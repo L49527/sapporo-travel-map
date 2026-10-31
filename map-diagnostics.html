@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>北海道地圖｜載入診斷</title>
+<style>
+:root{font-family:system-ui,"PingFang TC",sans-serif;color:#173b43;background:#f6f8f7}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1100px;margin:auto;padding:30px 18px}h1{font-size:clamp(24px,4vw,36px);margin:0 0 12px}.muted{color:#526a70;line-height:1.65}#map{height:min(58vh,560px);min-height:380px;border:1px solid #bed3d4;background:#e6edef;border-radius:12px}button,a.link{font:inherit;background:#174d57;color:white;padding:10px 16px;border-radius:8px;border:0;cursor:pointer;display:inline-block;text-decoration:none}a{color:#155f75}#log{width:100%;height:270px;border:1px solid #cbd4d1;background:white;border-radius:8px;font:12px/1.65 monospace;padding:14px;white-space:pre-wrap}.state{padding:11px 15px;background:#e0eeeb;border-radius:10px;margin:12px 0}li{line-height:1.8} .layout{display:grid;grid-template-columns:1.5fr 1fr;gap:22px}@media(max-width:790px){.layout{grid-template-columns:1fr}}.pass{color:#176b48}.fail{color:#b0422b}
+</style>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.css">
+</head><body><main class="wrap">
+<h1>北海道地圖｜載入診斷</h1>
+<p class="muted">這是獨立測試頁，不會改動正式旅行網站。它直接測試 WebGL、OpenFreeMap 地圖樣式、MapLibre 套件及地圖圖磚；如果這裡正常、正式首頁仍空白，問題就出在首頁的地圖整合邏輯。</p>
+<div class="layout"><section><div id="map" aria-label="札幌測試地圖"></div></section>
+<aside><h2>測試結果</h2><p id="status" class="state" role="status">正在檢查…</p>
+<ol id="checks"><li id="gl">WebGL：檢查中</li><li id="style">OpenFreeMap 樣式：檢查中</li><li id="lib">MapLibre 模組：檢查中</li><li id="tiles">地圖圖磚：檢查中</li></ol>
+<button type="button" id="copy">複製診斷紀錄</button>
+<p class="muted" style="font-size:13px">如地圖沒出現，按「複製診斷紀錄」貼回 ChatGPT。請不要貼個人 API Key。</p>
+<a href="https://openfreemap.org/quick_start/" target="_blank" rel="noopener">OpenFreeMap 官方範例</a></aside></div>
+<h2>詳細紀錄</h2><textarea id="log" readonly aria-label="地圖診斷紀錄"></textarea>
+</main>
+<script type="module">
+const logBox=document.getElementById('log');
+function log(msg){let t=new Date().toLocaleTimeString('zh-TW',{hour12:false});logBox.value+='['+t+'] '+msg+'\n';logBox.scrollTop=logBox.scrollHeight;console.log('[MapDiag]',msg)}
+function state(id,msg,ok){let e=document.getElementById(id);e.textContent=msg;e.className=ok===true?'pass':ok===false?'fail':''}
+function overall(msg){document.getElementById('status').textContent=msg}
+window.addEventListener('error',e=>log('JavaScript: '+e.message));
+window.addEventListener('unhandledrejection',e=>log('Promise: '+String(e.reason)));
+document.getElementById('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(logBox.value);overall('已複製，請貼到 ChatGPT')}catch(e){logBox.focus();logBox.select();overall('請手動選取下方紀錄複製')}});
+let gl=false;
+try{let c=document.createElement('canvas');gl=!!c.getContext('webgl2');state('gl','WebGL 2：'+(gl?'正常':'不可用'),gl)}catch(e){state('gl','WebGL 檢查失敗：'+e.message,false)}log('WebGL2='+gl+'，頁面='+location.href);
+try{const r=await fetch('https://tiles.openfreemap.org/styles/positron',{mode:'cors',cache:'no-store'});let raw=await r.text();state('style','樣式檔：HTTP '+r.status,r.ok);log('STYLE HTTP '+r.status+'，CORS可讀，內容長度='+raw.length);if(r.ok){let j=JSON.parse(raw);log('Style sources='+Object.keys(j.sources||{}).join(','))}}catch(e){state('style','樣式檔請求失敗',false);log('STYLE ERROR: '+e.message)}
+let mod=null;
+for(const url of ['https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.mjs','https://cdn.jsdelivr.net/npm/maplibre-gl@6.16.0/dist/maplibre-gl.mjs']){
+ try{mod=await import(url);state('lib','MapLibre：成功（'+new URL(url).host+'）',true);log('LIBRARY OK '+url);break}catch(e){log('LIBRARY FAIL '+url+' : '+e.message)}
+}
+if(!mod){state('lib','MapLibre：兩個 CDN 都載入失敗',false);overall('地圖套件載入失敗，請將紀錄傳回');}
+else{
+let map,loaded=false,errored=0;try{
+ map=new mod.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:[141.35,43.06],zoom:8,attributionControl:true});
+ map.on('error',e=>{errored++;let m=e.error?.message||String(e.error||e);log('MAP ERROR '+m);if(errored<5)state('tiles','地圖請求錯誤：'+m,false)});
+ map.on('style.load',()=>log('EVENT style.load'));
+ map.on('load',()=>{loaded=true;log('EVENT load');state('tiles','地圖樣式已載入，等待圖磚…');});
+ map.on('idle',()=>{let count=0;try{count=map.queryRenderedFeatures().length}catch(e){log('QUERY ERROR '+e.message)}log('EVENT idle，renderedFeatures='+count+', tilesLoaded='+map.areTilesLoaded());if(count>0){state('tiles','地圖已顯示，地圖圖徵='+count,true);overall('互動地圖載入成功；若正式首頁仍空白，是原網站的整合問題。')}});
+ map.on('click',e=>log('點選座標：'+e.lngLat.lng.toFixed(4)+','+e.lngLat.lat.toFixed(4)));
+ setTimeout(()=>{if(document.getElementById('status').textContent.includes('正在')){overall('20 秒內尚未確認圖磚顯示，請貼診斷紀錄');log('TIMEOUT styleLoaded='+loaded+', mapErrors='+errored)}},20000);
+}catch(e){log('MAP CREATE ERROR '+e.stack);state('tiles','地圖建立失敗：'+e.message,false);overall('地圖初始化失敗，請貼診斷紀錄')}
+}
+</script></body></html>
