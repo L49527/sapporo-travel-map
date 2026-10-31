@@ -191,7 +191,7 @@ button,input,select,textarea{font-family:inherit}
 @media(max-width:760px){.live-hokkaido-map{min-height:300px}.live-map-toolbar{top:9px;left:9px;max-width:calc(100% - 20px);gap:1px;padding:3px}.live-map-toolbar button{font-size:11px;padding:8px 7px}.map-card .map-label{font-size:10px}.maplibregl-ctrl-top-right{top:45px}}
 @media(prefers-reduced-motion:reduce){.live-hokkaido-map{transition:none}}
 </style>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2212%22%20fill%3D%22%23f8f9f7%22%2F%3E%3Cpath%20d%3D%22M6%2049%2025%2015%2035%2033%2042%2022%2059%2050%20M16%2049l9-17%206%209%22%20fill%3D%22none%22%20stroke%3D%22%23186278%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"></head><body><a class="skip-link" href="#routes">略過封面直接查看行程</a>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2212%22%20fill%3D%22%23f8f9f7%22%2F%3E%3Cpath%20d%3D%22M6%2049%2025%2015%2035%2033%2042%2022%2059%2050%20M16%2049l9-17%206%209%22%20fill%3D%22none%22%20stroke%3D%22%23186278%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"><link rel="manifest" href="./manifest.webmanifest"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="北海道旅遊"/><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"/><meta name="application-name" content="北海道旅遊"/></head><body><a class="skip-link" href="#routes">略過封面直接查看行程</a>
 <header class="topnav"><div class="nav-wrap"><a class="logo" href="#top" aria-label="返回札幌旅行首頁"><svg viewBox="0 0 45 40" aria-hidden="true" fill="none"><path d="M3 32L16 11 22 20 28 5 42 32M11 25l5-6 7 9 5-11 9 11" stroke="#17657d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>HOKKAIDO</strong><small>EXPLORE SAPPORO</small></span></a><nav aria-label="網站主選單" class="main-links" id="mainLinks"><a href="#routes">選擇路線</a><a href="#days">七日行程</a><a href="#route-map">地圖</a><a href="#hotels">住宿</a><a href="#budget">預算</a><a href="#checklist">行前準備</a></nav><div class="nav-actions"><a class="btn" href="#days">查看行程</a><button aria-expanded="false" aria-label="開啟選單" class="menu-toggle" id="menuBtn">☰</button></div></div></header>
 <main id="top">
 <section aria-label="札幌七日自由行" class="hero hero-sapporo">
@@ -769,7 +769,17 @@ button,input,select,textarea { font-family:var(--font)!important; }
  });
 })();
 </script>
-<script id="sapporoOpenFreeMap" type="module">
+<style id="sapporoMapVisibleFix">
+.map-card{position:relative;min-height:450px;height:470px}
+.map-card #liveHokkaidoMap{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;z-index:2;transform:none!important;transition:none!important}
+.map-card:not(.is-live-loading):not(.has-live-map) #liveHokkaidoMap{display:none!important}
+.map-card.is-live-loading #liveHokkaidoMap,.map-card.has-live-map #liveHokkaidoMap{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.map-card.is-live-loading > #offlineHokkaidoMap,.map-card.has-live-map > #offlineHokkaidoMap{display:none!important}
+.map-card:not(.is-live-loading):not(.has-live-map) > #offlineHokkaidoMap{display:block!important;opacity:1!important;visibility:visible!important}
+.map-card #liveHokkaidoMap .maplibregl-canvas-container,.map-card #liveHokkaidoMap .maplibregl-canvas{width:100%!important;height:100%!important}
+.map-card .live-map-toolbar{z-index:8}
+@media(max-width:760px){.map-card{height:360px;min-height:360px}}
+</style><script id="sapporoOpenFreeMap" type="module">
 // Maps work as a progressive enhancement: when CDN, WebGL or tiles fail, the original SVG remains.
 // No API token. The tile server requires a network connection and is supplied as-is.
 (async()=>{
@@ -778,10 +788,11 @@ if(location.protocol==='file:'){return;}
 const notice=document.getElementById('sapporoMapNotice');
 const status=(kind, message)=>{if(!notice)return;notice.dataset.state=kind;notice.querySelector('strong').textContent=kind==='ready'?'':'互動地圖未載入';notice.querySelector('span').textContent=message||'';};
 const retry=document.getElementById('sapporoMapRetry');if(retry)retry.addEventListener('click',()=>location.reload());
-const timeout=setTimeout(()=>{if(!ready){host.classList.remove('has-live-map');status('error','OpenFreeMap 尚未成功載入。下方保留行程示意圖；請確認網路，或以 http://localhost:8000/ 測試。')}},15000);
+const timeout=setTimeout(()=>{if(!ready){host.classList.remove('is-live-loading','has-live-map');toolbar.hidden=true;status('error','互動地圖 15 秒內未完成渲染，已切回行程示意圖。請在開發者工具查看 [SapporoMap] 訊息。')}},15000);
 
 const mapElement=document.getElementById('liveHokkaidoMap');
 const toolbar=document.getElementById('liveMapToolbar');
+if(host && mapElement){host.classList.add('is-live-loading');}
 const $=q=>document.querySelector(q);
 const PLACES={
   sapporo:{name:'札幌',point:[141.3508,43.0618],tag:'旅程主要住宿基地'},
@@ -880,6 +891,7 @@ try{
    map.addSource('trip-paths',{type:'geojson',data:routeData(params.plan,params.car)});
    map.addLayer({id:'trip-lines',type:'line',source:'trip-paths',paint:{'line-color':['get','color'],'line-width':3.4,'line-opacity':0.85,'line-dasharray':[1.5,2]}});
    mapStructureReady=true;
+   requestAnimationFrame(()=>{try{map.resize()}catch(e){}});
  });
  // A loaded style is NOT proof that the basemap has actually rendered. Wait for idle + visible vector features.
  function verifyAndShow(){
@@ -889,9 +901,10 @@ try{
   let visibleBasemap=false;
   try{visibleBasemap=map.queryRenderedFeatures().some(f=>f.source!=='trip-paths')}catch(e){return}
   if(!visibleBasemap)return;
+  console.info('[SapporoMap] Basemap rendered; tilesLoaded=',map.areTilesLoaded());
   ready=true;clearTimeout(timeout);
   redrawMarkers();view();highlightRoutes();status('ready','');
-  toolbar.hidden=false;host.classList.add('has-live-map');
+  host.classList.remove('is-live-loading');toolbar.hidden=false;host.classList.add('has-live-map');
   const fallbackLabel=host.querySelector('.map-label');if(fallbackLabel)fallbackLabel.textContent='景點順序連線，非實際道路導航｜OpenFreeMap © OpenStreetMap';
   map.resize();
  }
@@ -899,11 +912,17 @@ try{
  // Safari and slow networks can delay the first idle; checking render a few times is harmless.
  let polls=0;const poll=setInterval(()=>{polls++;if(ready||polls>18){clearInterval(poll);return}verifyAndShow()},850);
  map.on('error',event=>{if(!ready){console.warn('OpenFreeMap 載入失敗，保留離線示意圖',event.error);status('error','外部地圖資源載入失敗。離線示意圖仍可使用；請確認網路或瀏覽器封鎖設定。')}});
-}catch(err){console.warn('互動地圖未啟用，仍可查看原有離線示意地圖：',err.message);host.classList.remove('has-live-map');toolbar.hidden=true;status('error','地圖外部資源載入失敗：'+String(err.message||err).slice(0,125)+'。離線示意圖已保留，無須上傳 GitHub。')}
+}catch(err){console.warn('互動地圖未啟用，仍可查看原有離線示意地圖：',err.message);host.classList.remove('is-live-loading','has-live-map');toolbar.hidden=true;status('error','地圖外部資源載入失敗：'+String(err.message||err).slice(0,125)+'。離線示意圖已保留，無須上傳 GitHub。')}
 })();
 </script>
 <script>
 window.addEventListener('load',function(){
   setTimeout(function(){var n=document.getElementById('sapporoMapNotice');if(n && !n.dataset.state){n.dataset.state='error';n.querySelector('strong').textContent='互動地圖未載入';n.querySelector('span').textContent='瀏覽器可能阻擋了本機 HTML 的外部模組。請保持網路連線，改用本機伺服器或 GitHub Pages 測試。';}},12000);
 });
+</script><script id="sapporoPWARegister">
+if ('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1')) {
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'})
+ .then(reg=>{reg.update().catch(()=>{});console.info('[SapporoPWA] ready',reg.scope)})
+ .catch(err=>console.warn('[SapporoPWA] unavailable',err.message)));
+}
 </script></body></html>
