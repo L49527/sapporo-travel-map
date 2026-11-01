@@ -1,5 +1,5 @@
-const CACHE_NAME='sapporo-travel-shell-v1';
-const PRECACHE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon.png'];
+const CACHE_NAME='sapporo-travel-shell-v2';
+const PRECACHE=['./','./index.html','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(async cache=>{await Promise.allSettled(PRECACHE.map(url=>cache.add(new Request(url,{cache:'reload'}))));}).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('sapporo-travel-shell-')&&k!==CACHE_NAME).map(k=>caches.delete(k)))),self.clients.claim()]))});
 self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const url=new URL(req.url);if(url.origin!==self.location.origin)return;if(!url.pathname.startsWith(new URL('./',self.registration.scope).pathname))return;event.respondWith((async()=>{try{const res=await fetch(req);if(res.ok){const cache=await caches.open(CACHE_NAME);cache.put(req,res.clone()).catch(()=>{})}return res}catch(err){const cached=await caches.match(req,{ignoreSearch:true});if(cached)return cached;if(req.mode==='navigate'){const home=await caches.match(new URL('./index.html',self.registration.scope));if(home)return home}throw err}})())});

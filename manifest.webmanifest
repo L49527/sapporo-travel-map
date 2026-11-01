@@ -1,12 +1,12 @@
 {
-  "name": "北海道旅遊｜札幌 2027",
-  "short_name": "北海道旅遊",
+  "name": "HOKKAIDO | EXPLORE SAPPORO",
+  "short_name": "HOKKAIDO",
   "description": "札幌七日旅遊行程、交通切換、互動地圖、飯店預算及行前準備",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f5f5f1",
+  "background_color": "#FFFFFF",
   "theme_color": "#153e47",
   "lang": "zh-TW",
   "icons": [
