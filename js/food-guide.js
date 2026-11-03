@@ -16,18 +16,40 @@ const MEAL_ZONE={b1:'susukino',b2:'nijo',b3:'station',b4:'station',l1:'nijo',l2:
 const GIFT_ZONE={s1:'odori',s2:'station',s3:'odori',s4:'station',s5:'susukino',s6:'sakaimachi',s7:'sakaimachi',s8:'airport',s9:'airport',s10:'sakaimachi'};
 const GIFT_DAYS={0:['s5'],1:['s1','s2','s3','s5'],2:['s6','s7','s10'],3:[],4:['s1','s2','s3','s4','s5'],5:[],6:['s2','s4','s8','s9']};
 const LABELS=['札幌・薄野','札幌祭典','小樽・余市','富良野・美瑛','札幌神宮祭','郊外方案','札幌・機場'];
-const root=document.getElementById('food-guide');
-if(!root)return;
-const mealGrid=document.getElementById('fg-meals');
-const giftGrid=document.getElementById('fg-gifts');
-const countEl=document.getElementById('fg-count');
-const dateButtons=document.getElementById('fg-days');
-const dayTitle=document.getElementById('fg-day-title');
-const dayDesc=document.getElementById('fg-day-desc');
-const regionEl=document.getElementById('fg-region-label');
-const mapStatus=document.getElementById('fg-map-status');
-const tabs=Array.from(root.querySelectorAll('[data-fg-meal]'));
-let meal='all',localMap=null,markerLayer=null,markers={},currentPlaces=[];
+
+const dayRoot=document.getElementById('day-discover');
+const overview=document.getElementById('food-guide');
+if(!dayRoot||!overview)return;
+const mealGrid=document.getElementById('dd-meals');
+const giftGrid=document.getElementById('dd-gifts');
+const dayContextLabel=document.getElementById('dd-day-context');
+const counts=document.getElementById('dd-count');
+const mapPanel=document.getElementById('dd-map-panel');
+const mapStatus=document.getElementById('dd-map-status');
+const mealMore=document.getElementById('dd-more-meals');
+const giftMore=document.getElementById('dd-more-gifts');
+const FEATURED={meals:3,gifts:2};
+let expanded={meals:false,gifts:false};
+let localMap=null,markerLayer=null,markers={},currentPlaces=[],pendingFocus=null;
+const scenicStops={
+ 0:[['札幌站',43.0687,141.3508],['薄野・狸小路',43.0538,141.3535]],
+ 1:[['大通公園・YOSAKOI',43.0604,141.3542]],
+ 2:[['余市',43.1953,140.7942],['小樽運河',43.1992,141.0033],['小樽堺町通',43.1908,141.0082]],
+ 3:[['富田農場',43.4170,142.4257],['四季彩之丘',43.5479,142.4668],['白金青池',43.4939,142.6141]],
+ 4:[['北海道神宮',43.0547,141.3074],['大通公園',43.0604,141.3542]],
+ 6:[['札幌站',43.0687,141.3508],['新千歲機場',42.7746,141.6926]]
+};
+function dayLandmarks(ctx){
+ if(ctx.day!==5)return scenicStops[ctx.day]||[];
+ const landmarks=[];
+ if(ctx.zones.includes('noboribetsu'))landmarks.push(['登別地獄谷',42.4911,141.1649]);
+ if(ctx.zones.includes('shikotsu'))landmarks.push(['支笏湖',42.7586,141.3141]);
+ if(ctx.zones.includes('shakotan'))landmarks.push(['積丹・神威岬',43.3281,140.3440]);
+ if(ctx.zones.includes('jozankei'))landmarks.push(['定山溪溫泉',42.9625,141.1556]);
+ if(ctx.zones.includes('yoichi'))landmarks.push(['余市',43.1953,140.7942]);
+ if(ctx.zones.includes('otaru'))landmarks.push(['小樽運河',43.1992,141.0033]);
+ return landmarks;
+}
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function indexToday(){return (typeof state!=='undefined'&&Number.isInteger(state.day))?state.day:0;}
 function dayContext(){
@@ -72,105 +94,158 @@ function allFor(ctx){
  ].filter(p=>p.zone&&ctx.zones.includes(p.zone));
  return {meals:dishes,gifts};
 }
-function focusButton(p){
- return '<button type="button" class="fg-map" data-fg-focus="'+safe(p.zone)+'" data-fg-name="'+safe(p.name)+'" aria-label="在本站地圖查看'+safe(p.name)+'的所在區域">⌖ 在地圖看方位</button>';
+
+function editorialMeals(items,day){
+ const order=(day===0?['dinner','lunch','breakfast']:day===6?['breakfast','lunch','dinner']:day===3||day===5?['lunch','breakfast','dinner']:['lunch','dinner','breakfast']);
+ return items.map((p,i)=>({p,i})).sort((a,b)=>order.indexOf(a.p.meal)-order.indexOf(b.p.meal)||a.i-b.i).map(x=>x.p);
 }
-function foodCard(p,i){
- return '<article class="fg-card" data-fg-card="'+safe(p.zone)+'">'+
- '<div class="fg-card-top"><span class="fg-no">'+String(i+1).padStart(2,'0')+'</span><span class="fg-card-tag">'+safe(p.tag)+'</span></div>'+
- '<h3>'+safe(p.name)+'</h3><p class="fg-en">'+safe(p.en)+'</p>'+
- '<p class="fg-dish">'+safe(p.dish)+'</p><p class="fg-location">⌖ '+safe(p.place)+' · '+safe(p.area)+'</p>'+
- '<p class="fg-day">'+safe(p.hours)+'</p><p class="fg-detail">'+safe(p.note)+'</p>'+
- '<div class="fg-card-footer">'+focusButton(p)+'<a class="fg-directions" href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">官方／觀光資料 ↗</a></div></article>';
+function focusButton(p,kind){
+ return '<button type="button" class="dd-map-action" data-dd-place="'+safe(p.id)+'" data-dd-kind="'+kind+'" aria-label="在當日地圖查看'+safe(p.name)+'所在區域">⌖ 在地圖查看</button>';
 }
-function giftCard(p,i){
- return '<article class="fg-gift" data-fg-card="'+safe(p.zone)+'"><span class="fg-no">'+String(i+1).padStart(2,'0')+'</span><div><h4>'+safe(p.name)+'</h4>'+
- '<small>'+safe(p.en)+' · '+safe(p.area)+'</small>'+
- '<p class="fg-pick">'+safe(p.pick)+'</p><p>'+safe(p.carry)+'　·　'+safe(p.tip)+'</p>'+
- '<div class="fg-gift-actions">'+focusButton(p)+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">來源資料 ↗</a></div></div></article>';
+function foodCard(p){
+ const mealName={breakfast:'早餐',lunch:'午餐',dinner:'晚餐'}[p.meal]||'餐飲';
+ return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'"><div class="dd-pick-kicker">'+mealName+' / '+safe(p.area)+'</div>'+
+ '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
+ '<p class="dd-pick-feature">'+safe(p.dish)+'</p><p class="dd-pick-detail">'+safe(p.note)+'</p>'+
+ '<div class="dd-pick-foot">'+focusButton(p,'meal')+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">資料來源 ↗</a></div></article>';
+}
+function giftCard(p){
+ return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'"><div class="dd-pick-kicker">LOCAL FINDS / '+safe(p.area)+'</div>'+
+ '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
+ '<p class="dd-pick-feature">'+safe(p.pick)+'</p><p class="dd-pick-detail">'+safe(p.tip)+'　'+safe(p.carry)+'</p>'+
+ '<div class="dd-pick-foot">'+focusButton(p,'gift')+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">資料來源 ↗</a></div></article>';
+}
+function updateMore(btn,name,length,limit){
+ const remainder=Math.max(0,length-limit),open=expanded[name];
+ btn.hidden=!remainder;
+ btn.textContent=open?'收起精選':'探索更多 · +'+remainder;
+ btn.setAttribute('aria-expanded',String(open));
 }
 function draw(){
  const ctx=dayContext(),entries=allFor(ctx);
- const items=entries.meals.filter(p=>meal==='all'||p.meal===meal);
- currentPlaces=[...items.map(p=>Object.assign({},p,{kind:'meal'})),...entries.gifts.map(p=>Object.assign({},p,{kind:'gift'}))];
- dateButtons.querySelectorAll('button').forEach((btn,i)=>{const active=i===ctx.day;btn.setAttribute('aria-pressed',String(active));});
- dayTitle.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+'｜'+ctx.label;
- dayDesc.textContent=ctx.detail;
- regionEl.textContent='當日區域：'+ctx.zones.map(z=>ZONES[z]?.name||z).join('、');
- tabs.forEach(t=>{const on=t.dataset.fgMeal===meal;t.setAttribute('aria-pressed',String(on));const k=t.dataset.fgMeal;t.textContent=({breakfast:'早餐',lunch:'午餐',dinner:'晚餐',all:'全部'})[k]+' · '+entries.meals.filter(p=>k==='all'||p.meal===k).length;});
- mealGrid.innerHTML=items.length?items.map(foodCard).join(''):'<p class="fg-empty">當日此餐別暫無精選名店。可選「全部」或切換日期。</p>';
- giftGrid.innerHTML=entries.gifts.length?entries.gifts.map(giftCard).join(''):'<p class="fg-empty">當日暫無確定順路的伴手禮店家；建議回札幌或機場集中購買。</p>';
- countEl.textContent=items.length+' 間當日餐飲、'+entries.gifts.length+' 個當地名產／選物。點卡片可在本頁地圖看方位（非路線導航）。';
+ const meals=editorialMeals(entries.meals,ctx.day);
+ const gifts=entries.gifts;
+ currentPlaces=[...meals.map(p=>Object.assign({},p,{kind:'meal'})),...gifts.map(p=>Object.assign({},p,{kind:'gift'}))];
+ dayContextLabel.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+' · '+ctx.label+'｜'+ctx.detail;
+ mealGrid.innerHTML=(expanded.meals?meals:meals.slice(0,FEATURED.meals)).map(foodCard).join('')||'<p class="dd-empty">當天尚無確認順路的餐飲推薦，請保留用餐彈性。</p>';
+ giftGrid.innerHTML=(expanded.gifts?gifts:gifts.slice(0,FEATURED.gifts)).map(giftCard).join('')||'<p class="dd-empty">當天暫無順路地方選物，可安排最後一天集中採買。</p>';
+ updateMore(mealMore,'meals',meals.length,FEATURED.meals);
+ updateMore(giftMore,'gifts',gifts.length,FEATURED.gifts);
+ counts.textContent='當日 '+meals.length+' 間餐飲、'+gifts.length+' 處地方名產｜視時間選擇，不必全部排入行程。';
  if(localMap)refreshMap(ctx);
+}
+function showOverview(){
+ const ids=['s1','s2','s4'];
+ document.getElementById('dd-overview-list').innerHTML=ids.map((id,i)=>{
+  const p=GIFTS.find(x=>x.id===id);
+  return '<article class="dd-overview-item"><span class="dd-overview-num">0'+(i+1)+'</span><div><h3>'+safe(p.name)+'</h3><p class="dd-overview-en">'+safe(p.en)+'</p>'+
+   '<p>'+safe(p.pick)+'</p><small>'+safe(p.carry)+' · '+safe(p.tip)+'</small></div>'+
+   '<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">官方資訊 ↗</a></article>';
+ }).join('');
+}
+function popupHTML(name,zone,detail){
+ return '<strong>'+safe(name)+'</strong><p>'+safe(detail||zone.name)+'<br>地圖標記為區域示意，非精準店門位置。</p>';
 }
 function refreshMap(ctx){
  if(!localMap||!markerLayer)return;
  markerLayer.clearLayers();markers={};
- const zones=[...new Set(currentPlaces.map(p=>p.zone))].filter(z=>ZONES[z]);
  const bounds=[];
- zones.forEach(z=>{
-   const p=ZONES[z],places=currentPlaces.filter(x=>x.zone===z);
-   const desc=places.map(x=>'<li>'+safe(x.name)+'</li>').join('');
-   const color=places.some(x=>x.kind==='meal')?'meal':'gift';
-   const marker=window.L.marker([p.lat,p.lng],{icon:window.L.divIcon({className:'fg-geo-pin '+color,html:'<span>'+String(places.length)+'</span>',iconSize:[36,36],iconAnchor:[18,18]})})
-     .bindPopup('<strong>'+safe(p.name)+'一帶</strong><p>這是區域中心方位，非店門精準座標。</p><ul>'+desc+'</ul>');
-   markerLayer.addLayer(marker);markers[z]=marker;bounds.push([p.lat,p.lng]);
- });
- if(bounds.length===1)localMap.setView(bounds[0],12,{animate:false});
- else if(bounds.length>1)localMap.fitBounds(bounds,{padding:[25,25],maxZoom:13,animate:false});
- else localMap.setView([43.05,141.35],9,{animate:false});
- setTimeout(()=>{if(localMap)localMap.invalidateSize();},100);
+ const zoneIds=[...new Set(currentPlaces.map(x=>x.zone))].filter(z=>ZONES[z]);
+ for(const id of zoneIds){
+  const z=ZONES[id],list=currentPlaces.filter(x=>x.zone===id);
+  const marker=window.L.marker([z.lat,z.lng],{icon:window.L.divIcon({className:'dd-map-pin-wrap',html:'<span class="dd-map-pin">'+list.length+'</span>',iconSize:[32,32],iconAnchor:[16,16]})});
+  marker.bindPopup('<strong>'+safe(z.name)+'一帶</strong><p>此標記為區域中心，非個別店家門牌。</p><ul>'+list.map(x=>'<li>'+safe(x.name)+'</li>').join('')+'</ul>');
+  markerLayer.addLayer(marker);markers[id]=marker;bounds.push([z.lat,z.lng]);
+ }
+ for(const [name,lat,lng] of dayLandmarks(ctx)){
+  const m=window.L.marker([lat,lng],{icon:window.L.divIcon({className:'dd-map-landmark-wrap',html:'<span class="dd-map-landmark">◆</span>',iconSize:[22,22],iconAnchor:[11,11]})});
+  m.bindPopup('<strong>'+safe(name)+'</strong><p>當日行程景點方位示意；非道路導航。</p>');
+  markerLayer.addLayer(m);bounds.push([lat,lng]);
+ }
+ if(bounds.length>1)localMap.fitBounds(bounds,{padding:[24,24],maxZoom:12,animate:false});
+ else if(bounds.length===1)localMap.setView(bounds[0],12,{animate:false});
+ else localMap.setView([43.06,141.35],9,{animate:false});
+ window.requestAnimationFrame(()=>localMap?.invalidateSize());
+ if(pendingFocus){const match=currentPlaces.find(x=>x.id===pendingFocus.id&&x.kind===pendingFocus.kind);if(match)focusPlace(match,false);pendingFocus=null;}
+}
+function focusPlace(place,scroll){
+ const z=ZONES[place.zone];
+ if(!z)return;
+ dayRoot.querySelectorAll('[data-dd-card]').forEach(el=>el.classList.toggle('is-selected',el.dataset.ddCard===place.id));
+ if(!localMap){
+  pendingFocus={id:place.id,kind:place.kind};
+  mapStatus.textContent='已選取 '+place.name+'｜'+z.name+'。地圖尚在載入，請參考區域方位。';
+ }else{
+  localMap.invalidateSize();
+  const latlng=[z.lat,z.lng];
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)localMap.setView(latlng,13,{animate:false});
+  else localMap.flyTo(latlng,13,{duration:.75});
+  if(markers[place.zone]){
+   markers[place.zone].setPopupContent(popupHTML(place.name,z,place.address||place.area));
+   markers[place.zone].openPopup();
+  }
+  mapStatus.textContent='已聚焦 '+place.name+'（'+z.name+'一帶）。標記為區域中心，建議以店家地址核對實際位置。';
+ }
+ if(scroll)mapPanel.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function loadLeaflet(){
  if(window.L)return Promise.resolve();
  if(!document.querySelector('link[data-fg-leaflet]')){
-   const css=document.createElement('link');css.rel='stylesheet';css.dataset.fgLeaflet='yes';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(css);
+  const css=document.createElement('link');css.rel='stylesheet';css.dataset.fgLeaflet='yes';
+  css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(css);
  }
  const candidates=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js'];
  function attempt(i){
-   if(i>=candidates.length)return Promise.reject(new Error('地圖程式資源無法載入'));
-   return new Promise((resolve,reject)=>{
-     const s=document.createElement('script');s.src=candidates[i];s.async=true;
-     s.onload=()=>window.L?resolve():reject(new Error('Leaflet 未啟動'));
-     s.onerror=()=>reject(new Error('Leaflet 下載失敗'));
-     document.head.appendChild(s);
-   }).catch(()=>attempt(i+1));
+  if(i>=candidates.length)return Promise.reject(new Error('互動地圖程式載入失敗'));
+  return new Promise((resolve,reject)=>{
+   const s=document.createElement('script');s.src=candidates[i];s.async=true;
+   s.onload=()=>window.L?resolve():reject(new Error('Leaflet 尚未啟動'));
+   s.onerror=()=>reject(new Error('Leaflet 下載失敗'));
+   document.head.appendChild(s);
+  }).catch(()=>attempt(i+1));
  }
  return attempt(0);
 }
 async function initLocalMap(){
  try{
-   await loadLeaflet();
-   localMap=window.L.map('fg-local-map',{scrollWheelZoom:false,zoomControl:true,attributionControl:true}).setView([43.05,141.35],9);
-   window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors',maxZoom:18}).addTo(localMap);
-   markerLayer=window.L.layerGroup().addTo(localMap);
-   window.L.control.scale({imperial:false}).addTo(localMap);
-   mapStatus.textContent='拖曳／縮放查看方位；點數字標記可查看該區域的餐飲與名產。標記為區域中心，非店門精準位置。';
-   refreshMap(dayContext());
- }catch(e){
-   console.warn('[SapporoFoodExplorer] map unavailable',e);
-   mapStatus.textContent='外部地圖底圖暫無法載入；仍可使用上方區域名稱及下方店家來源資料。';
+  await loadLeaflet();
+  localMap=window.L.map('fg-local-map',{scrollWheelZoom:false,zoomControl:true,attributionControl:true}).setView([43.06,141.35],9);
+  window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors',maxZoom:18}).addTo(localMap);
+  markerLayer=window.L.layerGroup().addTo(localMap);
+  window.L.control.scale({imperial:false}).addTo(localMap);
+  mapStatus.textContent='◆ 當日景點　● 當地美食與選物；點選上方推薦即可在這張地圖看方位（非路線導航）。';
+  refreshMap(dayContext());
+ }catch(error){
+  console.warn('[SapporoDayDiscovery] 地圖載入失敗',error);
+  mapStatus.textContent='無法載入互動底圖；推薦卡片仍保留所在區域與店家官方資料。';
  }
 }
-dateButtons.innerHTML=LABELS.map((label,i)=>'<button type="button" class="fg-day-choice" data-fg-day="'+i+'" aria-pressed="false">D'+(i+1)+'<small>6/'+(12+i)+'</small></button>').join('');
-dateButtons.addEventListener('click',event=>{
- const button=event.target.closest('[data-fg-day]');if(!button)return;
- state.day=Number(button.dataset.fgDay);
- meal='all';
- if(typeof renderDays==='function')renderDays();
- else draw();
+dayRoot.addEventListener('click',event=>{
+ const more=event.target.closest('[data-dd-expand]');
+ if(more){
+  const category=more.dataset.ddExpand;
+  if(!['meals','gifts'].includes(category))return;
+  expanded[category]=!expanded[category];draw();
+  return;
+ }
+ const button=event.target.closest('[data-dd-place]');
+ if(!button)return;
+ const place=currentPlaces.find(x=>x.id===button.dataset.ddPlace&&x.kind===button.dataset.ddKind);
+ if(place)focusPlace(place,true);
 });
-tabs.forEach(t=>t.addEventListener('click',()=>{meal=t.dataset.fgMeal;draw();}));
-root.addEventListener('click',event=>{
- const button=event.target.closest('[data-fg-focus]');if(!button)return;
- const zone=button.dataset.fgFocus,p=ZONES[zone];
- if(!p)return;
- root.querySelectorAll('[data-fg-card]').forEach(node=>node.classList.toggle('is-highlighted',node.contains(button)));
- if(localMap){localMap.setView([p.lat,p.lng],Math.max(localMap.getZoom(),13),{animate:true});if(markers[zone])markers[zone].openPopup();}
- else mapStatus.textContent='目標區域：'+p.name+'（頁內地圖暫不可用；請查看店家官方來源）。';
- document.getElementById('fg-map-panel').scrollIntoView({behavior:'smooth',block:'center'});
+const lastDay=document.getElementById('dd-lastday');
+if(lastDay)lastDay.addEventListener('click',()=>{
+ if(typeof state==='undefined'||typeof renderDays!=='function')return;
+ state.day=6;renderDays();
+ document.getElementById('days').scrollIntoView({behavior:'smooth',block:'start'});
 });
-window.addEventListener('hokkaido:daychange',()=>{meal='all';draw();});
+window.addEventListener('hokkaido:daychange',()=>{
+ expanded={meals:false,gifts:false};
+ pendingFocus=null;
+ draw();
+});
+showOverview();
 draw();
 initLocalMap();
+
 })();
