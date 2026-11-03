@@ -657,3 +657,18 @@ button,input,select,textarea { font-family:var(--font)!important; }
 .dd-overview-item .dd-overview-link{margin-top:15px;align-self:flex-start}
 .dd-overview-item .dd-photo figcaption{font-size:9px}
 @media(max-width:720px){.dd-pick .dd-photo{margin:-17px -17px 17px}.dd-photo img,.dd-photo-placeholder{height:195px}.dd-overview-item .dd-photo img,.dd-overview-item .dd-photo-placeholder{height:210px}}
+
+/* Editorial food photography: the photograph is the hero; attribution remains visible but unobtrusive. */
+.dd-photo{height:218px;min-height:0!important;isolation:isolate;background:#e4e8df}
+.dd-photo img{height:100%!important;min-height:218px;object-fit:cover}
+.dd-photo figcaption{position:absolute;inset:auto 0 0 0;z-index:2;min-height:0;padding:23px 12px 8px!important;display:flex;justify-content:space-between;align-items:flex-end;gap:8px 12px;background:linear-gradient(180deg,transparent,rgba(14,24,20,.82));color:#fff!important;font-size:9px!important}
+.dd-photo figcaption span,.dd-photo figcaption a{color:#fff!important;font-size:9px!important;line-height:1.5}
+.dd-photo figcaption a{text-decoration:underline;text-decoration-color:#ffffff70;white-space:normal;overflow-wrap:anywhere;text-underline-offset:2px}
+.dd-photo[data-dd-photo="darumaReal"] img{object-position:center 58%}
+.dd-photo[data-dd-photo="roeEditorial"] img{object-position:center 48%}
+.dd-photo[data-dd-photo="ramenEditorial"] img{object-position:center 48%}
+.dd-photo[data-dd-photo="seafoodEditorial"] img{object-position:center 57%}
+.dd-photo-unavailable{height:auto;min-height:174px!important}
+.dd-overview-item .dd-photo{height:210px!important;min-height:0}
+.dd-overview-item .dd-photo img{height:100%!important;min-height:210px}
+@media(max-width:720px){.dd-photo{height:210px}.dd-photo img{min-height:210px}.dd-overview-item .dd-photo{height:210px!important}}
