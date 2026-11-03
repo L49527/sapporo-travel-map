@@ -20,16 +20,17 @@ const LABELS=['札幌・薄野','札幌祭典','小樽・余市','富良野・�
 const dayRoot=document.getElementById('day-discover');
 const overview=document.getElementById('food-guide');
 if(!dayRoot||!overview)return;
-const mealGrid=document.getElementById('dd-meals');
+const mealGrids=Object.fromEntries(['breakfast','lunch','dinner'].map(key=>[key,document.getElementById('dd-meals-'+key)]));
+const mealMore=Object.fromEntries(['breakfast','lunch','dinner'].map(key=>[key,document.getElementById('dd-more-'+key)]));
+const mealCounts=Object.fromEntries(['breakfast','lunch','dinner'].map(key=>[key,document.getElementById('dd-count-'+key)]));
 const giftGrid=document.getElementById('dd-gifts');
 const dayContextLabel=document.getElementById('dd-day-context');
 const counts=document.getElementById('dd-count');
 const mapPanel=document.getElementById('dd-map-panel');
 const mapStatus=document.getElementById('dd-map-status');
-const mealMore=document.getElementById('dd-more-meals');
 const giftMore=document.getElementById('dd-more-gifts');
-const FEATURED={meals:3,gifts:2};
-let expanded={meals:false,gifts:false};
+const FEATURED={breakfast:2,lunch:3,dinner:3,gifts:2};
+let expanded={breakfast:false,lunch:false,dinner:false,gifts:false};
 let localMap=null,markerLayer=null,markers={},currentPlaces=[],pendingFocus=null;
 const scenicStops={
  0:[['札幌站',43.0687,141.3508],['薄野・狸小路',43.0538,141.3535]],
@@ -82,25 +83,54 @@ function dayContext(){
  return {day,zones:[...new Set(zones)],label,detail};
 }
 function allFor(ctx){
+ const dining=window.HOKKAIDO_DINING;
  const date='6/'+String(12+ctx.day);
- const meals=[
- ...MEALS.filter(p=>p.day.includes(date)).map(p=>Object.assign({},p,{zone:MEAL_ZONE[p.id]})),
- ...EXTRA_MEALS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
- ];
- const dishes=meals.filter(p=>p.zone&&ctx.zones.includes(p.zone));
+ const breakfasts=MEALS.filter(p=>p.meal==='breakfast'&&p.day.includes(date))
+   .map(p=>Object.assign({},p,{zone:MEAL_ZONE[p.id]}))
+   .filter(p=>p.zone&&ctx.zones.includes(p.zone));
+ const choices=[];
+ const key=ctx.day===5?'5'+state.plan:String(ctx.day);
+ const schedule=dining?.roster?.[key];
+ function pick(id,meal){
+  const base=MEALS.find(p=>p.id===id)||EXTRA_MEALS.find(p=>p.id===id)||dining?.catalog?.[id];
+  if(!base)return null;
+  const candidate=Object.assign({},base,{meal,zone:base.zone||MEAL_ZONE[id]});
+  if(!candidate.zone||!ZONES[candidate.zone])return null;
+  if(ctx.day===3&&state.car===0){
+    candidate.note='觀光巴士常已含午餐且未必自由停靠；以下為更換行程／自駕候選。 '+candidate.note;
+  }
+  if(ctx.day===5&&state.car===0&&meal==='lunch'){
+    candidate.note='依預約團停靠點與自由用餐時間決定是否能去。 '+candidate.note;
+  }
+  if(ctx.day===6){
+    candidate.note='返程前安檢區外餐飲候選；請優先完成行李托運、免稅查驗及報到。 '+candidate.note;
+  }
+  return candidate;
+ }
+ for(const meal of ['lunch','dinner']){
+  const keys=[...(schedule?.[meal]||[])];
+  if(ctx.day===5&&meal==='lunch'&&state.car===2&&state.plan==='A')keys.push('x-shik');
+  if(ctx.day===5&&meal==='lunch'&&state.car===2&&state.plan==='C')keys.push('jozanHakken');
+  const names=new Set();
+  for(const id of keys){
+   const p=pick(id,meal);if(!p)continue;
+   const unique=p.name.normalize('NFKC').toLowerCase().trim();
+   if(names.has(unique))continue;
+   names.add(unique);choices.push(p);
+  }
+ }
  const gifts=[
- ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]})),
- ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
+  ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]})),
+  ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
  ].filter(p=>p.zone&&ctx.zones.includes(p.zone));
- return {meals:dishes,gifts};
+ return {meals:[...breakfasts,...choices],gifts};
 }
-
 
 /* Images have been sourced from individually linked Wikimedia Commons file pages.
  * A representative dish is not claimed to be a photograph from the listed store.
  * Photos of products or interiors are labeled separately. */
-const PHOTO_LIBRARY={"egg":{"file":"Japanese egg sandwich in a sandwich case.jpg","author":"Quercus acuta","license":"CC BY-SA 4.0","label":"料理示意照"},"seafood":{"file":"Seafood bowl.jpg","author":"Douglas P. Perkins","license":"CC0 1.0","label":"料理示意照"},"sushi":{"file":"2009, sushi in Otaru -81219.jpeg","author":"Syced","license":"CC0 1.0","label":"小樽料理示意照"},"soup":{"file":"A soup curry dish in Sapporo - Flickr - odako1.jpg","author":"Koichi Oda","license":"CC BY-SA 2.0","label":"札幌料理示意照"},"ramen":{"file":"Sapporo miso ramen.jpg","author":"Schellack","license":"CC BY 3.0","label":"札幌料理示意照"},"lamb":{"file":"Genghis Khan dish.jpg","author":"Douglas P. Perkins","license":"CC0 1.0","label":"料理示意照"},"matsuo":{"file":"Matsuo Jingisukan.jpg","author":"Totti","license":"CC BY-SA 4.0","label":"品牌料理實拍（非指定分店）"},"uni":{"file":"UniIkuraDon.jpg","author":"Douglas P. Perkins","license":"CC BY 3.0","label":"料理示意照"},"white":{"file":"Shiroi koibito.jpg","author":"Fk","license":"CC BY-SA 3.0","label":"實際商品照片"},"rokkatei":{"file":"Marusei butter sand of Rokkatei (1).jpg","author":"毒島みるく","license":"CC0 1.0","label":"實際商品照片"},"royce":{"file":"Royce chocolate.jpg","author":"Antonio733","license":"CC BY-SA 4.0","label":"實際商品照片"},"kitakaro":{"file":"KITAKARO Sapporo Honkan interior 201904.jpg","author":"MIKI Yoshihito","license":"CC BY 2.0","label":"札幌本館實景"},"kinotoya":{"file":"KINOTOYA, Sapporo, Hokkaido, Japan, 札幌, 北海道, 日本, 焼きたてチーズタルト, きのとや, 新千歳空港店, さっぽろし, ほっかいどう, にっぽん, にほん (16720983681).jpg","author":"bryan...","license":"CC BY-SA 2.0","label":"品牌商品實景（非指定分店）"},"letao":{"file":"LeTAO-1.jpg","author":"Evelyn-rose","license":"CC0 1.0","label":"品牌門市示意（非小樽本店）"},"music":{"file":"Otaru Music Box Museum interior.jpg","author":"Liandrei","license":"CC BY-SA 4.0","label":"小樽店內實景"},"pie":{"file":"IMG small apple pie.jpg","author":"LostplanetKD73","license":"CC0 1.0","label":"蘋果派示意照"}};
-const PHOTO_BY_ID={"b1":"egg","b2":"seafood","b3":"egg","b4":"egg","l1":"soup","l2":"sushi","l3":"ramen","l4":"sushi","l6":"uni","l7":"matsuo","d1":"lamb","d2":"seafood","d3":"lamb","d4":"ramen","d5":"seafood","d6":"soup","d7":"matsuo","x-yoi":"seafood","x-biei":null,"x-tomita":null,"x-nobo":"seafood","x-shik":"seafood","x-shako":"uni","x-joz":"pie","s1":"white","s2":"rokkatei","s3":"kitakaro","s4":"royce","s5":"kinotoya","s6":"letao","s7":null,"s8":null,"s9":null,"s10":"music","gx-yoi":"seafood","gx-biei":null,"gx-furano":null,"gx-nobo":null,"gx-shako":"uni","gx-joz":"pie","gx-shik":null};
+const PHOTO_LIBRARY={"egg":{"file":"Japanese egg sandwich in a sandwich case.jpg","author":"Quercus acuta","license":"CC BY-SA 4.0","label":"料理示意照"},"seafood":{"file":"Seafood bowl.jpg","author":"Douglas P. Perkins","license":"CC0 1.0","label":"料理示意照"},"sushi":{"file":"2009, sushi in Otaru -81219.jpeg","author":"Syced","license":"CC0 1.0","label":"小樽料理示意照"},"soup":{"file":"A soup curry dish in Sapporo - Flickr - odako1.jpg","author":"Koichi Oda","license":"CC BY-SA 2.0","label":"札幌料理示意照"},"ramen":{"file":"Sapporo miso ramen.jpg","author":"Schellack","license":"CC BY 3.0","label":"札幌料理示意照"},"lamb":{"file":"Genghis Khan dish.jpg","author":"Douglas P. Perkins","license":"CC0 1.0","label":"料理示意照"},"matsuo":{"file":"Matsuo Jingisukan.jpg","author":"Totti","license":"CC BY-SA 4.0","label":"品牌料理實拍（非指定分店）"},"uni":{"file":"UniIkuraDon.jpg","author":"Douglas P. Perkins","license":"CC BY 3.0","label":"料理示意照"},"white":{"file":"Shiroi koibito.jpg","author":"Fk","license":"CC BY-SA 3.0","label":"實際商品照片"},"rokkatei":{"file":"Marusei butter sand of Rokkatei (1).jpg","author":"毒島みるく","license":"CC0 1.0","label":"實際商品照片"},"royce":{"file":"Royce chocolate.jpg","author":"Antonio733","license":"CC BY-SA 4.0","label":"實際商品照片"},"kitakaro":{"file":"KITAKARO Sapporo Honkan interior 201904.jpg","author":"MIKI Yoshihito","license":"CC BY 2.0","label":"札幌本館實景"},"kinotoya":{"file":"KINOTOYA, Sapporo, Hokkaido, Japan, 札幌, 北海道, 日本, 焼きたてチーズタルト, きのとや, 新千歳空港店, さっぽろし, ほっかいどう, にっぽん, にほん (16720983681).jpg","author":"bryan...","license":"CC BY-SA 2.0","label":"品牌商品實景（非指定分店）"},"letao":{"file":"LeTAO-1.jpg","author":"Evelyn-rose","license":"CC0 1.0","label":"品牌門市示意（非小樽本店）"},"music":{"file":"Otaru Music Box Museum interior.jpg","author":"Liandrei","license":"CC BY-SA 4.0","label":"小樽店內實景"},"pie":{"file":"IMG small apple pie.jpg","author":"LostplanetKD73","license":"CC0 1.0","label":"蘋果派示意照"},"darumaReal":{"file":"Yakiniku on braziers at 成吉思汗 だるま in Sapporo, Japan (244).jpg","author":"Savannah Rivka","license":"CC BY-SA 4.0","label":"Daruma 本店實拍"},"roeEditorial":{"src":"https://images.unsplash.com/photo-1761095596580-c96bd32f84a2?auto=format&fit=crop&w=1100&q=82","creditUrl":"https://unsplash.com/photos/close-up-of-bright-orange-salmon-roe-in-a-tin-_eyJJf8Bwrc","author":"Madeline Liu","license":"Unsplash License","label":"鮭魚卵特寫／非店家實拍"},"ramenEditorial":{"src":"https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=1100&q=82","creditUrl":"https://unsplash.com/photos/ramen-dish-qom5MPOER-I","author":"Bon Vivant","license":"Unsplash License","label":"拉麵料理示意／非店家實拍"},"seafoodEditorial":{"src":"https://images.unsplash.com/photo-1752878821092-a0a77c6bd2f8?auto=format&fit=crop&w=1100&q=82","creditUrl":"https://unsplash.com/photos/sushi-bowl-with-various-fish-and-garnishes-GI_3suAJ-9Y","author":"Kris Tian","license":"Unsplash License","label":"海鮮丼示意／非店家實拍"},"lambCooked":{"file":"Sheep and cloud hill 2023-05-20(2) as.jpg","author":"Araisyohei","license":"CC BY 4.0","label":"北海道成吉思汗烤肉示意"}};
+const PHOTO_BY_ID={"b1":"egg","b2":"seafoodEditorial","b3":"egg","b4":"egg","l1":"soup","l2":"sushi","l3":"ramenEditorial","l4":"sushi","l6":"uni","l7":"matsuo","d1":"darumaReal","d2":"roeEditorial","d3":"lambCooked","d4":"ramenEditorial","d5":"seafoodEditorial","d6":"soup","d7":"matsuo","x-yoi":"seafoodEditorial","x-biei":null,"x-tomita":null,"x-nobo":"seafoodEditorial","x-shik":"seafood","x-shako":"uni","x-joz":"pie","s1":"white","s2":"rokkatei","s3":"kitakaro","s4":"royce","s5":"kinotoya","s6":"letao","s7":null,"s8":null,"s9":null,"s10":"music","gx-yoi":"seafood","gx-biei":null,"gx-furano":null,"gx-nobo":null,"gx-shako":"uni","gx-joz":"pie","gx-shik":null};
 const SHOP_HOURS={"s1":{"display":"10:00–20:00","source":"https://www.ishiya.co.jp/shop/001352.html"},"s2":{"display":"10:00–17:30；喫茶 10:30–16:30（週三休）","source":"https://www.rokkatei.co.jp/shop/sapporo/"},"s3":{"display":"10:00–18:00；咖啡廳 11:00–16:00","source":"https://www.sapporo.travel/gourmet/shop/shop_51-2/"},"s4":{"display":"10:00–20:00（依百貨休館日）","source":"https://www.royce.com/brand/shop/detail/?no=101"},"s5":{"display":"10:00–21:00（末點 20:45）","source":"https://www.sapporo-chikagai.jp/shop/single/176"},"s6":{"display":"09:00–18:00；咖啡廳最末點 17:30","source":"https://otaru.gr.jp/shop/letao_honten"},"s7":{"display":"5–10月 平日 09:00–18:00、週末 09:00–19:00","source":"https://kamaei.co.jp/store_introduce/chokubai/"},"s8":{"display":"08:00–19:00","source":"https://bieisenka.jp/about/"},"s9":{"display":"營業時間待核實（請查機場官方商店列表）","source":"https://www.hokkaido-airports.com/ja/new-chitose/spend/shop/"},"s10":{"display":"09:00–18:00（2、3 樓 17:45 關閉）","source":"https://www.otaru-orgel.co.jp/shop"},"gx-yoi":{"display":"營業時間請查店家最新公告","source":"https://yoichi-kankoukyoukai.com/kaisanbutsu_special/"},"gx-biei":{"display":"6月營業時間請查店家公告","source":"https://bieisenka.jp/about/"},"gx-furano":{"display":"季節營業；開放時間以官方為準","source":"https://www.farm-tomita.co.jp/"},"gx-nobo":{"display":"約 10:30–21:00（參考；請查店家）","source":"https://noboribetsu-spa.jp/spot/spot0169/"},"gx-shako":{"display":"依當年季節營業公告","source":"https://www.kanko-shakotan.jp/food/"},"gx-joz":{"display":"09:30–17:00（不定期公休）","source":"https://jozankei.jp/tw/store/j-glacee/"},"gx-shik":{"display":"營業時間待確認","source":"https://shikotsuko-gyokyo.org/shop/"}};
 function shopHours(p){
  const detail=SHOP_HOURS[p.id];
@@ -112,13 +142,14 @@ function hoursHTML(p){
  '<a href="'+safe(h.source)+'" target="_blank" rel="noopener noreferrer" aria-label="查看'+safe(p.name)+'官方營業時間">核對 ↗</a></p>';
 }
 function photoHTML(p){
- const key=PHOTO_BY_ID[p.id];
+ const key=PHOTO_BY_ID[p.id]||p.photoKey;
  const photo=key?PHOTO_LIBRARY[key]:null;
- if(!photo)return '<div class="dd-photo dd-photo-unavailable" role="img" aria-label="尚未取得可核實授權的店家或商品照片"><div class="dd-photo-placeholder"><span>HOKKAIDO / LOCAL FINDS</span><small>此項目暫無經核實的授權照片</small></div></div>';
- const url='https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(photo.file.replace(/ /g,'_'))+'?width=800';
- const src='https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(photo.file.replace(/ /g,'_'));
- return '<figure class="dd-photo"><img src="'+safe(url)+'" alt="'+safe(p.name+'相關'+photo.label)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'+
- '<figcaption><span>'+safe(photo.label)+'</span><a href="'+safe(src)+'" target="_blank" rel="noopener noreferrer">© '+safe(photo.author)+' · '+safe(photo.license)+' ↗</a></figcaption></figure>';
+ if(!photo)return '<div class="dd-photo dd-photo-unavailable" role="img" aria-label="目前沒有相符且可使用的照片"><div class="dd-photo-placeholder"><span>HOKKAIDO / LOCAL FINDS</span><small>尚無符合這項推薦的授權照片</small></div></div>';
+ const path=photo.file?photo.file.replace(/ /g,'_'):'';
+ const url=photo.src||('https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(path)+'?width=900');
+ const credit=photo.creditUrl||('https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(path));
+ return '<figure class="dd-photo" data-dd-photo="'+safe(key)+'"><img src="'+safe(url)+'" alt="'+safe(p.name+'相關'+photo.label)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'+
+ '<figcaption><span>'+safe(photo.label)+'</span><a href="'+safe(credit)+'" target="_blank" rel="noopener noreferrer" title="照片作者與授權資訊">© '+safe(photo.author)+' · '+safe(photo.license)+' ↗</a></figcaption></figure>';
 }
 
 function editorialMeals(items,day){
@@ -154,15 +185,28 @@ function updateMore(btn,name,length,limit){
 }
 function draw(){
  const ctx=dayContext(),entries=allFor(ctx);
- const meals=editorialMeals(entries.meals,ctx.day);
- const gifts=entries.gifts;
+ const meals=editorialMeals(entries.meals,ctx.day), gifts=entries.gifts;
  currentPlaces=[...meals.map(p=>Object.assign({},p,{kind:'meal'})),...gifts.map(p=>Object.assign({},p,{kind:'gift'}))];
- dayContextLabel.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+' · '+ctx.label+'｜'+ctx.detail;
- mealGrid.innerHTML=(expanded.meals?meals:meals.slice(0,FEATURED.meals)).map(foodCard).join('')||'<p class="dd-empty">當天尚無確認順路的餐飲推薦，請保留用餐彈性。</p>';
- giftGrid.innerHTML=(expanded.gifts?gifts:gifts.slice(0,FEATURED.gifts)).map(giftCard).join('')||'<p class="dd-empty">當天暫無順路地方選物，可安排最後一天集中採買。</p>';
- updateMore(mealMore,'meals',meals.length,FEATURED.meals);
+ let contextExtra='';
+ if(ctx.day===0)contextExtra='｜首日午後抵達，午餐僅供航班較早時備選。';
+ if(ctx.day===3&&state.car===0)contextExtra='｜6/15 一日觀光巴士可能含午餐，餐廳候選不代表有自由停靠時間。';
+ if(ctx.day===5)contextExtra='｜郊外午餐受巴士或自駕路線限制；晚餐建議回札幌後安排。';
+ if(ctx.day===6)contextExtra='｜回程當天以航班優先，晚餐僅適合較晚起飛且預留充足報到時間者。';
+ dayContextLabel.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+' · '+ctx.label+'｜'+ctx.detail+contextExtra;
+ const numbers={};
+ for(const meal of ['breakfast','lunch','dinner']){
+  const options=meals.filter(p=>p.meal===meal),limit=FEATURED[meal];
+  const box=document.getElementById('dd-group-'+meal);
+  box.hidden=options.length===0;
+  mealGrids[meal].innerHTML=(expanded[meal]?options:options.slice(0,limit)).map(foodCard).join('');
+  mealCounts[meal].textContent=' · '+options.length+' 選';
+  updateMore(mealMore[meal],meal,options.length,limit);
+  numbers[meal]=options.length;
+ }
+ giftGrid.innerHTML=(expanded.gifts?gifts:gifts.slice(0,FEATURED.gifts)).map(giftCard).join('')||
+ '<p class="dd-empty">當天暫無順路地方選物，可安排最後一天集中採買。</p>';
  updateMore(giftMore,'gifts',gifts.length,FEATURED.gifts);
- counts.textContent='當日 '+meals.length+' 間餐飲、'+gifts.length+' 處地方名產｜視時間選擇，不必全部排入行程。';
+ counts.textContent='午餐 '+numbers.lunch+' 間備選 · 晚餐 '+numbers.dinner+' 間備選 · 地方名產 '+gifts.length+' 處｜餐廳是候選，不必全部排入行程。';
  if(localMap)refreshMap(ctx);
 }
 
@@ -280,7 +324,7 @@ dayRoot.addEventListener('click',event=>{
  const more=event.target.closest('[data-dd-expand]');
  if(more){
   const category=more.dataset.ddExpand;
-  if(!['meals','gifts'].includes(category))return;
+  if(!['breakfast','lunch','dinner','gifts'].includes(category))return;
   expanded[category]=!expanded[category];draw();
   return;
  }
@@ -296,7 +340,7 @@ if(lastDay)lastDay.addEventListener('click',()=>{
  document.getElementById('days').scrollIntoView({behavior:'smooth',block:'start'});
 });
 window.addEventListener('hokkaido:daychange',()=>{
- expanded={meals:false,gifts:false};
+ expanded={breakfast:false,lunch:false,dinner:false,gifts:false};
  pendingFocus=null;
  draw();
 });
