@@ -1,0 +1,126 @@
+'use strict';
+const PHOTOS={"bluepond":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Biei_Blue-pond.jpg/1280px-Biei_Blue-pond.jpg","otaru":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Otaru_Canal_Center.jpg/1280px-Otaru_Canal_Center.jpg","flowers":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Shikisai-no-oka.jpg/1280px-Shikisai-no-oka.jpg","sapporoLilac":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Odori_park_at_Sapporo_TV_tower.jpg/1280px-Odori_park_at_Sapporo_TV_tower.jpg","farm":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Farm_Tomita_2.jpg/1280px-Farm_Tomita_2.jpg","shakotan":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Cape_Kamui_HDR1.jpg/1280px-Cape_Kamui_HDR1.jpg","noboribetsu":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Jigokudani_%28Hell_Valley%29%2C_Noboribetsu_Onsen%2C_Hokkaido%2C_April_2023_05.jpg/1280px-Jigokudani_%28Hell_Valley%29%2C_Noboribetsu_Onsen%2C_Hokkaido%2C_April_2023_05.jpg","jozankei":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Jozankei_Onsen_02.jpg/1280px-Jozankei_Onsen_02.jpg","hero":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Sapporo_TV_Tower_at_Odori_Park_01.jpg/1600px-Sapporo_TV_Tower_at_Odori_Park_01.jpg"};
+const dates=['6/12 六','6/13 日','6/14 一','6/15 二','6/16 三','6/17 四','6/18 五'];
+const baseDays=[
+ {title:'抵達札幌・薄野美食',desc:'從機場到城市，把第一天留給舒適的節奏。',image:'city',transport:'JR＋地鐵',geo:'札幌車站',stops:[['13:00–15:00','抵達新千歲機場','入境、領取行李；時段依實際航班調整'],['15:00–16:00','JR 快速列車到札幌','最快約 33 分鐘，依車種而異'],['16:00–17:30','飯店入住及休息','推薦連住札幌車站或大通周邊'],['18:00–21:00','薄野晚餐、狸小路散步','湯咖哩、味噌拉麵或成吉思汗烤肉']],note:'第一天不安排郊外景點，避免航班或入境時間延誤。'},
+ {title:'YOSAKOI 索朗祭',desc:'全日本最有活力的街頭舞蹈之一，在初夏札幌熱鬧上演。',image:'festival',transport:'步行＋地鐵',geo:'大通公園 札幌',stops:[['09:00–11:00','札幌鐘樓、北海道廳舊本廳舍','沿札幌市區慢慢散步'],['11:00–12:30','午餐：湯咖哩','提前避開祭典熱門用餐時段'],['13:00–18:00','大通公園 YOSAKOI 演出','2027/6/13 為最後一天；場次及地點待公告'],['18:00–21:00','祭典延伸、晚餐與薄野','預留彈性，視演出時刻調整']],note:'2027 年節日日期已公布；實際舞台及遊行時刻需臨行確認。'},
+ {title:'小樽・余市海岸小旅行',desc:'運河、海鮮、音樂盒與余市蒸餾所，JR 可串成一日旅程。',image:'otaru',transport:'JR＋步行',geo:'小樽運河',stops:[['08:45–10:15','札幌 → 小樽轉車 → 余市','先查 JR 函館本線班次；小樽以西不能直接刷常用 IC 卡'],['10:15–12:00','余市蒸餾所／小鎮散步','導覽須預約且以日文進行；也可不預約參觀開放區'],['12:00–13:15','前往小樽、海鮮午餐','以當日車次調整午餐時間'],['13:15–17:30','小樽運河・堺町通・LeTAO','玻璃工藝、音樂盒和運河散步'],['17:30–19:00','JR 返回札幌','晚餐自行選擇']],note:'余市導覽須提前預約，若交通轉乘不順，刪除余市、將小樽玩深度即可。'},
+ {title:'富良野・美瑛・青池',desc:'初夏丘陵、白樺綠意與青池；全程開車最多的一日。',image:'bluepond',transport:'租車第 1 天',geo:'白金青い池 美瑛',stops:[['08:00–10:40','札幌取車 → 富田農場','取車須配合實際營業時間；途中休息'],['10:40–11:35','富田農場','初夏花卉、甜點；6 月中薰衣草通常尚未盛開'],['11:35–13:20','四季彩之丘・午餐','丘陵風景，依實際開花及入園時間調整'],['13:20–14:45','白金青池','步行拍照、欣賞池水顏色'],['14:45–15:35','白鬚瀑布','白金溫泉周邊步道'],['15:35–19:30','返回札幌、加油還車','路程長，預留塞車、休息與還車時間']],note:'約 10–12 小時長途自駕日；全程路線可能約 400–450 公里，實際依導航。單人駕駛建議降低停靠點或改一日團。'},
+ {title:'北海道神宮祭・神轎遊行',desc:'6 月 16 日的札幌傳統祭典，從神宮到市區都很熱鬧。',image:'shrine',transport:'地鐵＋步行',geo:'北海道神宮 札幌',stops:[['08:30–10:15','北海道神宮、圓山公園','晨間參拜與森林步行'],['10:15–12:30','咖啡、午餐及移動','避開人潮並提前找觀賞位置'],['12:30–16:30','神轎遊行與祭典','依 2027 年公布的實際遊行路線和時間調整'],['17:00–20:30','中島公園祭典攤販','人潮較多，依當日狀況選擇']],note:'2027/6/14–16 活動已列於札幌官方觀光網站；神轎遊行安排於 6/16。'},
+ null,
+ {title:'札幌購物・返台',desc:'最後一天保留機場交通與伴手禮時間。',image:'city',transport:'JR',geo:'新千歳空港',stops:[['09:00–11:00','札幌站周邊購物','依回程班機時段調整；可提早前往機場'],['11:00–12:00','取行李、退房','確認飯店退房與行李寄存規則'],['12:00–13:00','JR 前往新千歲機場','一般車程約 33–43 分鐘'],['起飛前建議至少 3 小時','免稅海關確認 → 行李托運 → 登機報到與安檢','若有免稅品，須在托運前完成海關確認；預留額外查驗時間']],note:'若是上午班機，刪除購物行程直接前往機場；有免稅商品時，請先在機場完成海關確認，再交付托運行李。'}
+];
+const variations={
+ A:{label:'自然景觀',intro:'山與湖，走進北海道的初夏。',short:'湖泊、火山、森林、丘陵',rental1:'6/15 美瑛・富良野自駕；6/17 登別以 JR＋當地巴士探訪，支笏湖不硬排。',rental2:'6/15 富良野・美瑛，6/17 支笏湖＋登別，各租車一天；不連續租車。',day6:{
+  1:{title:'登別地獄谷・溫泉',desc:'今天不開車。JR＋當地巴士走火山地熱與溫泉，把支笏湖留給下次。',image:'noboribetsu',transport:'JR＋巴士',geo:'登別地獄谷',stops:[['08:30–10:30','札幌 → 登別','搭 JR 特急／轉當地巴士，時間與車次出發前確認'],['10:30–12:30','登別地獄谷','步道、硫磺岩壁與地熱煙霧'],['12:30–14:00','登別午餐','溫泉街用餐'],['14:00–16:00','日歸溫泉或大湯沼附近','依步道及日歸設施開放時間調整'],['16:00–18:30','巴士＋JR 返回札幌','傍晚自由活動']],note:'1 天租車方案不建議再串支笏湖：跨區公車轉乘會令行程過於緊湊。'},
+  2:{title:'支笏湖・登別地獄谷',desc:'一日看見碧藍湖水、火山谷地與溫泉。',image:'shikotsu',transport:'租車第 2 天',geo:'支笏湖',stops:[['08:00–09:20','札幌取車 → 支笏湖','沿路進入國立公園周邊'],['09:20–11:20','支笏湖散步、湖畔咖啡','遊船或活動需另行查詢'],['11:20–12:40','開車前往登別','經高速與一般道路，依導航安排'],['12:40–14:45','登別地獄谷、午餐','步道觀賞火山地貌'],['14:45–16:00','日歸溫泉','注意部分設施的入浴截止時間'],['16:00–19:00','加油、返回札幌還車','租車據點營業時間需事先確認']],note:'此為第二個獨立租車日；建議取還同據點，確認 ETC／油資／過路費。'}
+ },route1:['札幌 → 富田農場 → 四季彩之丘 → 青池 → 白鬚瀑布 → 札幌','6/17 登別：札幌 JR → 登別 → 巴士至溫泉街／地獄谷。'],route2:['6/15 札幌 → 富良野 → 美瑛 → 青池 → 札幌','6/17 札幌 → 支笏湖 → 登別地獄谷 → 札幌']},
+ B:{label:'海景美食',intro:'沿海岸出發，把積丹藍與海味收藏起來。',short:'積丹、海膽、小樽、余市',rental1:'6/15 美瑛・富良野自駕；6/17 積丹參加當日開團的巴士一日團，若無團改小樽深遊。',rental2:'6/15 富良野・美瑛自駕；6/17 再租車前往積丹半島，天候允許才走神威岬。',day6:{
+  1:{title:'積丹半島巴士一日團',desc:'想看積丹藍，又不想租第二天車：優先尋找 2027 年 6 月中可成團的當地一日巴士團。',image:'shakotan',transport:'預約一日團',geo:'神威岬 北海道',stops:[['07:30–09:00','依旅行社集合時間出發','先確認 2027 年 6 月有無出團及集合點'],['上午','前往積丹半島','實際停靠點依團型'],['中午','海鮮／海膽午餐','海膽供應及價格依漁況、店家當日為準'],['下午','神威岬或島武意海岸','風大、雨天時可能限制步道進入'],['17:30–19:30','返回札幌','實際時間依巴士團']],note:'重要：尚未確認 2027 年 6/17 有可預訂的積丹巴士團。若未成團或無法銜接，改小樽／余市、或選 2 天租車。'},
+  2:{title:'積丹藍・神威岬自駕',desc:'順著小樽與余市以西的海岸線，前往神威岬與夏季海鮮餐廳。',image:'shakotan',transport:'租車第 2 天',geo:'神威岬 北海道',stops:[['08:00–10:30','札幌取車 → 積丹','經余市方向，預留休息'],['10:30–12:00','神威岬步道','視風速與步道開放狀態決定是否走至岬端'],['12:00–13:30','海膽丼午餐','6 月起通常進入海膽季；供應以漁況為準'],['13:30–15:00','島武意海岸觀景','視天氣及體力調整'],['15:00–19:00','返回札幌、加油還車','可中途短暫休息']],note:'積丹半島路程長，雨天或強風下以安全為先；未必能走完神威岬。'}
+ },route1:['札幌 → 富田農場 → 四季彩之丘 → 青池 → 札幌','6/17 積丹：以預約巴士一日團為主；2027 年可訂性尚未確認。'],route2:['6/15 札幌 → 富良野 → 美瑛 → 青池 → 札幌','6/17 札幌 → 余市 → 神威岬 → 島武意海岸 → 札幌']},
+ C:{label:'舒適慢遊',intro:'泡湯、散步、賞風景，讓旅程有真正的休息。',short:'定山溪、溫泉、在地散步',rental1:'6/15 美瑛・富良野自駕；6/17 定山溪搭巴士日歸泡湯，適合長住不搬行李。',rental2:'6/15 富良野・美瑛自駕；6/17 再租車走定山溪＋支笏湖，保留從容停靠時間。',day6:{
+  1:{title:'定山溪溫泉慢遊',desc:'溪谷、咖啡與溫泉，不開車也能輕鬆到達。',image:'jozankei',transport:'巴士',geo:'定山溪温泉',stops:[['09:00–10:20','札幌搭巴士到定山溪','直達巴士約 60 分鐘、一般巴士約 80 分鐘'],['10:20–12:00','二見吊橋・溪谷散步','初夏森林與清澈溪流'],['12:00–13:45','午餐、咖啡','當地商店散步'],['14:00–16:00','日歸溫泉','建議提前查詢接受非住客的時段'],['16:00–17:30','返回札幌','晚上自由購物或回飯店休息']],note:'若不想太忙，今天不加其他跨區景點，體驗北海道溫泉慢旅行。'},
+  2:{title:'定山溪＋支笏湖輕自駕',desc:'比美瑛自駕日更輕鬆，享受森林步道、湖景與泡湯。',image:'jozankei',transport:'租車第 2 天',geo:'定山溪温泉',stops:[['08:30–09:30','札幌取車 → 定山溪','約 50–70 分鐘，依路況'],['09:30–11:45','定山溪溪谷、咖啡','森林步道和風景散步'],['11:45–13:30','午餐與短程泡湯','建議選可日歸入浴的設施'],['13:30–15:00','開車前往支笏湖','依導航路線及道路狀況調整'],['15:00–16:30','支笏湖畔散步','可選湖景咖啡'],['16:30–19:00','札幌還車','預留晚間交通與加油時間']],note:'2 天租車的 C 方案仍以休閒為主；若希望更悠閒，6/17 只遊定山溪即可。'}
+ },route1:['6/15 札幌 → 富良野 → 美瑛 → 青池 → 札幌','6/17 定山溪：札幌站 → 直達巴士 → 定山溪 → 札幌。'],route2:['6/15 札幌 → 富良野 → 美瑛 → 青池 → 札幌','6/17 札幌 → 定山溪 → 支笏湖 → 札幌']}
+};
+const hotels=[
+ {name:'京王廣場飯店札幌',en:'Keio Plaza Hotel Sapporo',area:'札幌站西側',rating:'4 星級以上',description:'全服務型飯店，適合重視舒適與租車動線的 A 方案。飯店附近有租車據點，仍需確認可用時段。',for:['A'],url:'https://www.keioplaza-sapporo.co.jp/english/',ico:'🏙️'},
+ {name:'三井花園飯店札幌西',en:'Mitsui Garden Hotel Sapporo West',area:'札幌站',rating:'4 星級左右',description:'交通便捷，房間配置與住客大浴場適合連住六晚。',for:['A','B'],url:'https://www.gardenhotels.co.jp/sapporo-west/eng/',ico:'♨️'},
+ {name:'札幌索拉利亞西鐵飯店',en:'Solaria Nishitetsu Hotel Sapporo',area:'札幌站',rating:'4 星級左右',description:'兼顧舒適客房與大浴場，早上搭 JR、晚上泡湯很適合。',for:['A'],url:'https://solaria-sapporo.nnr-h.com/',ico:'🛀'},
+ {name:'札幌 Cross Hotel',en:'Cross Hotel Sapporo',area:'札幌站與大通之間',rating:'4 星級左右',description:'札幌站與大通兩邊都好走，吃飯逛街與小樽交通均方便。',for:['B','A'],url:'https://cross-sapporo.orixhotelsandresorts.com/',ico:'🌆'},
+ {name:'札幌大通 La’gent Stay',en:'La’gent Stay Sapporo Odori',area:'大通／狸小路',rating:'4 星級左右',description:'餐廳、商店密集，住客天然溫泉大浴場很適合晚上放鬆。',for:['B','C'],url:'https://lagent.jp/sapporo-odori/en/',ico:'🍣'},
+ {name:'札幌站前 HOTEL FORZA',en:'HOTEL FORZA SAPPORO STATION',area:'札幌站南口',rating:'3 星級以上',description:'實用商務型飯店，適合將預算留給景點、海鮮與租車。',for:['B'],url:'https://www.hotelforza.jp/sapporo/',ico:'🧳'},
+ {name:'東急 Stay 札幌大通',en:'Tokyu Stay Sapporo Odori',area:'大通／狸小路',rating:'3 星級以上',description:'部分房型備有洗脫烘設備，連住六晚、行李輕量化很方便。',for:['C','B'],url:'https://www.tokyustay.co.jp/en/hotel/sapporo-odori/',ico:'🧺'},
+ {name:'札幌 RESOL Trinity 飯店',en:'Hotel Resol Trinity Sapporo',area:'大通公園',rating:'3 星級以上',description:'緊鄰大通公園，對 YOSAKOI 祭典與市區散步非常方便。',for:['C'],url:'https://en.www.resol-hotel.jp/trinity-sapporo/',ico:'🌿'},
+ {name:'karaksa hotel 札幌',en:'karaksa hotel Sapporo',area:'狸小路／薄野',rating:'3 星級以上',description:'夜間餐飲、購物便利，適合步行為主的慢遊與美食路線。',for:['C','B'],url:'https://karaksahotels.com/tc/sapporo/',ico:'🏮'}
+];
+
+
+// 不租車方案：依公開的 2026 年營運資料編製 2027 年規劃版；非 2027 已訂座班次。
+const noCarDayFour={title:'富良野・美瑛｜定期觀光巴士',desc:'不用開車：從札幌站搭一日觀光巴士走富田農場、四季彩之丘及白金青池；實際景點順序以 2027 開賣行程為準。',image:'bluepond',transport:'預約觀光巴士（不租車）',geo:'美瑛 白金青池 北海道',stops:[
+ ['08:35–09:10','札幌站集合、換票','2026 年中央巴士參考為 09:10 出發，請核對 2027 年班次與集合點'],
+ ['09:10–12:00','觀光巴士前往富良野','巴士沿路移動、由營運商安排途中休息與景點'],
+ ['12:00–16:40','富田農場・四季彩之丘・白金青池','依當年定期觀光路線安排停留；6 月中薰衣草尚非盛開期'],
+ ['16:40–19:10','返回札幌站','2026 年同路線約 19:06 抵達；實際依當日交通及 2027 時刻'],
+ ['19:30 後','札幌晚餐','無須還車，晚上回原飯店']
+ ],note:'2026 年官方「富田農場、四季彩之丘、青池」路線成人 ¥9,300（含午餐），2027 年是否營運及票價尚未公布。也可改為 JR 札幌→旭川→美瑛＋預約 Biei View Bus，請避免把不連接的班次硬排在一起。'};
+const noCarDaySix={
+ A:{title:'登別地獄谷｜JR＋當地巴士',desc:'搭特急列車前往登別，再轉乘當地巴士到地獄谷及溫泉街。支笏湖需要另一個獨立的巴士團，不與登別硬併。',image:'noboribetsu',transport:'JR 特急＋道南巴士',geo:'登別地獄谷 北海道',stops:[
+  ['08:00–09:45','札幌 → JR 登別站','JR 特急約 1～1.5 小時，班次與座席依 2027 時刻表預訂'],
+  ['09:45–10:15','登別站 → 登別溫泉','轉當地巴士約 15 分鐘，班距可能較長'],
+  ['10:15–12:30','登別地獄谷散步','按步道開放狀況參觀火山噴氣地形'],
+  ['12:30–15:30','午餐＋日歸溫泉','事先確認溫泉館日間入浴及最後入場時間'],
+  ['15:30–18:30','巴士 → JR → 札幌','回程需預留巴士與列車轉乘時間']
+ ],note:'登別站不在溫泉街，務必轉乘當地巴士；6/17 不順帶支笏湖。2026 年 JR 特急普通車票價與班次供參考，2027 年待公布。'},
+ B:{title:'積丹神威岬｜定期觀光巴士',desc:'不用開車也可看到積丹藍。優先預約札幌出發、同時停神威岬與小樽的季節性定期觀光巴士。',image:'shakotan',transport:'預約定期觀光巴士',geo:'積丹 神威岬 北海道',stops:[
+  ['07:45–08:10','札幌站集合、登車','2026 年中央巴士 N 路線參考 08:10 出發'],
+  ['08:10–12:15','余市方向 → 神威岬','2026 路線含途中休息與神威岬停留，若強風步道可能關閉'],
+  ['12:15–16:45','小樽運河・堺町通・白色戀人公園','2026 年巴士套裝停靠；與 Day 3 小樽內容部分重複，可調整 Day 3 改深遊余市'],
+  ['約 18:00','返回札幌站','2026 年參考 18:01 返回，2027 年班次尚待確認']
+ ],note:'2026 年官方 N 路線成人 ¥6,500，並非 2027 年報價；不應假設隨時能搭一般公車直達神威岬。若當天停駛，可改小樽／余市深遊或預約其他有證照的一日團。'},
+ C:{title:'定山溪溫泉｜直達巴士慢遊',desc:'札幌出發搭預約制河童 Liner 或一般巴士，泡湯散步後同日回札幌；不用開車。',image:'jozankei',transport:'定山溪直達／一般巴士',geo:'定山溪温泉 北海道',stops:[
+  ['08:45–10:15','札幌站 → 定山溪溫泉','可預約河童 Liner 約一小時，或地鐵＋一般巴士轉乘'],
+  ['10:15–12:15','二見吊橋及溪谷步道','散步拍照，注意雨後步道狀況'],
+  ['12:15–14:00','溫泉街午餐及咖啡','休閒慢遊、不趕景點'],
+  ['14:00–16:00','日歸泡湯','先確認各溫泉設施接待日與時間'],
+  ['16:00–17:30','巴士回札幌','預約回程班次或查一般巴士，晚上自由活動']
+ ],note:'河童 Liner 需預約；2026 年網路預付參考單程 ¥1,460，車次與票價在 2027 年應重新確認。'}
+};
+const noCarRoutes={
+ A:['6/15：札幌站 → 中央巴士 F 路線（富田農場／四季彩之丘／青池）→ 札幌站','6/17：札幌 JR 特急 → 登別站 → 當地巴士 → 登別地獄谷／溫泉 → 原路返回'],
+ B:['6/15：札幌站 → 中央巴士 F 路線（富良野／美瑛／青池）→ 札幌站','6/17：札幌站 → 中央巴士 N 路線（積丹神威岬／小樽）→ 札幌站'],
+ C:['6/15：札幌站 → 中央巴士 F 路線（富良野／美瑛／青池）→ 札幌站','6/17：札幌站 → 河童 Liner／一般巴士 → 定山溪溫泉 → 札幌站']
+};
+const noCarNotice={
+ A:'全程不租車。6/15 使用札幌出發的富良野／美瑛定期觀光巴士；6/17 以 JR＋當地巴士前往登別，支笏湖不與登別硬併。',
+ B:'全程不租車。6/15 美瑛／富良野搭一日巴士；6/17 參加積丹神威岬季節性巴士。2027 年班次與開團狀態都需確認。',
+ C:'全程不租車。6/15 美瑛／富良野搭一日巴士；6/17 定山溪搭河童 Liner 或一般巴士，適合無車慢遊。'
+};
+const railEstimate={0:{A:5500,B:4400,C:3700},1:{A:2900,B:2800,C:2500},2:{A:1800,B:1800,C:1800}};
+const transitSources=[
+ ['富良野・美瑛定期觀光巴士','https://teikan.chuo-bus.co.jp/en/course/14739'],
+ ['JR 北海道：美瑛交通替代方案','https://www.jrhokkaido.co.jp/global/english/travel/furanobiei/course/3a.html'],
+ ['積丹神威岬季節性巴士','https://teikan.chuo-bus.co.jp/tw/course/18092'],
+ ['定山溪河童 Liner','https://www.jotetsu.co.jp/bus/kappa_liner/']
+];
+function updateTransitLinks(){let el=document.getElementById('transitResources');if(!el)return;el.innerHTML=transitSources.map(a=>`<a href="${a[1]}" target="_blank" rel="noopener noreferrer">${a[0]} ↗</a>`).join('')}
+function adjustRailEstimate(){let el=document.getElementById('rail'); if(!el || el.dataset.manuallyEdited==='yes')return;el.value=railEstimate[state.car][state.plan]}
+
+const state={plan:'A',car:0,day:0,filter:'all'};
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const clean=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'NT$'+Math.round(n).toLocaleString('en-US');
+const graphic={city:'hero',otaru:'otaru',bluepond:'bluepond',farm:'farm',festival:'hero',shrine:'sapporoLilac',noboribetsu:'noboribetsu',shikotsu:'bluepond',shakotan:'shakotan',jozankei:'sapporoLilac'};
+function getDay(i){return state.car===0?(i===3?noCarDayFour:i===5?noCarDaySix[state.plan]:baseDays[i]):i===5?variations[state.plan].day6[state.car]:baseDays[i]}
+function renderControls(){for(const el of $$('[data-plan]')){let on=el.dataset.plan===state.plan;el.classList.toggle('active',on);el.setAttribute('aria-pressed',String(on))}for(const el of $$('[data-car]')){let on=Number(el.dataset.car)===state.car;el.classList.toggle('active',on);el.setAttribute('aria-pressed',String(on))}$('#modeExplainer').textContent=state.car===0?'全程不開車：札幌搭 JR／地鐵、富良野美瑛參加一日巴士團；其他郊區依路線搭 JR／巴士／季節觀光巴士。':state.car===1?'市區搭 JR／地鐵；郊區租車一天，第二個郊外日依方案安排 JR＋巴士／預約巴士團。':'市區搭 JR／地鐵；6/15 美瑛・富良野及 6/17 郊外各自租車一天，不須在札幌市區開車。';$('#planNotice').textContent=state.car===0?noCarNotice[state.plan]:state.car===1?variations[state.plan].rental1:variations[state.plan].rental2;adjustRailEstimate();renderMap();renderDays();renderHotels();renderBudget()}
+function renderMap(){let v=variations[state.plan];$('#mapTitle').textContent='PLAN '+state.plan+'｜'+v.label;$('#mapDesc').textContent=v.intro;let r=state.car===0?noCarRoutes[state.plan]:state.car===1?v.route1:v.route2;$('#mapLines').innerHTML=r.map((x,i)=>`<div class="map-route"><strong>${i===0?'6/15｜美瑛・富良野':'6/17｜'+getDay(5).title}</strong><p>${clean(x)}</p></div>`).join('');$('#mapLink').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(state.plan==='A'?'支笏湖 登別 北海道':state.plan==='B'?'積丹 神威岬 北海道':'定山溪 支笏湖 北海道');
+ const map={sapporo:[318,300,'札幌'],furano:[486,207,'富良野'],biei:[487,158,'美瑛'],blue:[539,177,'青池'],otaru:[251,279,'小樽'],yoichi:[201,265,'余市'],shakotan:[144,205,'積丹'],shikotsu:[323,355,'支笏湖'],noboribetsu:[236,388,'登別'],jozankei:[258,336,'定山溪']};
+ let names=['sapporo','furano','biei','blue','otaru'];if(state.plan==='A')names.push('noboribetsu',...(state.car===2?['shikotsu']:[]));if(state.plan==='B')names.push('yoichi','shakotan');if(state.plan==='C')names.push('jozankei',...(state.car===2?['shikotsu']:[]));names=[...new Set(names)];$('#mapPoints').innerHTML=names.map((n,i)=>{const [x,y,t]=map[n];return `<g><circle cx="${x}" cy="${y}" r="${n==='sapporo'?12:8}" fill="${n==='sapporo'?'#d97249':'#176b88'}" stroke="#fff" stroke-width="3"/><text x="${x+13}" y="${y-8}" font-family="sans-serif" font-size="14" font-weight="700" fill="#213b4a" paint-order="stroke" stroke="#e7efee" stroke-width="4">${t}</text></g>`}).join('');const path=state.car===0?[map.sapporo,map.furano,map.biei,map.blue,map.sapporo]:[map.sapporo,map.furano,map.biei,map.blue,map.sapporo];$('#mapRoutes').setAttribute('stroke-dasharray',state.car===0?'8 10':'none');if(state.car===2){let more=state.plan==='A'?['shikotsu','noboribetsu']:state.plan==='B'?['yoichi','shakotan']:['jozankei','shikotsu'];path.push(...more.map(n=>map[n]),map.sapporo)}$('#mapRoutes').setAttribute('d','M'+path.map(([x,y])=>x+' '+y).join(' L'));window.dispatchEvent(new CustomEvent('hokkaido:routechange',{detail:{plan:state.plan,car:state.car}}));}
+function renderDays(){$('#dayNav').innerHTML=dates.map((dt,i)=>`<button class="day-nav ${i===state.day?'active':''}" type="button" data-day="${i}" aria-current="${i===state.day?'date':'false'}"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${clean(dt)}<small>${clean(getDay(i).title)}</small></span></button>`).join('');$$('[data-day]').forEach(b=>b.onclick=()=>{state.day=Number(b.dataset.day);renderDays();if(innerWidth<760)$('#days').scrollIntoView({behavior:'smooth'})});let d=getDay(state.day);$('#dayDate').textContent='DAY '+String(state.day+1).padStart(2,'0')+' / 2027.06.'+String(12+state.day).padStart(2,'0');$('#dayTransport').textContent=d.transport;$('#dayTitle').textContent=d.title;$('#dayDesc').textContent=d.desc;$('#dayImage').src=PHOTOS[graphic[d.image]]||PHOTOS.hero;$('#dayImage').alt=['city','festival','shrine'].includes(d.image)?'札幌大通公園與電視塔實景（非祭典或神宮現場照片）':d.title+'當地景點實景攝影';$('#dayTimeline').innerHTML=d.stops.map(t=>`<div class="time-step"><time>${clean(t[0])}</time><div><strong>${clean(t[1])}</strong><p>${clean(t[2])}</p></div></div>`).join('');$('#dayNotice').textContent='注意事項｜'+d.note;$('#dayGoogle').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(d.geo);$('#prevDay').disabled=state.day===0;$('#nextDay').disabled=state.day===6;window.dispatchEvent(new CustomEvent('hokkaido:daychange',{detail:{day:state.day,plan:state.plan,car:state.car}}))}
+function renderHighlights(){const x=[['札幌・大通公園','CITY & CULTURE','6/13 於札幌市區參加 YOSAKOI，6/16 感受北海道神宮祭。','hero','大通公園 札幌'],['小樽・運河散步','HISTORIC PORT','歷史倉庫、甜點、玻璃工藝，搭 JR 輕鬆抵達。','otaru','小樽運河'],['美瑛・白金青池','NATURE & LANDSCAPE','青色池水與初夏綠意，是 6 月最值得造訪的景點之一。','bluepond','白金青池'],['北海道初夏花田','SEASONAL FLOWERS','6 月中先看季節花卉，大片薰衣草通常要到 7 月。','flowers','四季彩之丘']];$('#highlightGrid').innerHTML=x.map(a=>`<article class="highlight-card"><img loading="lazy" src="${PHOTOS[a[3]]}" alt="${a[0]}"><div><div class="k">${a[1]}</div><h3>${a[0]}</h3><p>${a[2]}</p><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a[4])}" target="_blank" rel="noopener noreferrer">查看目的地 ↗</a></div></article>`).join('')}
+function renderHotels(){let arr=hotels.filter(h=>state.filter==='all'||h.for.includes(state.filter));$('#hotelGrid').innerHTML=arr.map(h=>`<article class="hotel"><div class="area">${clean(h.area)} · ${clean(h.rating)}</div><h3>${clean(h.name)}</h3><div class="en">${clean(h.en)}</div><p>${clean(h.description)}</p><footer><span>適合 ${h.for.join('・')}</span><a href="${h.url}" target="_blank" rel="noopener noreferrer">飯店官網 ↗</a></footer></article>`).join('');$$('[data-filter]').forEach(e=>e.classList.toggle('active',e.dataset.filter===state.filter))}
+function value(id){return Math.max(0,Number($('#'+id).value)||0)}function renderBudget(){const ppl=Math.max(1,value('people')),flight=value('flight'),room=value('room'),food=value('food'),rail=value('rail'),car=value('car'),act=value('activity'),other=value('other');const rooms=Math.ceil(ppl/2),hotelsCost=rooms*6*room,rental=car*state.car,total=ppl*(flight+food*7+rail+act+other)+hotelsCost+rental;$('#budgetLabel').textContent='PLAN '+state.plan+(state.car===0?' / 100% PUBLIC TRANSIT':' / RENTAL '+state.car+' DAY'+(state.car===2?'S':''));$('#perCost').textContent=money(total/ppl);$('#allCost').textContent=`${ppl} 人全團總預算　${money(total)}`;$('#budgetParts').innerHTML=[['機票',flight],['六晚住宿分攤',hotelsCost/ppl],['7 天餐飲',food*7],['大眾運輸',rail],['租車分攤',rental/ppl],['景點體驗',act],['其他預備費',other]].map(([k,n])=>`<div><span>${k}</span><b>${money(n)}</b></div>`).join('')}
+function copyDay(){let d=getDay(state.day),t=`2027/6/${12+state.day} ${d.title}\n交通：${d.transport}\n`+d.stops.map(a=>a.join('｜')).join('\n')+'\n注意：'+d.note;const cb=()=>{let btn=$('#copyDay');btn.textContent='已複製 ✓';setTimeout(()=>btn.textContent='複製當日行程　⧉',1500)};if(navigator.clipboard?.writeText){navigator.clipboard.writeText(t).then(cb).catch(()=>fallback(t,cb))}else fallback(t,cb)}function fallback(t,cb){let inp=document.createElement('textarea');document.body.appendChild(inp);inp.value=t;inp.select();document.execCommand('copy');inp.remove();cb()}
+function exportJson(){const ds=dates.map((date,i)=>({day:i+1,date,...getDay(i)}));let content=JSON.stringify({destination:'札幌・北海道',dates:'2027/06/12 - 2027/06/18',plan:state.plan,carRentalDays:state.car,days:ds,hotels,notice:'規劃參考，非即時房價、班次或活動預約資訊'},null,2);let url=URL.createObjectURL(new Blob([content],{type:'application/json;charset=utf-8'}));let a=document.createElement('a');a.href=url;a.download='Sapporo-2027-7D6N-'+state.plan+'-'+state.car+'day.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)}
+function init(){let img=PHOTOS;for (let [key,src] of [['tourA','bluepond'],['tourB','otaru'],['tourC','flowers'],['storyImg','bluepond']])$('#'+key).src=img[src];$$('[data-plan]').forEach(el=>el.onclick=()=>{state.plan=el.dataset.plan;renderControls()});$$('[data-car]').forEach(el=>el.onclick=()=>{state.car=Number(el.dataset.car);renderControls()});$$('[data-filter]').forEach(el=>el.onclick=()=>{state.filter=el.dataset.filter;renderHotels()});$$('#budget input').forEach(x=>x.addEventListener('input',()=>{if(x.id==='rail')x.dataset.manuallyEdited='yes';renderBudget()}));$('#prevDay').onclick=()=>{if(state.day){state.day--;renderDays()}};$('#nextDay').onclick=()=>{if(state.day<6){state.day++;renderDays()}};$('#copyDay').onclick=copyDay;$('#downloadJson').onclick=exportJson;$('#printPage').onclick=()=>window.print();$('#menuBtn').onclick=()=>{const n=$('#mainLinks');n.classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',String(n.classList.contains('open')))};$$('#mainLinks a').forEach(a=>a.addEventListener('click',()=>{$('#mainLinks').classList.remove('open');$('#menuBtn').setAttribute('aria-expanded','false')}));updateTransitLinks();renderHighlights();renderControls()}
+document.addEventListener('DOMContentLoaded',()=>{
+  const dayPhoto=document.getElementById('dayImage');
+  const imageContainer=dayPhoto&&dayPhoto.closest('.day-img');
+  if(dayPhoto){
+    dayPhoto.addEventListener('error',()=>{
+      // Remote images can fail due to access control, broken links or rate limits.
+      // Use the already-embedded original cover photograph, not a striped placeholder.
+      if(dayPhoto.src!==PHOTOS.hero){
+        dayPhoto.alt='札幌大通公園實景（當日景點照片暫時無法載入）';
+        dayPhoto.src=PHOTOS.hero;
+        return;
+      }
+      if(imageContainer)imageContainer.classList.add('photo-missing');
+    });
+    dayPhoto.addEventListener('load',()=>{
+      if(imageContainer)imageContainer.classList.remove('photo-missing');
+    });
+  }
+  init();
+});
