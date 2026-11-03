@@ -284,15 +284,15 @@ button,input,select,textarea{font-family:inherit}
 <section class="section highlights" id="highlights"><div class="wrap"><div class="section-head"><div><div class="eyebrow">EXPERIENCES WORTH THE JOURNEY</div><h2>北海道・精選體驗</h2><p>初夏的城市祭典、港口街道與透明湖水，每一站都有值得放慢腳步的理由。</p></div></div><div class="highlight-grid" id="highlightGrid"></div></div></section>
 <section class="section" id="food-guide" aria-labelledby="fg-title">
 <div class="wrap">
-<div class="fg-heading"><div><span class="fg-kicker">HOKKAIDO FIELD NOTES · FOOD & SOUVENIRS</span><h2 id="fg-title">沿著風景，<br>尋找北海道的味道。<em>Eat well. Travel further.</em></h2></div><p class="fg-lede">從薄野的深夜拉麵、二條市場的清晨海鮮，到小樽的起司甜點。挑一家想吃的，點「地圖定位」就能找到店面；不用為了美食打亂七日旅程。</p></div>
+<div class="fg-heading"><div><span class="fg-kicker">HOKKAIDO FIELD NOTES · FOOD & SOUVENIRS</span><h2 id="fg-title">沿著風景，<br>尋找北海道的味道。<em>Eat well. Travel further.</em></h2></div><p class="fg-lede">像九州行程一樣，切換日期就看當天的必吃名店與地方名產。點「在地圖看方位」，在網頁裡查看店家所在區域；不會跳轉導航。</p></div>
 <p class="fg-atlas">SAPPORO 2027 · JUNE 12—18 · PERSONAL TRAVEL JOURNAL</p>
-<div class="fg-controls"><div class="fg-tabs" role="group" aria-label="依餐別篩選餐廳"><button class="fg-tab" type="button" data-fg-meal="breakfast" aria-pressed="false">早餐 · 04</button><button class="fg-tab" type="button" data-fg-meal="lunch" aria-pressed="true">午餐 · 07</button><button class="fg-tab" type="button" data-fg-meal="dinner" aria-pressed="false">晚餐 · 07</button><button class="fg-tab" type="button" data-fg-meal="all" aria-pressed="false">全部 · 18</button></div><label class="fg-select-wrap" for="fg-area">探索區域 <select id="fg-area" name="food-area"><option value="all">全部地區</option><option value="札幌">札幌市區</option><option value="小樽">小樽</option><option value="富良野">富良野</option></select></label></div>
-<p class="fg-count" id="fg-count" aria-live="polite">7 間午餐選擇 · 點擊定位可開啟 Google Maps</p>
+<div class="fg-day-picker"><div class="fg-day-picker-title"><span class="fg-kicker">EXPLORE BY DAY · 每日美食探索</span><strong id="fg-day-title">DAY 01｜札幌・薄野</strong><p id="fg-day-desc">跟隨旅遊時間軸、方案和交通選擇同步更新。</p></div><div id="fg-days" class="fg-days" role="group" aria-label="選擇每日美食與名產"></div></div><div class="fg-controls"><div class="fg-tabs" role="group" aria-label="依餐別篩選餐廳"><button class="fg-tab" type="button" data-fg-meal="breakfast" aria-pressed="false">早餐</button><button class="fg-tab" type="button" data-fg-meal="lunch" aria-pressed="false">午餐</button><button class="fg-tab" type="button" data-fg-meal="dinner" aria-pressed="false">晚餐</button><button class="fg-tab" type="button" data-fg-meal="all" aria-pressed="true">全部</button></div><span class="fg-current-region" id="fg-region-label">選取日期自動顯示對應區域</span></div>
+<p class="fg-count" id="fg-count" aria-live="polite">當日名店與特產，依日期更新</p><div class="fg-map-panel" id="fg-map-panel"><div class="fg-map-heading"><div><span class="fg-kicker">LOCAL ORIENTATION · 區域方位</span><h3>當日探索地圖</h3></div><span class="fg-map-key">● 美食　● 名產　|　顯示區域中心，非店門精準位置</span></div><div id="fg-local-map" class="fg-local-map" role="region" aria-label="當日美食與名產區域互動地圖"></div><p class="fg-map-status" id="fg-map-status" aria-live="polite">地圖準備中；若無法載入，仍可查閱下方區域和店家清單。</p></div>
 <div class="fg-grid" id="fg-meals" aria-live="polite"></div>
 <div class="fg-guide-note"><strong>旅途安排建議：</strong>6/14 小樽日安排一間主餐、再找一家甜點；6/15 富良野／美瑛路途較長，餐廳僅為順路備選。熱門店可能需要候位或預訂，2027 年營業時間出發前應再查證。</div>
-<div class="fg-gift-heading"><div><span class="fg-kicker">THE THINGS WE BRING HOME</span><h3>帶走北海道的好味道。<br>伴手禮與在地選物</h3></div><p>從不需冷藏的經典餅乾，到小樽手作紀念品與機場限定麵包。地圖按鈕直達指定店鋪，不會只搜尋品牌名稱。</p></div>
+<div class="fg-gift-heading"><div><span class="fg-kicker">THE THINGS WE BRING HOME</span><h3>帶走北海道的好味道。<br>伴手禮與在地選物</h3></div><p>依每天實際會到的地點推薦伴手禮，點「在地圖看方位」可查看所在區域。返台當天則聚焦札幌站與新千歲機場。</p></div>
 <div class="fg-gift-grid" id="fg-gifts"></div>
-<p class="fg-footnote">資料參考：<a href="https://www.sapporo.travel/en/gourmet/" target="_blank" rel="noopener noreferrer">札幌觀光協會</a>、<a href="https://visit.sapporo.travel/tw/discover/cuisine/" target="_blank" rel="noopener noreferrer">札幌官方美食指南</a>及各店官方頁面（2026 年 11 月核對）。這是旅遊選擇清單，不代表訂位或即時營業狀態；所有店名、地址與營業時間需於 2027 年出發前再次確認。攝影與商標均屬各原始權利人，本站未複製餐廳或 Backroads 的商標圖像。</p>
+<p class="fg-footnote">資料參考：<a href="https://www.sapporo.travel/en/gourmet/" target="_blank" rel="noopener noreferrer">札幌觀光協會</a>、<a href="https://visit.sapporo.travel/tw/discover/cuisine/" target="_blank" rel="noopener noreferrer">札幌官方美食指南</a>及各店官方頁面（2026 年 11 月核對）。地圖只顯示區域方位，不提供精準店門座標或道路導航。這是旅遊選擇清單，不代表訂位或即時營業狀態；所有店名、地址與營業時間需於 2027 年出發前再次確認。攝影與商標均屬各原始權利人，本站未複製餐廳或 Backroads 的商標圖像。</p>
 </div></section>
 <section class="section" id="hotels"><div class="wrap"><div class="section-head"><div><div class="eyebrow">REST WELL. EXPLORE MORE.</div><h2>札幌住宿選擇</h2><p>九間三星級以上飯店，主打札幌站、大通與狸小路。住宿星級以常見平台分類為參考，價格與空房須以 2027/6/12–18 實際訂房為準。</p></div></div><div aria-label="住宿方案篩選" class="hotel-filters" role="group"><button class="hotel-filter active" data-filter="all" type="button">全部 9 間</button><button class="hotel-filter" data-filter="A" type="button">A 自然</button><button class="hotel-filter" data-filter="B" type="button">B 海景</button><button class="hotel-filter" data-filter="C" type="button">C 慢遊</button></div><div class="hotel-grid" id="hotelGrid" style="margin-top:22px"></div></div></section>
 <section class="section" id="budget" style="background:#eef4f2"><div class="wrap"><div class="section-head"><div><div class="eyebrow">PLAN WITH CLARITY</div><h2>旅費預算試算</h2><p>直接調整人數、機票、住宿、交通與租車費用，計算全團總額與每人分攤。所有金額為新台幣估算，非飯店或航空公司即時報價。</p></div></div><div class="budget-layout"><div><div class="budget-form"><div class="budget-field"><label for="people">同行人數</label><input id="people" max="15" min="1" type="number" value="2"/><small>成人同行人數</small></div><div class="budget-field"><label for="flight">每人來回機票 NT$</label><input id="flight" min="0" step="500" type="number" value="14000"/><small>依出發地與行李方案調整</small></div><div class="budget-field"><label for="room">雙人房每晚 NT$</label><input id="room" min="0" step="200" type="number" value="4200"/><small>共住 6 晚，輸入整間房費用</small></div><div class="budget-field"><label for="food">每人每日餐飲 NT$</label><input id="food" min="0" step="100" type="number" value="900"/><small>以 7 天估算</small></div><div class="budget-field"><label for="rail">每人公共交通 NT$</label><input id="rail" min="0" step="100" type="number" value="1700"/><small>JR／地鐵／一般巴士／預約觀光巴士（含團費），按所選交通調整</small></div><div class="budget-field"><label for="car">每輛租車每天總成本 NT$</label><input id="car" min="0" step="200" type="number" value="4700"/><small>含租金、油資、過路、停車預估</small></div><div class="budget-field"><label for="activity">每人景點活動 NT$</label><input id="activity" min="0" step="100" type="number" value="1100"/><small>溫泉、遊船、門票等</small></div><div class="budget-field"><label for="other">每人其他預備費 NT$</label><input id="other" min="0" step="100" type="number" value="1500"/><small>預留誤差與臨時開銷</small></div></div><p class="small-note">住宿以每兩人一間房試算（奇數人需多一間）。租車按整車計算。如分兩輛車，請自行提高每日車資。</p></div><aside class="budget-summary"><div class="sub" id="budgetLabel">PLAN A / RENTAL 1 DAY</div><div class="total" id="perCost">NT$0</div><p>每人平均估算旅費</p><div class="budget-breakdown" id="budgetParts"></div><div id="allCost" style="margin-top:22px;border-top:1px solid #ffffff45;padding-top:17px;font-weight:800">全團總預算 NT$0</div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:22px"><button class="btn light" id="downloadJson" type="button">匯出行程 JSON ↓</button><button class="btn" id="printPage" style="border:1px solid #adcbcf" type="button">列印 / PDF ↗</button></div></aside></div></div></section>
@@ -499,7 +499,7 @@ function renderControls(){for(const el of $$('[data-plan]')){let on=el.dataset.p
 function renderMap(){let v=variations[state.plan];$('#mapTitle').textContent='PLAN '+state.plan+'｜'+v.label;$('#mapDesc').textContent=v.intro;let r=state.car===0?noCarRoutes[state.plan]:state.car===1?v.route1:v.route2;$('#mapLines').innerHTML=r.map((x,i)=>`<div class="map-route"><strong>${i===0?'6/15｜美瑛・富良野':'6/17｜'+getDay(5).title}</strong><p>${clean(x)}</p></div>`).join('');$('#mapLink').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(state.plan==='A'?'支笏湖 登別 北海道':state.plan==='B'?'積丹 神威岬 北海道':'定山溪 支笏湖 北海道');
  const map={sapporo:[318,300,'札幌'],furano:[486,207,'富良野'],biei:[487,158,'美瑛'],blue:[539,177,'青池'],otaru:[251,279,'小樽'],yoichi:[201,265,'余市'],shakotan:[144,205,'積丹'],shikotsu:[323,355,'支笏湖'],noboribetsu:[236,388,'登別'],jozankei:[258,336,'定山溪']};
  let names=['sapporo','furano','biei','blue','otaru'];if(state.plan==='A')names.push('noboribetsu',...(state.car===2?['shikotsu']:[]));if(state.plan==='B')names.push('yoichi','shakotan');if(state.plan==='C')names.push('jozankei',...(state.car===2?['shikotsu']:[]));names=[...new Set(names)];$('#mapPoints').innerHTML=names.map((n,i)=>{const [x,y,t]=map[n];return `<g><circle cx="${x}" cy="${y}" r="${n==='sapporo'?12:8}" fill="${n==='sapporo'?'#d97249':'#176b88'}" stroke="#fff" stroke-width="3"/><text x="${x+13}" y="${y-8}" font-family="sans-serif" font-size="14" font-weight="700" fill="#213b4a" paint-order="stroke" stroke="#e7efee" stroke-width="4">${t}</text></g>`}).join('');const path=state.car===0?[map.sapporo,map.furano,map.biei,map.blue,map.sapporo]:[map.sapporo,map.furano,map.biei,map.blue,map.sapporo];$('#mapRoutes').setAttribute('stroke-dasharray',state.car===0?'8 10':'none');if(state.car===2){let more=state.plan==='A'?['shikotsu','noboribetsu']:state.plan==='B'?['yoichi','shakotan']:['jozankei','shikotsu'];path.push(...more.map(n=>map[n]),map.sapporo)}$('#mapRoutes').setAttribute('d','M'+path.map(([x,y])=>x+' '+y).join(' L'));window.dispatchEvent(new CustomEvent('hokkaido:routechange',{detail:{plan:state.plan,car:state.car}}));}
-function renderDays(){$('#dayNav').innerHTML=dates.map((dt,i)=>`<button class="day-nav ${i===state.day?'active':''}" type="button" data-day="${i}" aria-current="${i===state.day?'date':'false'}"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${clean(dt)}<small>${clean(getDay(i).title)}</small></span></button>`).join('');$$('[data-day]').forEach(b=>b.onclick=()=>{state.day=Number(b.dataset.day);renderDays();if(innerWidth<760)$('#days').scrollIntoView({behavior:'smooth'})});let d=getDay(state.day);$('#dayDate').textContent='DAY '+String(state.day+1).padStart(2,'0')+' / 2027.06.'+String(12+state.day).padStart(2,'0');$('#dayTransport').textContent=d.transport;$('#dayTitle').textContent=d.title;$('#dayDesc').textContent=d.desc;$('#dayImage').src=PHOTOS[graphic[d.image]]||PHOTOS.hero;$('#dayImage').alt=['city','festival','shrine'].includes(d.image)?'札幌大通公園與電視塔實景（非祭典或神宮現場照片）':d.title+'當地景點實景攝影';$('#dayTimeline').innerHTML=d.stops.map(t=>`<div class="time-step"><time>${clean(t[0])}</time><div><strong>${clean(t[1])}</strong><p>${clean(t[2])}</p></div></div>`).join('');$('#dayNotice').textContent='注意事項｜'+d.note;$('#dayGoogle').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(d.geo);$('#prevDay').disabled=state.day===0;$('#nextDay').disabled=state.day===6}
+function renderDays(){$('#dayNav').innerHTML=dates.map((dt,i)=>`<button class="day-nav ${i===state.day?'active':''}" type="button" data-day="${i}" aria-current="${i===state.day?'date':'false'}"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${clean(dt)}<small>${clean(getDay(i).title)}</small></span></button>`).join('');$$('[data-day]').forEach(b=>b.onclick=()=>{state.day=Number(b.dataset.day);renderDays();if(innerWidth<760)$('#days').scrollIntoView({behavior:'smooth'})});let d=getDay(state.day);$('#dayDate').textContent='DAY '+String(state.day+1).padStart(2,'0')+' / 2027.06.'+String(12+state.day).padStart(2,'0');$('#dayTransport').textContent=d.transport;$('#dayTitle').textContent=d.title;$('#dayDesc').textContent=d.desc;$('#dayImage').src=PHOTOS[graphic[d.image]]||PHOTOS.hero;$('#dayImage').alt=['city','festival','shrine'].includes(d.image)?'札幌大通公園與電視塔實景（非祭典或神宮現場照片）':d.title+'當地景點實景攝影';$('#dayTimeline').innerHTML=d.stops.map(t=>`<div class="time-step"><time>${clean(t[0])}</time><div><strong>${clean(t[1])}</strong><p>${clean(t[2])}</p></div></div>`).join('');$('#dayNotice').textContent='注意事項｜'+d.note;$('#dayGoogle').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(d.geo);$('#prevDay').disabled=state.day===0;$('#nextDay').disabled=state.day===6;window.dispatchEvent(new CustomEvent('hokkaido:daychange',{detail:{day:state.day,plan:state.plan,car:state.car}}))}
 function renderHighlights(){const x=[['札幌・大通公園','CITY & CULTURE','6/13 於札幌市區參加 YOSAKOI，6/16 感受北海道神宮祭。','hero','大通公園 札幌'],['小樽・運河散步','HISTORIC PORT','歷史倉庫、甜點、玻璃工藝，搭 JR 輕鬆抵達。','otaru','小樽運河'],['美瑛・白金青池','NATURE & LANDSCAPE','青色池水與初夏綠意，是 6 月最值得造訪的景點之一。','bluepond','白金青池'],['北海道初夏花田','SEASONAL FLOWERS','6 月中先看季節花卉，大片薰衣草通常要到 7 月。','flowers','四季彩之丘']];$('#highlightGrid').innerHTML=x.map(a=>`<article class="highlight-card"><img loading="lazy" src="${PHOTOS[a[3]]}" alt="${a[0]}"><div><div class="k">${a[1]}</div><h3>${a[0]}</h3><p>${a[2]}</p><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a[4])}" target="_blank" rel="noopener noreferrer">查看目的地 ↗</a></div></article>`).join('')}
 function renderHotels(){let arr=hotels.filter(h=>state.filter==='all'||h.for.includes(state.filter));$('#hotelGrid').innerHTML=arr.map(h=>`<article class="hotel"><div class="area">${clean(h.area)} · ${clean(h.rating)}</div><h3>${clean(h.name)}</h3><div class="en">${clean(h.en)}</div><p>${clean(h.description)}</p><footer><span>適合 ${h.for.join('・')}</span><a href="${h.url}" target="_blank" rel="noopener noreferrer">飯店官網 ↗</a></footer></article>`).join('');$$('[data-filter]').forEach(e=>e.classList.toggle('active',e.dataset.filter===state.filter))}
 function value(id){return Math.max(0,Number($('#'+id).value)||0)}function renderBudget(){const ppl=Math.max(1,value('people')),flight=value('flight'),room=value('room'),food=value('food'),rail=value('rail'),car=value('car'),act=value('activity'),other=value('other');const rooms=Math.ceil(ppl/2),hotelsCost=rooms*6*room,rental=car*state.car,total=ppl*(flight+food*7+rail+act+other)+hotelsCost+rental;$('#budgetLabel').textContent='PLAN '+state.plan+(state.car===0?' / 100% PUBLIC TRANSIT':' / RENTAL '+state.car+' DAY'+(state.car===2?'S':''));$('#perCost').textContent=money(total/ppl);$('#allCost').textContent=`${ppl} 人全團總預算　${money(total)}`;$('#budgetParts').innerHTML=[['機票',flight],['六晚住宿分攤',hotelsCost/ppl],['7 天餐飲',food*7],['大眾運輸',rail],['租車分攤',rental/ppl],['景點體驗',act],['其他預備費',other]].map(([k,n])=>`<div><span>${k}</span><b>${money(n)}</b></div>`).join('')}
@@ -1093,58 +1093,205 @@ if ('serviceWorker' in navigator && (location.protocol==='https:' || location.ho
  .then(reg=>{reg.update().catch(()=>{});console.info('[SapporoPWA] ready',reg.scope)})
  .catch(err=>console.warn('[SapporoPWA] unavailable',err.message)));
 }
-</script><script id="hokkaidoFoodGuide2026">
+</script><style id="sapporoDailyFoodMapStyle">
+#food-guide .fg-day-picker{display:grid;grid-template-columns:minmax(215px,.75fr) minmax(0,1.4fr);gap:22px;align-items:center;padding:25px 27px;margin:23px 0 24px;border:1px solid #d6dfd7;background:#f4f6f0}
+#food-guide .fg-day-picker-title strong{display:block;font-size:21px;line-height:1.4;margin:8px 0 6px;color:#243e34}
+#food-guide .fg-day-picker-title p{font-size:12px;color:#586c62;line-height:1.8}
+#food-guide .fg-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+#food-guide .fg-day-choice{min-width:0;border:1px solid #b9c9be;background:#fff;color:#325043;cursor:pointer;padding:13px 2px;text-align:center;font-size:12px;font-weight:750;transition:background .2s ease,color .2s ease}
+#food-guide .fg-day-choice small{display:block;font-size:10px;font-weight:500;margin-top:4px;opacity:.75}
+#food-guide .fg-day-choice[aria-pressed="true"]{background:#27493d;border-color:#27493d;color:#fff}
+#food-guide .fg-current-region{padding:10px 13px;border:1px solid #d8ded7;font-size:12px;color:#436156;background:#fff}
+#food-guide .fg-map-panel{border:1px solid #d1ddd3;background:#f2f5f0;margin:14px 0 26px;overflow:hidden}
+#food-guide .fg-map-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;padding:19px 22px 14px}
+#food-guide .fg-map-heading h3{font-size:21px;line-height:1.5;margin:5px 0 0;color:#254236}
+#food-guide .fg-map-key{font-size:11px;color:#52665d;line-height:1.6}
+#food-guide .fg-local-map{width:100%;height:370px;background:linear-gradient(145deg,#ddebe7,#eaf1eb);z-index:0}
+#food-guide .fg-map-status{min-height:26px;padding:9px 20px;font-size:11px;line-height:1.6;color:#66786e}
+#food-guide .fg-map{cursor:pointer;background:#fff;font-family:inherit}
+#food-guide .fg-map:focus-visible,#food-guide .fg-day-choice:focus-visible{outline:2px solid #0a7f81;outline-offset:2px}
+#food-guide .fg-geo-pin{background:none;border:0}
+#food-guide .fg-geo-pin span{display:flex;align-items:center;justify-content:center;min-width:33px;height:33px;border:2px solid #fff;border-radius:100%;box-shadow:0 2px 8px #14241a55;color:#fff;font-size:12px;font-weight:800;background:#2a5a4d}
+#food-guide .fg-geo-pin.gift span{background:#aa714a}
+#food-guide .fg-card.is-highlighted,#food-guide .fg-gift.is-highlighted{outline:2px solid #9eab8d}
+#food-guide .fg-empty{margin:0}
+@media(max-width:900px){#food-guide .fg-day-picker{grid-template-columns:1fr}#food-guide .fg-map-heading{align-items:start;flex-direction:column;gap:5px}}
+@media(max-width:540px){#food-guide .fg-days{gap:3px}#food-guide .fg-day-choice{padding:11px 0;font-size:10px}#food-guide .fg-day-choice small{font-size:9px}#food-guide .fg-day-picker{padding:18px 14px}#food-guide .fg-local-map{height:320px}#food-guide .fg-map-heading{padding:17px}}
+</style>
+<script id="hokkaidoFoodGuide2026">
 (function(){
 'use strict';
 const MEALS=[{"id":"b1","meal":"breakfast","name":"Sandria 本店","en":"SANDRIA / SANDWICHES","dish":"北海道雞蛋三明治","area":"札幌","place":"薄野・中島公園","address":"北海道札幌市中央区南8条西9丁目758-14","hours":"本店 24 小時（以店家公告為準）","day":"6/13・6/16","note":"外帶專門店，適合出發前買好，到中島公園散步野餐。","source":"https://www.sapporo.travel/en/gourmet/shop/sandria/","tag":"早起外帶"},{"id":"b2","meal":"breakfast","name":"どんぶり茶屋 二條市場店","en":"DONBURI CHAYA / SEAFOOD","dish":"北海道海鮮丼","area":"札幌","place":"二條市場","address":"北海道札幌市中央区南3条東1丁目7 二条市場","hours":"夏季約 07:30 起","day":"6/13・6/16","note":"鮭魚卵、海膽與螃蟹等海味，早上先逛市場再吃。","source":"https://donburi.jp/en/shop/nijo","tag":"市場早餐"},{"id":"b3","meal":"breakfast","name":"CAFE YOSHIMI 赤れんがテラス","en":"CAFE YOSHIMI / MORNING","dish":"晨間吐司、咖啡與輕食","area":"札幌","place":"札幌車站・赤磚廣場","address":"北海道札幌市中央区北2条西4丁目1 赤れんがテラス B1F","hours":"約 08:00 起","day":"6/13・6/18","note":"位於札幌站至大通的地下連通動線，適合需要簡單早餐的早晨。","source":"https://www.sapporo.travel/en/gourmet/feature/breakfast-in-sapporo/","tag":"咖啡館"},{"id":"b4","meal":"breakfast","name":"Northern Terrace Diner","en":"SAPPORO GRAND HOTEL / BREAKFAST","dish":"北海道食材自助早餐","area":"札幌","place":"大通・札幌格蘭飯店","address":"北海道札幌市中央区北1条西4丁目2-3 札幌グランドホテル 1F","hours":"早餐約 06:30–10:00","day":"6/15・6/17","note":"長途郊遊日可先吃飽再出發；餐費和是否對非住客開放需再確認。","source":"https://www.sapporo.travel/en/gourmet/feature/breakfast-in-sapporo/","tag":"飯店早餐"},{"id":"l1","meal":"lunch","name":"Soup Curry GARAKU 札幌本店","en":"GARAKU / SOUP CURRY","dish":"香料湯咖哩與北海道蔬菜","area":"札幌","place":"大通・創成川東","address":"北海道札幌市中央区南3条東2丁目6-1 プレサント南3東2 B1F","hours":"午餐約 11:30 起","day":"6/13・6/16","note":"高人氣湯咖哩名店，熱門時段需預留候位時間。","source":"https://visit.sapporo.travel/tw/discover/cuisine/soup-curry/","tag":"札幌代表味"},{"id":"l2","meal":"lunch","name":"根室花まる JR TOWER 店","en":"NEMURO HANAMARU / SUSHI","dish":"北海道迴轉壽司與季節鮮魚","area":"札幌","place":"札幌站・Stellar Place","address":"北海道札幌市中央区北5条西4丁目 JRタワー ステラプレイス 6F","hours":"約 11:00 起","day":"6/13・6/16","note":"車站直通、動線方便；容易排隊，適合行程彈性的一天。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"車站直達"},{"id":"l3","meal":"lunch","name":"らーめん 信玄 南6条店","en":"RAMEN SHINGEN / MISO","dish":"濃郁札幌系味噌拉麵","area":"札幌","place":"薄野","address":"北海道札幌市中央区南6条西8丁目8-2","hours":"約 11:00 起","day":"6/13・6/16","note":"份量足、候位人氣高；趕祭典場次時請準備替代店。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"人氣拉麵"},{"id":"l4","meal":"lunch","name":"おたる政寿司 本店","en":"OTARU MASAZUSHI / SUSHI","dish":"小樽職人握壽司與海鮮","area":"小樽","place":"小樽・壽司屋通","address":"北海道小樽市花園1丁目1-1","hours":"午餐約 11:00–15:00","day":"6/14","note":"較適合安排一頓正式海鮮午餐；需確認預約和預算。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"小樽午餐"},{"id":"l5","meal":"lunch","name":"若鶏時代 なると 本店","en":"NARUTO / HALF FRIED CHICKEN","dish":"若雞半身炸雞","area":"小樽","place":"小樽・稻穗","address":"北海道小樽市稲穂3丁目16-13","hours":"約 11:00 起","day":"6/14","note":"不想再吃海鮮時的經典選擇，可與同行者分食。","source":"https://www.sapporo.travel/en/gourmet/","tag":"小樽名物"},{"id":"l6","meal":"lunch","name":"くまげら","en":"KUMAGERA / FURANO","dish":"富良野和牛與鄉土料理","area":"富良野","place":"富良野車站周邊","address":"北海道富良野市日の出町3-22","hours":"約 11:30 起（休息日需確認）","day":"6/15","note":"長途美瑛自駕日僅列備選；如果為了用餐繞路，優先保留青池景點。","source":"https://www.visit-hokkaido.jp/en/","tag":"郊遊備選"},{"id":"l7","meal":"lunch","name":"松尾ジンギスカン 大通南1条店","en":"MATSUO / JINGISUKAN","dish":"醬漬成吉思汗烤羊肉","area":"札幌","place":"大通・西4丁目","address":"北海道札幌市中央区南1条西4丁目16-1 南舘ビル 1F","hours":"午餐約 11:00–15:00","day":"6/16","note":"中午也能品嚐北海道烤羊肉，地點靠近大通行程。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"當地肉料理"},{"id":"d1","meal":"dinner","name":"成吉思汗 だるま 本店","en":"DARUMA / JINGISUKAN","dish":"傳統炭火烤羊肉","area":"札幌","place":"薄野","address":"北海道札幌市中央区南5条西4丁目","hours":"晚間約 17:00 起","day":"6/12・6/16","note":"經典吧檯式烤羊肉，熱門時段排隊；座位型式不適合所有旅伴。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"經典名店"},{"id":"d2","meal":"dinner","name":"海味はちきょう 本店","en":"HACHIKYO / SEAFOOD IZAKAYA","dish":"鮭魚卵『つっこ飯』與海鮮","area":"札幌","place":"薄野","address":"北海道札幌市中央区南3条西3丁目 都ビル1F","hours":"平日約 18:00 起；週日較早","day":"6/12・6/16","note":"以鮭魚卵飯聞名，適合當作一晚的主題餐；建議事先詢問預約。","source":"https://hachikyo.com/shop/honten","tag":"值得預訂"},{"id":"d3","meal":"dinner","name":"サッポロビール園","en":"SAPPORO BEER GARDEN","dish":"北海道烤羊肉與歷史建築餐廳","area":"札幌","place":"札幌站東北側","address":"北海道札幌市東区北7条東9丁目2-10","hours":"午晚餐營業，夜間約至 21:00","day":"6/16・6/17","note":"適合安排團體晚餐；餐廳館別、座位與用餐時段請先確認。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"特色體驗"},{"id":"d4","meal":"dinner","name":"けやき すすきの本店","en":"KEYAKI / MISO RAMEN","dish":"札幌味噌拉麵","area":"札幌","place":"薄野","address":"北海道札幌市中央区南6条西3丁目 陸ビル1F","hours":"營業至深夜，實際時段請確認","day":"6/12・6/13","note":"晚歸時可彈性吃一碗熱拉麵，適合不想花太久吃正餐的夜晚。","source":"https://www.sapporo.travel/en/gourmet/","tag":"夜間友善"},{"id":"d5","meal":"dinner","name":"札幌かに本家 札幌駅前本店","en":"KANI HONKE / CRAB COURSE","dish":"螃蟹會席與鍋物","area":"札幌","place":"札幌站","address":"北海道札幌市中央区北3条西2丁目1-18","hours":"晚餐供應；需確認套餐與預訂","day":"6/16","note":"想正式吃一次北海道螃蟹料理可列入，預算通常高於一般拉麵。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"正式晚餐"},{"id":"d6","meal":"dinner","name":"Soup Curry GARAKU 札幌本店","en":"GARAKU / EVENING CURRY","dish":"香料雞腿與蔬菜湯咖哩","area":"札幌","place":"大通・創成川東","address":"北海道札幌市中央区南3条東2丁目6-1 プレサント南3東2 B1F","hours":"晚餐約 17:00–20:30","day":"6/12・6/13","note":"午餐排不到時，可改列夜間候補；並非第二間分店。","source":"https://visit.sapporo.travel/tw/discover/cuisine/soup-curry/","tag":"午晚皆可"},{"id":"d7","meal":"dinner","name":"松尾ジンギスカン 大通南1条店","en":"MATSUO / GRILLED LAMB","dish":"醬漬羊肉燒烤套餐","area":"札幌","place":"大通・西4丁目","address":"北海道札幌市中央区南1条西4丁目16-1 南舘ビル 1F","hours":"晚餐約 16:30–22:30","day":"6/12・6/16","note":"與達摩不同的醬漬烤法，適合想有較完整餐桌用餐體驗的晚餐。","source":"https://visit.sapporo.travel/discover/cuisine/","tag":"烤羊肉候補"}];
 const GIFTS=[{"id":"s1","name":"白色戀人・ISHIYA 札幌大通本店","en":"SHIROI KOIBITO","pick":"白巧克力夾心餅乾、美冬","area":"札幌","address":"北海道札幌市中央区大通西4丁目6-1 札幌大通西4ビル 1F","carry":"常溫伴手禮／同事分送","tip":"6/13 大通公園周邊順買。","source":"https://www.ishiya.co.jp/odori/index.html"},{"id":"s2","name":"六花亭 札幌本店","en":"ROKKATEI","pick":"MARUSEI 奶油葡萄夾心","area":"札幌","address":"北海道札幌市中央区北4条西6丁目3-3","carry":"留意保存溫度與期限","tip":"札幌站周邊散步可順買。","source":"https://www.rokkatei.co.jp/shop/sapporo/"},{"id":"s3","name":"北菓樓 札幌本館","en":"KITAKARO","pick":"北海道開拓米菓、年輪蛋糕","area":"札幌","address":"北海道札幌市中央区北1条西5丁目1-2","carry":"常溫禮盒為主","tip":"特色歷史建築，適合 6/16 市區購物。","source":"https://www.kitakaro.com/ext/tenpo/sapporohonkan.html"},{"id":"s4","name":"ROYCE' 大丸札幌店","en":"ROYCE' CHOCOLATE","pick":"生巧克力、洋芋片巧克力","area":"札幌","address":"北海道札幌市中央区北5条西4丁目7 大丸札幌店 B1F","carry":"生巧克力須保冷","tip":"返台前買較易控制保冷時間。","source":"https://www.royce.com/"},{"id":"s5","name":"KINOTOYA BAKE 地下街店","en":"KINOTOYA BAKE","pick":"現烤起司塔、北海道牛奶霜淇淋","area":"札幌","address":"北海道札幌市中央区南2条西3丁目 さっぽろ地下街ポールタウン","carry":"現吃較適合","tip":"逛狸小路、大通時補充甜點。","source":"https://www.sapporo.travel/en/gourmet/"},{"id":"s6","name":"LeTAO 本店","en":"LETAO / OTARU","pick":"Double Fromage 雙層起司蛋糕","area":"小樽","address":"北海道小樽市堺町7-16","carry":"需留意冷藏／冷凍","tip":"6/14 小樽堺町通必經甜點站。","source":"https://www.letao.jp/"},{"id":"s7","name":"かま栄 工場直売店","en":"KAMAEI / OTARU","pick":"現炸魚板、蒲鉾禮盒","area":"小樽","address":"北海道小樽市堺町3-7","carry":"部分商品需冷藏","tip":"適合 6/14 邊走邊吃。","source":"https://www.sapporo.travel/en/gourmet/"},{"id":"s8","name":"美瑛選果 新千歲機場店","en":"BIEI SENKA","pick":"美瑛玉米麵包與農產品點心","area":"機場","address":"北海道千歳市美々 新千歳空港国内線ターミナル 2F","carry":"麵包適合當日食用","tip":"分批出爐且可能售完，不為購買而壓縮登機時間。","source":"https://bieisenka.jp/about/"},{"id":"s9","name":"北海道本舗 綜合土產店","en":"HOKKAIDO HONPO / AIRPORT","pick":"薯條三兄弟、夕張哈密瓜果凍等","area":"機場","address":"北海道千歳市美々 新千歳空港 国内線ターミナル 2F","carry":"常溫盒裝商品","tip":"6/18 返回機場時集中採購。","source":"https://www.hokkaido-airports.com/en/new-chitose/"},{"id":"s10","name":"小樽オルゴール堂 本館","en":"OTARU MUSIC BOX MUSEUM","pick":"手工音樂盒、特色生活選物","area":"小樽","address":"北海道小樽市住吉町4-1","carry":"易碎品需妥善包裝","tip":"不想只買食品，可挑一件小樽紀念品。","source":"https://www.sapporo.travel/en/"}];
+const EXTRA_MEALS=[{"id":"x-yoi","meal":"lunch","name":"柿崎商店 海鮮工房","en":"KAKIZAKI / YOICHI","dish":"余市海鮮丼、現撈海產定食","area":"余市","place":"余市站前","address":"北海道余市郡余市町黒川町7丁目25","hours":"10:00–18:00（以當年公告為準）","day":"6/14","note":"余市站前名店；如果 6/14 預定在小樽吃壽司，兩者擇一，不要連排兩餐。","source":"https://yoichi-kankoukyoukai.com/spot_food/%E6%B5%B7%E9%AE%AE%E3%83%BB%E5%AF%BF%E5%8F%B8/","tag":"余市必吃","zone":"yoichi","index":2},{"id":"x-biei","meal":"lunch","name":"RESTAURANT ASPERGES","en":"ASPERGES / BIEI","dish":"美瑛當季蔬菜法式料理","area":"美瑛","place":"美瑛選果","address":"北海道上川郡美瑛町大町2丁目","hours":"午餐約 11:00–14:00，季節營業","day":"6/15","note":"需預留較長用餐時間；6/15 長途一日巴士團不適合另外安排此餐，僅供自駕自由調整。","source":"https://www.biei-hokkaido.jp/ja/facility/restaurant-asperges","tag":"美瑛特色","zone":"biei","index":3,"carOnly":true},{"id":"x-tomita","meal":"lunch","name":"とみたメロンハウス","en":"FURANO MELON HOUSE","dish":"富良野哈密瓜與哈密瓜霜淇淋","area":"富良野","place":"中富良野・富田農場附近","address":"北海道空知郡中富良野町宮町3-32","hours":"季節營業，6月營運與果品供應須核對","day":"6/15","note":"適合在富田農場附近短暫休息；如果參加一日巴士團，只有時間許可才順買。","source":"https://www.tomita-m.co.jp/","tag":"季節甜點","zone":"tomita","index":3},{"id":"x-nobo","meal":"lunch","name":"登別温泉市場","en":"ONSEN ICHIBA / NOBORIBETSU","dish":"海鮮丼、烤貝類、溫泉蛋","area":"登別","place":"登別溫泉街","address":"北海道登別市登別温泉町50","hours":"約 10:30–21:00","day":"6/17","note":"位於地獄谷周邊溫泉街，可搭配午餐；用餐與泡湯時間請按當日交通取捨。","source":"https://noboribetsu-spa.jp/spot/spot0169/","tag":"溫泉街","zone":"noboribetsu","index":5},{"id":"x-shik","meal":"lunch","name":"支笏湖 レークサイドキッチン トントン","en":"LAKESIDE KITCHEN TONTON","dish":"支笏湖姬鱒（チップ）料理","area":"支笏湖","place":"支笏湖遊客中心附近","address":"北海道千歳市支笏湖温泉番外地","hours":"約 9:00–17:00","day":"6/17","note":"支笏湖漁協列出的姬鱒餐廳；只有 6/17 方案實際到支笏湖才顯示。","source":"https://shikotsuko-gyokyo.org/shop/","tag":"湖畔名物","zone":"shikotsu","index":5},{"id":"x-shako","meal":"lunch","name":"お食事処 みさき","en":"MISAKI / SHAKOTAN UNI","dish":"積丹天然海膽丼（6–8 月為產季）","area":"積丹","place":"積丹・日司町","address":"北海道積丹郡積丹町日司町236","hours":"2026 年參考 9:00–15:00；季節營業","day":"6/17","note":"熱門且可能提前售完；參加巴士團不一定能在店前停靠，不要假設可以離團用餐。","source":"https://osyokujidokoromisaki.com/","tag":"積丹名店","zone":"shakotan","index":5},{"id":"x-joz","meal":"lunch","name":"Furukawa Fruit J・glacée","en":"J-GLACEE / JOZANKEI","dish":"北海道蘋果派、季節水果甜點","area":"定山溪","place":"定山溪溫泉街","address":"北海道札幌市南区定山渓温泉西4丁目356","hours":"9:30–17:00（不定期休）","day":"6/17","note":"定山溪散步時的甜點休息點，官方觀光協會收錄；下午較適合。","source":"https://jozankei.jp/tw/store/j-glacee/","tag":"溪谷甜點","zone":"jozankei","index":5}];
+const EXTRA_GIFTS=[{"id":"gx-yoi","name":"柿崎商店・海產選物","en":"KAKIZAKI / YOICHI","pick":"余市水產品及地方食品","area":"余市","address":"北海道余市郡余市町黒川町7丁目25","carry":"生鮮需冷藏且入台可能有限制","tip":"6/14 余市站前；優先選可合法攜帶的常溫產品。","source":"https://yoichi-kankoukyoukai.com/kaisanbutsu_special/","zone":"yoichi","index":2},{"id":"gx-biei","name":"美瑛選果・美瑛町店","en":"BIEI SENKA / BIEI","pick":"美瑛小麥麵包、餅乾及地方農產品加工品","area":"美瑛","address":"北海道上川郡美瑛町大町2丁目","carry":"常溫加工點心比較好攜帶","tip":"6/15 自駕順路較適合；觀光巴士行程未必停靠。","source":"https://www.biei-hokkaido.jp/ja/facility/biei-vegetable-market","zone":"biei","index":3,"carOnly":true},{"id":"gx-furano","name":"富田農場周邊選物","en":"FARM TOMITA / NAKAFURANO","pick":"富良野花香周邊紀念品、當季甜點","area":"富良野","address":"北海道空知郡中富良野町基線北15号","carry":"食品先看保存溫度；紀念品方便攜帶","tip":"6/15 限真正有停靠富田農場時購買，勿為購物延誤巴士。","source":"https://www.farm-tomita.co.jp/","zone":"tomita","index":3},{"id":"gx-nobo","name":"登別温泉市場・地方土產","en":"ONSEN ICHIBA / GIFTS","pick":"登別地方加工食品、溫泉蛋與甜點","area":"登別","address":"北海道登別市登別温泉町50","carry":"常溫包裝較方便；蛋類食品入台先核對檢疫","tip":"6/17 登別溫泉街就地選購。","source":"https://noboribetsu-spa.jp/spot/spot0169/","zone":"noboribetsu","index":5},{"id":"gx-shako","name":"食堂 鱗晃・當地伴手禮角落","en":"RINKOU / SHAKOTAN","pick":"積丹地方食品及紀念品","area":"積丹","address":"北海道積丹郡積丹町神威岬周邊","carry":"確認個別商品保存條件及入台規定","tip":"若當天經過神威岬周邊再選購，先以景觀及巴士班次為優先。","source":"https://www.kanko-shakotan.jp/food/","zone":"shakotan","index":5},{"id":"gx-joz","name":"J・glacée 手工蘋果派","en":"JOZANKEI / APPLE PIE","pick":"定山溪蘋果派、當季水果甜點","area":"定山溪","address":"北海道札幌市南区定山渓温泉西4丁目356","carry":"現吃或當日享用較適合","tip":"6/17 定山溪散步時順道購買。","source":"https://jozankei.jp/tw/store/j-glacee/","zone":"jozankei","index":5},{"id":"gx-shik","name":"メメール・湖畔甜點","en":"MEMERE / LAKE SHIKOTSU","pick":"北海道乳品水果製作的義式冰淇淋","area":"支笏湖","address":"北海道千歳市支笏湖温泉","carry":"當地現吃，非適合長途攜帶的伴手禮","tip":"6/17 支笏湖湖畔短暫停留時選購。","source":"https://shikotsuko-gyokyo.org/shop/","zone":"shikotsu","index":5}];
+
+const ZONES={
+susukino:{name:'薄野',lat:43.0538,lng:141.3535},odori:{name:'大通公園',lat:43.0604,lng:141.3542},station:{name:'札幌站',lat:43.0687,lng:141.3508},nijo:{name:'二條市場',lat:43.0582,lng:141.3602},
+otaru:{name:'小樽站周邊',lat:43.1973,lng:141.0011},sakaimachi:{name:'小樽堺町通',lat:43.1908,lng:141.0082},yoichi:{name:'余市站周邊',lat:43.1953,lng:140.7942},
+furano:{name:'富良野站周邊',lat:43.3479,lng:142.392},tomita:{name:'中富良野・富田農場',lat:43.4170,lng:142.4257},biei:{name:'美瑛站周邊',lat:43.5910,lng:142.4620},
+noboribetsu:{name:'登別溫泉街',lat:42.4914,lng:141.1444},shikotsu:{name:'支笏湖畔',lat:42.7712,lng:141.4030},shakotan:{name:'積丹・日司町',lat:43.3270,lng:140.4810},jozankei:{name:'定山溪溫泉街',lat:42.9650,lng:141.1666},airport:{name:'新千歲機場',lat:42.7746,lng:141.6926}
+};
+const MEAL_ZONE={b1:'susukino',b2:'nijo',b3:'station',b4:'station',l1:'nijo',l2:'station',l3:'susukino',l4:'otaru',l5:'otaru',l6:'furano',l7:'odori',d1:'susukino',d2:'susukino',d3:'station',d4:'susukino',d5:'station',d6:'nijo',d7:'odori'};
+const GIFT_ZONE={s1:'odori',s2:'station',s3:'odori',s4:'station',s5:'susukino',s6:'sakaimachi',s7:'sakaimachi',s8:'airport',s9:'airport',s10:'sakaimachi'};
+const GIFT_DAYS={0:['s5'],1:['s1','s2','s3','s5'],2:['s6','s7','s10'],3:[],4:['s1','s2','s3','s4','s5'],5:[],6:['s2','s4','s8','s9']};
+const LABELS=['札幌・薄野','札幌祭典','小樽・余市','富良野・美瑛','札幌神宮祭','郊外方案','札幌・機場'];
 const root=document.getElementById('food-guide');
 if(!root)return;
 const mealGrid=document.getElementById('fg-meals');
 const giftGrid=document.getElementById('fg-gifts');
 const countEl=document.getElementById('fg-count');
-const areaEl=document.getElementById('fg-area');
+const dateButtons=document.getElementById('fg-days');
+const dayTitle=document.getElementById('fg-day-title');
+const dayDesc=document.getElementById('fg-day-desc');
+const regionEl=document.getElementById('fg-region-label');
+const mapStatus=document.getElementById('fg-map-status');
 const tabs=Array.from(root.querySelectorAll('[data-fg-meal]'));
-const labels={breakfast:'早餐',lunch:'午餐',dinner:'晚餐',all:'全部餐別'};
-let meal='lunch';
-function safe(text){return String(text||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function url(place,type){
-  const query=encodeURIComponent(place.name+' '+place.address);
-  if(type==='route')return 'https://www.google.com/maps/dir/?api=1&destination='+query;
-  return 'https://www.google.com/maps/search/?api=1&query='+query;
+let meal='all',localMap=null,markerLayer=null,markers={},currentPlaces=[];
+function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function indexToday(){return (typeof state!=='undefined'&&Number.isInteger(state.day))?state.day:0;}
+function dayContext(){
+ const day=indexToday();
+ const zones=day===0?['station','susukino','odori']:
+ day===1?['station','odori','nijo','susukino']:
+ day===2?['yoichi','otaru','sakaimachi']:
+ day===3?['furano','tomita','biei']:
+ day===4?['odori','nijo','station','susukino']:
+ day===6?['station','airport']:[];
+ let label=LABELS[day];
+ let detail='';
+ if(day===5&&typeof getDay==='function'){
+   const itinerary=getDay(5);
+   const words=[itinerary.title,itinerary.desc,...itinerary.stops.map(s=>s[1])].join(' ');
+   if(/登別/.test(words))zones.push('noboribetsu');
+   if(/支笏湖/.test(words))zones.push('shikotsu');
+   if(/積丹|神威岬/.test(words))zones.push('shakotan');
+   if(/定山溪|定山渓/.test(words))zones.push('jozankei');
+   if(/余市/.test(words))zones.push('yoichi');
+   if(/小樽/.test(words))zones.push('otaru','sakaimachi');
+   if(!zones.length)zones.push('station');
+   label=itinerary.title;
+   detail='目前為 '+state.plan+' 方案／'+(state.car===0?'不租車':state.car+' 天租車')+'。當天的美食與名產會依此更換。';
+ }else if(day===3){
+   detail=state.car===0?'觀光巴士行程停留時間有限；美瑛市區餐廳僅自駕時顯示。':'自駕可視停留時間決定是否加進美瑛餐廳。';
+ }else if(day===6){
+   detail='機場購物與札幌站最後採買；依實際航班時間取捨。';
+ }else detail='與七日旅行時間軸連動；點一下名店就能在下方地圖查看所在區域。';
+ return {day,zones:[...new Set(zones)],label,detail};
 }
-function mapLink(place,text,route){
-  return '<a class="'+(route?'fg-directions':'fg-map')+'" href="'+safe(url(place,route?'route':'search'))+'" target="_blank" rel="noopener noreferrer" aria-label="'+safe(text+'：'+place.name)+'">'+safe(text)+(route?' ↗':' ↗')+'</a>';
+function allFor(ctx){
+ const date='6/'+String(12+ctx.day);
+ const meals=[
+ ...MEALS.filter(p=>p.day.includes(date)).map(p=>Object.assign({},p,{zone:MEAL_ZONE[p.id]})),
+ ...EXTRA_MEALS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
+ ];
+ const dishes=meals.filter(p=>p.zone&&ctx.zones.includes(p.zone));
+ const gifts=[
+ ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]})),
+ ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
+ ].filter(p=>p.zone&&ctx.zones.includes(p.zone));
+ return {meals:dishes,gifts};
 }
-function card(place,index){
-  return '<article class="fg-card">'+
-    '<div class="fg-card-top"><span class="fg-no">'+String(index+1).padStart(2,'0')+'</span><span class="fg-card-tag">'+safe(place.tag)+'</span></div>'+
-    '<h3>'+safe(place.name)+'</h3><p class="fg-en">'+safe(place.en)+'</p>'+
-    '<p class="fg-dish">'+safe(place.dish)+'</p>'+
-    '<p class="fg-location">⌖ '+safe(place.place)+' · '+safe(place.area)+'</p>'+
-    '<p class="fg-day">建議搭配 '+safe(place.day)+'　|　'+safe(place.hours)+'</p>'+
-    '<p class="fg-detail">'+safe(place.note)+'</p>'+
-    '<div class="fg-card-footer">'+mapLink(place,'地圖定位',false)+mapLink(place,'開始導航',true)+'</div></article>';
+function focusButton(p){
+ return '<button type="button" class="fg-map" data-fg-focus="'+safe(p.zone)+'" data-fg-name="'+safe(p.name)+'" aria-label="在本站地圖查看'+safe(p.name)+'的所在區域">⌖ 在地圖看方位</button>';
 }
-function render(){
-  const area=areaEl.value;
-  const selected=MEALS.filter(function(x){return (meal==='all'||x.meal===meal)&&(area==='all'||x.area===area);});
-  mealGrid.innerHTML=selected.length?selected.map(card).join(''):'<p class="fg-empty">這個區域暫無符合餐別的推薦。可切換到「全部地區」查看其他選擇。</p>';
-  tabs.forEach(function(t){const active=t.dataset.fgMeal===meal;t.setAttribute('aria-pressed',String(active));});
-  countEl.textContent=selected.length+' 間'+labels[meal]+'選擇 · 點擊定位可開啟 Google Maps';
+function foodCard(p,i){
+ return '<article class="fg-card" data-fg-card="'+safe(p.zone)+'">'+
+ '<div class="fg-card-top"><span class="fg-no">'+String(i+1).padStart(2,'0')+'</span><span class="fg-card-tag">'+safe(p.tag)+'</span></div>'+
+ '<h3>'+safe(p.name)+'</h3><p class="fg-en">'+safe(p.en)+'</p>'+
+ '<p class="fg-dish">'+safe(p.dish)+'</p><p class="fg-location">⌖ '+safe(p.place)+' · '+safe(p.area)+'</p>'+
+ '<p class="fg-day">'+safe(p.hours)+'</p><p class="fg-detail">'+safe(p.note)+'</p>'+
+ '<div class="fg-card-footer">'+focusButton(p)+'<a class="fg-directions" href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">官方／觀光資料 ↗</a></div></article>';
 }
-function gift(place,index){
-  const source=place.source?'<a href="'+safe(place.source)+'" target="_blank" rel="noopener noreferrer" aria-label="查看 '+safe(place.name)+' 官方或觀光資料">來源資料 ↗</a>':'';
-  return '<article class="fg-gift"><span class="fg-no">'+String(index+1).padStart(2,'0')+'</span><div><h4>'+safe(place.name)+'</h4>'+
-    '<small>'+safe(place.en)+' · '+safe(place.area)+'</small>'+
-    '<p class="fg-pick">'+safe(place.pick)+'</p>'+
-    '<p>'+safe(place.carry)+'　·　'+safe(place.tip)+'</p>'+
-    '<div class="fg-gift-actions"><a href="'+safe(url(place,'search'))+'" target="_blank" rel="noopener noreferrer" aria-label="查看 '+safe(place.name)+' 地圖位置">⌖ 地圖定位 ↗</a>'+
-    '<a href="'+safe(url(place,'route'))+'" target="_blank" rel="noopener noreferrer" aria-label="導航到 '+safe(place.name)+'">開始導航 ↗</a>'+source+'</div></div></article>';
+function giftCard(p,i){
+ return '<article class="fg-gift" data-fg-card="'+safe(p.zone)+'"><span class="fg-no">'+String(i+1).padStart(2,'0')+'</span><div><h4>'+safe(p.name)+'</h4>'+
+ '<small>'+safe(p.en)+' · '+safe(p.area)+'</small>'+
+ '<p class="fg-pick">'+safe(p.pick)+'</p><p>'+safe(p.carry)+'　·　'+safe(p.tip)+'</p>'+
+ '<div class="fg-gift-actions">'+focusButton(p)+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">來源資料 ↗</a></div></div></article>';
 }
-tabs.forEach(function(t){t.addEventListener('click',function(){meal=t.dataset.fgMeal;render();});});
-areaEl.addEventListener('change',render);
-giftGrid.innerHTML=GIFTS.map(gift).join('');
-render();
+function draw(){
+ const ctx=dayContext(),entries=allFor(ctx);
+ const items=entries.meals.filter(p=>meal==='all'||p.meal===meal);
+ currentPlaces=[...items.map(p=>Object.assign({},p,{kind:'meal'})),...entries.gifts.map(p=>Object.assign({},p,{kind:'gift'}))];
+ dateButtons.querySelectorAll('button').forEach((btn,i)=>{const active=i===ctx.day;btn.setAttribute('aria-pressed',String(active));});
+ dayTitle.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+'｜'+ctx.label;
+ dayDesc.textContent=ctx.detail;
+ regionEl.textContent='當日區域：'+ctx.zones.map(z=>ZONES[z]?.name||z).join('、');
+ tabs.forEach(t=>{const on=t.dataset.fgMeal===meal;t.setAttribute('aria-pressed',String(on));const k=t.dataset.fgMeal;t.textContent=({breakfast:'早餐',lunch:'午餐',dinner:'晚餐',all:'全部'})[k]+' · '+entries.meals.filter(p=>k==='all'||p.meal===k).length;});
+ mealGrid.innerHTML=items.length?items.map(foodCard).join(''):'<p class="fg-empty">當日此餐別暫無精選名店。可選「全部」或切換日期。</p>';
+ giftGrid.innerHTML=entries.gifts.length?entries.gifts.map(giftCard).join(''):'<p class="fg-empty">當日暫無確定順路的伴手禮店家；建議回札幌或機場集中購買。</p>';
+ countEl.textContent=items.length+' 間當日餐飲、'+entries.gifts.length+' 個當地名產／選物。點卡片可在本頁地圖看方位（非路線導航）。';
+ if(localMap)refreshMap(ctx);
+}
+function refreshMap(ctx){
+ if(!localMap||!markerLayer)return;
+ markerLayer.clearLayers();markers={};
+ const zones=[...new Set(currentPlaces.map(p=>p.zone))].filter(z=>ZONES[z]);
+ const bounds=[];
+ zones.forEach(z=>{
+   const p=ZONES[z],places=currentPlaces.filter(x=>x.zone===z);
+   const desc=places.map(x=>'<li>'+safe(x.name)+'</li>').join('');
+   const color=places.some(x=>x.kind==='meal')?'meal':'gift';
+   const marker=window.L.marker([p.lat,p.lng],{icon:window.L.divIcon({className:'fg-geo-pin '+color,html:'<span>'+String(places.length)+'</span>',iconSize:[36,36],iconAnchor:[18,18]})})
+     .bindPopup('<strong>'+safe(p.name)+'一帶</strong><p>這是區域中心方位，非店門精準座標。</p><ul>'+desc+'</ul>');
+   markerLayer.addLayer(marker);markers[z]=marker;bounds.push([p.lat,p.lng]);
+ });
+ if(bounds.length===1)localMap.setView(bounds[0],12,{animate:false});
+ else if(bounds.length>1)localMap.fitBounds(bounds,{padding:[25,25],maxZoom:13,animate:false});
+ else localMap.setView([43.05,141.35],9,{animate:false});
+ setTimeout(()=>{if(localMap)localMap.invalidateSize();},100);
+}
+function loadLeaflet(){
+ if(window.L)return Promise.resolve();
+ if(!document.querySelector('link[data-fg-leaflet]')){
+   const css=document.createElement('link');css.rel='stylesheet';css.dataset.fgLeaflet='yes';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(css);
+ }
+ const candidates=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js'];
+ function attempt(i){
+   if(i>=candidates.length)return Promise.reject(new Error('地圖程式資源無法載入'));
+   return new Promise((resolve,reject)=>{
+     const s=document.createElement('script');s.src=candidates[i];s.async=true;
+     s.onload=()=>window.L?resolve():reject(new Error('Leaflet 未啟動'));
+     s.onerror=()=>reject(new Error('Leaflet 下載失敗'));
+     document.head.appendChild(s);
+   }).catch(()=>attempt(i+1));
+ }
+ return attempt(0);
+}
+async function initLocalMap(){
+ try{
+   await loadLeaflet();
+   localMap=window.L.map('fg-local-map',{scrollWheelZoom:false,zoomControl:true,attributionControl:true}).setView([43.05,141.35],9);
+   window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors',maxZoom:18}).addTo(localMap);
+   markerLayer=window.L.layerGroup().addTo(localMap);
+   window.L.control.scale({imperial:false}).addTo(localMap);
+   mapStatus.textContent='拖曳／縮放查看方位；點數字標記可查看該區域的餐飲與名產。標記為區域中心，非店門精準位置。';
+   refreshMap(dayContext());
+ }catch(e){
+   console.warn('[SapporoFoodExplorer] map unavailable',e);
+   mapStatus.textContent='外部地圖底圖暫無法載入；仍可使用上方區域名稱及下方店家來源資料。';
+ }
+}
+dateButtons.innerHTML=LABELS.map((label,i)=>'<button type="button" class="fg-day-choice" data-fg-day="'+i+'" aria-pressed="false">D'+(i+1)+'<small>6/'+(12+i)+'</small></button>').join('');
+dateButtons.addEventListener('click',event=>{
+ const button=event.target.closest('[data-fg-day]');if(!button)return;
+ state.day=Number(button.dataset.fgDay);
+ meal='all';
+ if(typeof renderDays==='function')renderDays();
+ else draw();
+});
+tabs.forEach(t=>t.addEventListener('click',()=>{meal=t.dataset.fgMeal;draw();}));
+root.addEventListener('click',event=>{
+ const button=event.target.closest('[data-fg-focus]');if(!button)return;
+ const zone=button.dataset.fgFocus,p=ZONES[zone];
+ if(!p)return;
+ root.querySelectorAll('[data-fg-card]').forEach(node=>node.classList.toggle('is-highlighted',node.contains(button)));
+ if(localMap){localMap.setView([p.lat,p.lng],Math.max(localMap.getZoom(),13),{animate:true});if(markers[zone])markers[zone].openPopup();}
+ else mapStatus.textContent='目標區域：'+p.name+'（頁內地圖暫不可用；請查看店家官方來源）。';
+ document.getElementById('fg-map-panel').scrollIntoView({behavior:'smooth',block:'center'});
+});
+window.addEventListener('hokkaido:daychange',()=>{meal='all';draw();});
+draw();
+initLocalMap();
 })();
 </script></body></html>
