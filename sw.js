@@ -1,4 +1,4 @@
-const CACHE_NAME='sapporo-travel-shell-v10';
+const CACHE_NAME='sapporo-travel-shell-v11';
 const PRECACHE=["./","./index.html","./css/site.css","./js/app.js","./js/photo-loader.js","./js/cover-carousel.js","./js/checklist.js","./js/embedded-photo.js","./js/map-local-advice.js","./js/map.js","./js/map-status.js","./js/pwa-register.js","./js/food-guide.js","./assets/photos/sapporo-odori-cover.webp","./assets/photos/sapporo-odori-backup.webp","./manifest.webmanifest","./icons/icon.svg","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./icons/apple-touch-icon.png"];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(async cache=>{await Promise.allSettled(PRECACHE.map(url=>cache.add(new Request(url,{cache:'reload'}))));}).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('sapporo-travel-shell-')&&k!==CACHE_NAME).map(k=>caches.delete(k)))),self.clients.claim()]))});
