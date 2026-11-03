@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",()=>{const p="./assets/photos/sapporo-odori-backup.webp";for(const id of ["tourC","storyImg"]){const e=document.getElementById(id);if(e){e.src=p;e.alt="使用者提供的札幌大通公園與電視塔實景照片";e.closest(".tour-card,.story-layout")?.classList.remove("photo-missing")}}});
