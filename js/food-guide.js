@@ -150,12 +150,17 @@ const VERIFIED_RESTAURANT_PHOTOS={
   author:'Gpx-evo',license:'CC BY-SA 3.0',
   label:'若鶏時代なると小樽本店 店面實景',type:'店面外觀'}
 };
-const RESTAURANT_PHOTO_REFERENCES={
- d2:{title:'食べログ｜海味はちきょう 本店 つっこ飯實拍',
-     url:'https://tabelog.com/hokkaido/A0101/A010103/1003784/dtlrvwlst/B15682040/'},
- l1:{title:'GARAKU 店家料理實拍介紹',
-     url:'https://www.magical-trip.com/media/soup-curry-garaku-sapporo-guide-best-menu-surrounding-gourmet-spots-2025/'}
-};
+/* Direct links are source-verified Tabelog store pages. For unverified shops,
+   use Tabelog's own restaurant search rather than guessing an ID or branch. */
+const TABELOG_DIRECT={"d1":"https://tabelog.com/hokkaido/A0101/A010103/1000007/","d2":"https://tabelog.com/hokkaido/A0101/A010103/1003784/","l1":"https://tabelog.com/hokkaido/A0101/A010102/1082918/","d6":"https://tabelog.com/hokkaido/A0101/A010102/1082918/","l2":"https://tabelog.com/hokkaido/A0101/A010101/1001102/","l3":"https://tabelog.com/hokkaido/A0101/A010103/1002793/","l4":"https://tabelog.com/hokkaido/A0106/A010601/1000209/","l5":"https://tabelog.com/hokkaido/A0106/A010601/1000906/","d4":"https://tabelog.com/hokkaido/A0101/A010103/1000150/","l7":"https://tabelog.com/hokkaido/A0101/A010102/1002898/","d7":"https://tabelog.com/hokkaido/A0101/A010102/1002898/","x-yoi":"https://tabelog.com/hokkaido/A0106/A010602/1000224/","x-shik":"https://tabelog.com/hokkaido/A0107/A010701/1031081/","citySuage":"https://tabelog.com/hokkaido/A0101/A010103/1006004/","cityIchigen":"https://tabelog.com/hokkaido/A0101/A010103/1025072/"};
+function tabelogPhotoLink(p){
+ const direct=TABELOG_DIRECT[p.id];
+ return {
+  url:direct||('https://tabelog.com/rstLst/?sk='+encodeURIComponent(p.name+' '+(p.area||'北海道'))),
+  direct:Boolean(direct)
+ };
+}
+
 function googleRealPhotosURL(p){
  const query=[p.name,p.address||p.place||p.area,'北海道'].filter(Boolean).join(' ');
  return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query);
@@ -166,8 +171,8 @@ function verifiedRestaurantPhoto(p){
   return '<div class="dd-photo dd-photo-authentic-pending" role="group" aria-label="查看'+safe(p.name)+'真實照片">'+
     '<div class="dd-authentic-symbol">HOKKAIDO / FOOD JOURNAL</div>'+
     '<div class="dd-authentic-name">'+safe(p.name)+'</div>'+
-    '<a class="dd-authentic-link" href="'+safe(googleRealPhotosURL(p))+'" target="_blank" rel="noopener noreferrer" aria-label="在 Google Maps 查看'+safe(p.name)+'真正店家照片">查看店家實拍　↗</a>'+
-    '<small>照片由 Google Maps 原站展示，本站不盜用其他店家圖片</small></div>';
+    '<a class="dd-authentic-link" href="'+safe(tabelogPhotoLink(p).url)+'" target="_blank" rel="noopener noreferrer" aria-label="前往食べログ查看'+safe(p.name)+'的照片或搜尋結果">在食べログ查看實拍　↗</a>'+
+    '<small>連至食べログ'+(tabelogPhotoLink(p).direct?'店家頁':'搜尋結果')+'；未獲授權的照片不複製到本站</small></div>';
  }
  const file=photo.file.replace(/ /g,'_');
  const src='https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width=900';
@@ -176,10 +181,13 @@ function verifiedRestaurantPhoto(p){
    '<figcaption><span>'+safe(photo.label)+'</span><a href="'+safe(credit)+'" target="_blank" rel="noopener noreferrer">© '+safe(photo.author)+' · '+safe(photo.license)+' ↗</a></figcaption></figure>';
 }
 function restaurantPhotoSourceLinks(p){
- const ref=RESTAURANT_PHOTO_REFERENCES[p.id];
- return '<a class="dd-actual-photo-link" href="'+safe(googleRealPhotosURL(p))+'" target="_blank" rel="noopener noreferrer">Google Maps 實拍 ↗</a>'+
- (ref?'<a class="dd-actual-photo-link" href="'+safe(ref.url)+'" target="_blank" rel="noopener noreferrer">'+safe(ref.title)+' ↗</a>':'');
+ const t=tabelogPhotoLink(p);
+ const label=t.direct?'食べログ實拍':'食べログ搜尋照片';
+ const search='<a class="dd-actual-photo-link" href="'+safe(t.url)+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>';
+ const google='<a class="dd-actual-photo-link" href="'+safe(googleRealPhotosURL(p))+'" target="_blank" rel="noopener noreferrer">Google Maps 照片 ↗</a>';
+ return search+google;
 }
+
 function photoHTML(p){
  // Exact restaurant photos only: never use stock/other-shop dishes as a restaurant's photograph.
  if(p.meal)return verifiedRestaurantPhoto(p);
