@@ -95,6 +95,32 @@ function allFor(ctx){
  return {meals:dishes,gifts};
 }
 
+
+/* Images have been sourced from individually linked Wikimedia Commons file pages.
+ * A representative dish is not claimed to be a photograph from the listed store.
+ * Photos of products or interiors are labeled separately. */
+const PHOTO_LIBRARY={"egg":{"file":"Japanese egg sandwich in a sandwich case.jpg","author":"Quercus acuta","license":"CC BY-SA 4.0","label":"料理示意照"},"seafood":{"file":"Seafood bowl.jpg","author":"Douglas P. Perkins","license":"CC0 1.0","label":"料理示意照"},"sushi":{"file":"2009, sushi in Otaru -81219.jpeg","author":"Syced","license":"CC0 1.0","label":"小樽料理示意照"},"soup":{"file":"A soup curry dish in Sapporo - Flickr - odako1.jpg","author":"Koichi Oda","license":"CC BY-SA 2.0","label":"札幌料理示意照"},"ramen":{"file":"Sapporo miso ramen.jpg","author":"Schellack","license":"CC BY 3.0","label":"札幌料理示意照"},"lamb":{"file":"Genghis Khan dish.jpg","author":"Douglas P. Perkins","license":"CC0 1.0","label":"料理示意照"},"matsuo":{"file":"Matsuo Jingisukan.jpg","author":"Totti","license":"CC BY-SA 4.0","label":"品牌料理實拍（非指定分店）"},"uni":{"file":"UniIkuraDon.jpg","author":"Douglas P. Perkins","license":"CC BY 3.0","label":"料理示意照"},"white":{"file":"Shiroi koibito.jpg","author":"Fk","license":"CC BY-SA 3.0","label":"實際商品照片"},"rokkatei":{"file":"Marusei butter sand of Rokkatei (1).jpg","author":"毒島みるく","license":"CC0 1.0","label":"實際商品照片"},"royce":{"file":"Royce chocolate.jpg","author":"Antonio733","license":"CC BY-SA 4.0","label":"實際商品照片"},"kitakaro":{"file":"KITAKARO Sapporo Honkan interior 201904.jpg","author":"MIKI Yoshihito","license":"CC BY 2.0","label":"札幌本館實景"},"kinotoya":{"file":"KINOTOYA, Sapporo, Hokkaido, Japan, 札幌, 北海道, 日本, 焼きたてチーズタルト, きのとや, 新千歳空港店, さっぽろし, ほっかいどう, にっぽん, にほん (16720983681).jpg","author":"bryan...","license":"CC BY-SA 2.0","label":"品牌商品實景（非指定分店）"},"letao":{"file":"LeTAO-1.jpg","author":"Evelyn-rose","license":"CC0 1.0","label":"品牌門市示意（非小樽本店）"},"music":{"file":"Otaru Music Box Museum interior.jpg","author":"Liandrei","license":"CC BY-SA 4.0","label":"小樽店內實景"},"pie":{"file":"IMG small apple pie.jpg","author":"LostplanetKD73","license":"CC0 1.0","label":"蘋果派示意照"}};
+const PHOTO_BY_ID={"b1":"egg","b2":"seafood","b3":"egg","b4":"egg","l1":"soup","l2":"sushi","l3":"ramen","l4":"sushi","l6":"uni","l7":"matsuo","d1":"lamb","d2":"seafood","d3":"lamb","d4":"ramen","d5":"seafood","d6":"soup","d7":"matsuo","x-yoi":"seafood","x-biei":null,"x-tomita":null,"x-nobo":"seafood","x-shik":"seafood","x-shako":"uni","x-joz":"pie","s1":"white","s2":"rokkatei","s3":"kitakaro","s4":"royce","s5":"kinotoya","s6":"letao","s7":null,"s8":null,"s9":null,"s10":"music","gx-yoi":"seafood","gx-biei":null,"gx-furano":null,"gx-nobo":null,"gx-shako":"uni","gx-joz":"pie","gx-shik":null};
+const SHOP_HOURS={"s1":{"display":"10:00–20:00","source":"https://www.ishiya.co.jp/shop/001352.html"},"s2":{"display":"10:00–17:30；喫茶 10:30–16:30（週三休）","source":"https://www.rokkatei.co.jp/shop/sapporo/"},"s3":{"display":"10:00–18:00；咖啡廳 11:00–16:00","source":"https://www.sapporo.travel/gourmet/shop/shop_51-2/"},"s4":{"display":"10:00–20:00（依百貨休館日）","source":"https://www.royce.com/brand/shop/detail/?no=101"},"s5":{"display":"10:00–21:00（末點 20:45）","source":"https://www.sapporo-chikagai.jp/shop/single/176"},"s6":{"display":"09:00–18:00；咖啡廳最末點 17:30","source":"https://otaru.gr.jp/shop/letao_honten"},"s7":{"display":"5–10月 平日 09:00–18:00、週末 09:00–19:00","source":"https://kamaei.co.jp/store_introduce/chokubai/"},"s8":{"display":"08:00–19:00","source":"https://bieisenka.jp/about/"},"s9":{"display":"營業時間待核實（請查機場官方商店列表）","source":"https://www.hokkaido-airports.com/ja/new-chitose/spend/shop/"},"s10":{"display":"09:00–18:00（2、3 樓 17:45 關閉）","source":"https://www.otaru-orgel.co.jp/shop"},"gx-yoi":{"display":"營業時間請查店家最新公告","source":"https://yoichi-kankoukyoukai.com/kaisanbutsu_special/"},"gx-biei":{"display":"6月營業時間請查店家公告","source":"https://bieisenka.jp/about/"},"gx-furano":{"display":"季節營業；開放時間以官方為準","source":"https://www.farm-tomita.co.jp/"},"gx-nobo":{"display":"約 10:30–21:00（參考；請查店家）","source":"https://noboribetsu-spa.jp/spot/spot0169/"},"gx-shako":{"display":"依當年季節營業公告","source":"https://www.kanko-shakotan.jp/food/"},"gx-joz":{"display":"09:30–17:00（不定期公休）","source":"https://jozankei.jp/tw/store/j-glacee/"},"gx-shik":{"display":"營業時間待確認","source":"https://shikotsuko-gyokyo.org/shop/"}};
+function shopHours(p){
+ const detail=SHOP_HOURS[p.id];
+ return {display:detail?.display||p.hours||'營業時間待確認',source:detail?.source||p.source};
+}
+function hoursHTML(p){
+ const h=shopHours(p);
+ return '<p class="dd-shop-hours"><span aria-hidden="true">◷</span> <span>營業時間（參考）</span> <strong>'+safe(h.display)+'</strong> '+
+ '<a href="'+safe(h.source)+'" target="_blank" rel="noopener noreferrer" aria-label="查看'+safe(p.name)+'官方營業時間">核對 ↗</a></p>';
+}
+function photoHTML(p){
+ const key=PHOTO_BY_ID[p.id];
+ const photo=key?PHOTO_LIBRARY[key]:null;
+ if(!photo)return '<div class="dd-photo dd-photo-unavailable" role="img" aria-label="尚未取得可核實授權的店家或商品照片"><div class="dd-photo-placeholder"><span>HOKKAIDO / LOCAL FINDS</span><small>此項目暫無經核實的授權照片</small></div></div>';
+ const url='https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(photo.file.replace(/ /g,'_'))+'?width=800';
+ const src='https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(photo.file.replace(/ /g,'_'));
+ return '<figure class="dd-photo"><img src="'+safe(url)+'" alt="'+safe(p.name+'相關'+photo.label)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'+
+ '<figcaption><span>'+safe(photo.label)+'</span><a href="'+safe(src)+'" target="_blank" rel="noopener noreferrer">© '+safe(photo.author)+' · '+safe(photo.license)+' ↗</a></figcaption></figure>';
+}
+
 function editorialMeals(items,day){
  const order=(day===0?['dinner','lunch','breakfast']:day===6?['breakfast','lunch','dinner']:day===3||day===5?['lunch','breakfast','dinner']:['lunch','dinner','breakfast']);
  return items.map((p,i)=>({p,i})).sort((a,b)=>order.indexOf(a.p.meal)-order.indexOf(b.p.meal)||a.i-b.i).map(x=>x.p);
@@ -102,17 +128,22 @@ function editorialMeals(items,day){
 function focusButton(p,kind){
  return '<button type="button" class="dd-map-action" data-dd-place="'+safe(p.id)+'" data-dd-kind="'+kind+'" aria-label="在當日地圖查看'+safe(p.name)+'所在區域">⌖ 在地圖查看</button>';
 }
+
 function foodCard(p){
  const mealName={breakfast:'早餐',lunch:'午餐',dinner:'晚餐'}[p.meal]||'餐飲';
- return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'"><div class="dd-pick-kicker">'+mealName+' / '+safe(p.area)+'</div>'+
+ return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'">'+photoHTML(p)+
+ '<div class="dd-pick-kicker">'+mealName+' / '+safe(p.area)+'</div>'+
  '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
- '<p class="dd-pick-feature">'+safe(p.dish)+'</p><p class="dd-pick-detail">'+safe(p.note)+'</p>'+
+ '<p class="dd-pick-feature">'+safe(p.dish)+'</p>'+hoursHTML(p)+
+ '<p class="dd-pick-detail">'+safe(p.note)+'</p>'+
  '<div class="dd-pick-foot">'+focusButton(p,'meal')+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">資料來源 ↗</a></div></article>';
 }
 function giftCard(p){
- return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'"><div class="dd-pick-kicker">LOCAL FINDS / '+safe(p.area)+'</div>'+
+ return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'">'+photoHTML(p)+
+ '<div class="dd-pick-kicker">LOCAL FINDS / '+safe(p.area)+'</div>'+
  '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
- '<p class="dd-pick-feature">'+safe(p.pick)+'</p><p class="dd-pick-detail">'+safe(p.tip)+'　'+safe(p.carry)+'</p>'+
+ '<p class="dd-pick-feature">'+safe(p.pick)+'</p>'+hoursHTML(p)+
+ '<p class="dd-pick-detail">'+safe(p.tip)+'　'+safe(p.carry)+'</p>'+
  '<div class="dd-pick-foot">'+focusButton(p,'gift')+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">資料來源 ↗</a></div></article>';
 }
 function updateMore(btn,name,length,limit){
@@ -134,13 +165,15 @@ function draw(){
  counts.textContent='當日 '+meals.length+' 間餐飲、'+gifts.length+' 處地方名產｜視時間選擇，不必全部排入行程。';
  if(localMap)refreshMap(ctx);
 }
+
 function showOverview(){
  const ids=['s1','s2','s4'];
  document.getElementById('dd-overview-list').innerHTML=ids.map((id,i)=>{
   const p=GIFTS.find(x=>x.id===id);
-  return '<article class="dd-overview-item"><span class="dd-overview-num">0'+(i+1)+'</span><div><h3>'+safe(p.name)+'</h3><p class="dd-overview-en">'+safe(p.en)+'</p>'+
-   '<p>'+safe(p.pick)+'</p><small>'+safe(p.carry)+' · '+safe(p.tip)+'</small></div>'+
-   '<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">官方資訊 ↗</a></article>';
+  return '<article class="dd-overview-item">'+photoHTML(p)+
+   '<span class="dd-overview-num">0'+(i+1)+'</span><div class="dd-overview-copy"><h3>'+safe(p.name)+'</h3><p class="dd-overview-en">'+safe(p.en)+'</p>'+
+   '<p>'+safe(p.pick)+'</p>'+hoursHTML(p)+'<small>'+safe(p.carry)+' · '+safe(p.tip)+'</small></div>'+
+   '<a class="dd-overview-link" href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">官方資訊 ↗</a></article>';
  }).join('');
 }
 function popupHTML(name,zone,detail){
@@ -220,6 +253,29 @@ async function initLocalMap(){
   mapStatus.textContent='無法載入互動底圖；推薦卡片仍保留所在區域與店家官方資料。';
  }
 }
+
+// Broken third-party photos must not leave missing-image icons in the cards.
+function photoErrorFallback(event){
+ const image=event.target;
+ if(!(image instanceof HTMLImageElement)||!image.closest('.dd-photo'))return;
+ const figure=image.closest('.dd-photo');
+ figure.classList.add('dd-photo-unavailable');
+ image.remove();
+ let placeholder=figure.querySelector('.dd-photo-placeholder');
+ if(!placeholder){
+  placeholder=document.createElement('div');
+  placeholder.className='dd-photo-placeholder';
+  const label=document.createElement('span');
+  label.textContent='HOKKAIDO / LOCAL TASTE';
+  const message=document.createElement('small');
+  message.textContent='照片暫時無法載入，可點來源查看';
+  placeholder.append(label,message);
+  figure.prepend(placeholder);
+ }
+}
+dayRoot.addEventListener('error',photoErrorFallback,true);
+overview.addEventListener('error',photoErrorFallback,true);
+
 dayRoot.addEventListener('click',event=>{
  const more=event.target.closest('[data-dd-expand]');
  if(more){
