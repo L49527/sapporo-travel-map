@@ -20,16 +20,17 @@ const LABELS=['札幌・薄野','札幌祭典','小樽・余市','富良野・�
 const dayRoot=document.getElementById('day-discover');
 const overview=document.getElementById('food-guide');
 if(!dayRoot||!overview)return;
-const mealGrid=document.getElementById('dd-meals');
+const mealGrids=Object.fromEntries(['breakfast','lunch','dinner'].map(key=>[key,document.getElementById('dd-meals-'+key)]));
+const mealMore=Object.fromEntries(['breakfast','lunch','dinner'].map(key=>[key,document.getElementById('dd-more-'+key)]));
+const mealCounts=Object.fromEntries(['breakfast','lunch','dinner'].map(key=>[key,document.getElementById('dd-count-'+key)]));
 const giftGrid=document.getElementById('dd-gifts');
 const dayContextLabel=document.getElementById('dd-day-context');
 const counts=document.getElementById('dd-count');
 const mapPanel=document.getElementById('dd-map-panel');
 const mapStatus=document.getElementById('dd-map-status');
-const mealMore=document.getElementById('dd-more-meals');
 const giftMore=document.getElementById('dd-more-gifts');
-const FEATURED={meals:3,gifts:2};
-let expanded={meals:false,gifts:false};
+const FEATURED={breakfast:2,lunch:3,dinner:3,gifts:2};
+let expanded={breakfast:false,lunch:false,dinner:false,gifts:false};
 let localMap=null,markerLayer=null,markers={},currentPlaces=[],pendingFocus=null;
 const scenicStops={
  0:[['札幌站',43.0687,141.3508],['薄野・狸小路',43.0538,141.3535]],
@@ -82,19 +83,48 @@ function dayContext(){
  return {day,zones:[...new Set(zones)],label,detail};
 }
 function allFor(ctx){
+ const dining=window.HOKKAIDO_DINING;
  const date='6/'+String(12+ctx.day);
- const meals=[
- ...MEALS.filter(p=>p.day.includes(date)).map(p=>Object.assign({},p,{zone:MEAL_ZONE[p.id]})),
- ...EXTRA_MEALS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
- ];
- const dishes=meals.filter(p=>p.zone&&ctx.zones.includes(p.zone));
+ const breakfasts=MEALS.filter(p=>p.meal==='breakfast'&&p.day.includes(date))
+   .map(p=>Object.assign({},p,{zone:MEAL_ZONE[p.id]}))
+   .filter(p=>p.zone&&ctx.zones.includes(p.zone));
+ const choices=[];
+ const key=ctx.day===5?'5'+state.plan:String(ctx.day);
+ const schedule=dining?.roster?.[key];
+ function pick(id,meal){
+  const base=MEALS.find(p=>p.id===id)||EXTRA_MEALS.find(p=>p.id===id)||dining?.catalog?.[id];
+  if(!base)return null;
+  const candidate=Object.assign({},base,{meal,zone:base.zone||MEAL_ZONE[id]});
+  if(!candidate.zone||!ZONES[candidate.zone])return null;
+  if(ctx.day===3&&state.car===0){
+    candidate.note='觀光巴士常已含午餐且未必自由停靠；以下為更換行程／自駕候選。 '+candidate.note;
+  }
+  if(ctx.day===5&&state.car===0&&meal==='lunch'){
+    candidate.note='依預約團停靠點與自由用餐時間決定是否能去。 '+candidate.note;
+  }
+  if(ctx.day===6){
+    candidate.note='返程前安檢區外餐飲候選；請優先完成行李托運、免稅查驗及報到。 '+candidate.note;
+  }
+  return candidate;
+ }
+ for(const meal of ['lunch','dinner']){
+  const keys=[...(schedule?.[meal]||[])];
+  if(ctx.day===5&&meal==='lunch'&&state.car===2&&state.plan==='A')keys.push('x-shik');
+  if(ctx.day===5&&meal==='lunch'&&state.car===2&&state.plan==='C')keys.push('jozanHakken');
+  const names=new Set();
+  for(const id of keys){
+   const p=pick(id,meal);if(!p)continue;
+   const unique=p.name.normalize('NFKC').toLowerCase().trim();
+   if(names.has(unique))continue;
+   names.add(unique);choices.push(p);
+  }
+ }
  const gifts=[
- ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]})),
- ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
+  ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]})),
+  ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0))
  ].filter(p=>p.zone&&ctx.zones.includes(p.zone));
- return {meals:dishes,gifts};
+ return {meals:[...breakfasts,...choices],gifts};
 }
-
 
 /* Images have been sourced from individually linked Wikimedia Commons file pages.
  * A representative dish is not claimed to be a photograph from the listed store.
@@ -112,7 +142,7 @@ function hoursHTML(p){
  '<a href="'+safe(h.source)+'" target="_blank" rel="noopener noreferrer" aria-label="查看'+safe(p.name)+'官方營業時間">核對 ↗</a></p>';
 }
 function photoHTML(p){
- const key=PHOTO_BY_ID[p.id];
+ const key=PHOTO_BY_ID[p.id]||p.photoKey;
  const photo=key?PHOTO_LIBRARY[key]:null;
  if(!photo)return '<div class="dd-photo dd-photo-unavailable" role="img" aria-label="目前沒有相符且可使用的照片"><div class="dd-photo-placeholder"><span>HOKKAIDO / LOCAL FINDS</span><small>尚無符合這項推薦的授權照片</small></div></div>';
  const path=photo.file?photo.file.replace(/ /g,'_'):'';
@@ -155,15 +185,28 @@ function updateMore(btn,name,length,limit){
 }
 function draw(){
  const ctx=dayContext(),entries=allFor(ctx);
- const meals=editorialMeals(entries.meals,ctx.day);
- const gifts=entries.gifts;
+ const meals=editorialMeals(entries.meals,ctx.day), gifts=entries.gifts;
  currentPlaces=[...meals.map(p=>Object.assign({},p,{kind:'meal'})),...gifts.map(p=>Object.assign({},p,{kind:'gift'}))];
- dayContextLabel.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+' · '+ctx.label+'｜'+ctx.detail;
- mealGrid.innerHTML=(expanded.meals?meals:meals.slice(0,FEATURED.meals)).map(foodCard).join('')||'<p class="dd-empty">當天尚無確認順路的餐飲推薦，請保留用餐彈性。</p>';
- giftGrid.innerHTML=(expanded.gifts?gifts:gifts.slice(0,FEATURED.gifts)).map(giftCard).join('')||'<p class="dd-empty">當天暫無順路地方選物，可安排最後一天集中採買。</p>';
- updateMore(mealMore,'meals',meals.length,FEATURED.meals);
+ let contextExtra='';
+ if(ctx.day===0)contextExtra='｜首日午後抵達，午餐僅供航班較早時備選。';
+ if(ctx.day===3&&state.car===0)contextExtra='｜6/15 一日觀光巴士可能含午餐，餐廳候選不代表有自由停靠時間。';
+ if(ctx.day===5)contextExtra='｜郊外午餐受巴士或自駕路線限制；晚餐建議回札幌後安排。';
+ if(ctx.day===6)contextExtra='｜回程當天以航班優先，晚餐僅適合較晚起飛且預留充足報到時間者。';
+ dayContextLabel.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+' · '+ctx.label+'｜'+ctx.detail+contextExtra;
+ const numbers={};
+ for(const meal of ['breakfast','lunch','dinner']){
+  const options=meals.filter(p=>p.meal===meal),limit=FEATURED[meal];
+  const box=document.getElementById('dd-group-'+meal);
+  box.hidden=options.length===0;
+  mealGrids[meal].innerHTML=(expanded[meal]?options:options.slice(0,limit)).map(foodCard).join('');
+  mealCounts[meal].textContent=' · '+options.length+' 選';
+  updateMore(mealMore[meal],meal,options.length,limit);
+  numbers[meal]=options.length;
+ }
+ giftGrid.innerHTML=(expanded.gifts?gifts:gifts.slice(0,FEATURED.gifts)).map(giftCard).join('')||
+ '<p class="dd-empty">當天暫無順路地方選物，可安排最後一天集中採買。</p>';
  updateMore(giftMore,'gifts',gifts.length,FEATURED.gifts);
- counts.textContent='當日 '+meals.length+' 間餐飲、'+gifts.length+' 處地方名產｜視時間選擇，不必全部排入行程。';
+ counts.textContent='午餐 '+numbers.lunch+' 間備選 · 晚餐 '+numbers.dinner+' 間備選 · 地方名產 '+gifts.length+' 處｜餐廳是候選，不必全部排入行程。';
  if(localMap)refreshMap(ctx);
 }
 
@@ -281,7 +324,7 @@ dayRoot.addEventListener('click',event=>{
  const more=event.target.closest('[data-dd-expand]');
  if(more){
   const category=more.dataset.ddExpand;
-  if(!['meals','gifts'].includes(category))return;
+  if(!['breakfast','lunch','dinner','gifts'].includes(category))return;
   expanded[category]=!expanded[category];draw();
   return;
  }
@@ -297,7 +340,7 @@ if(lastDay)lastDay.addEventListener('click',()=>{
  document.getElementById('days').scrollIntoView({behavior:'smooth',block:'start'});
 });
 window.addEventListener('hokkaido:daychange',()=>{
- expanded={meals:false,gifts:false};
+ expanded={breakfast:false,lunch:false,dinner:false,gifts:false};
  pendingFocus=null;
  draw();
 });

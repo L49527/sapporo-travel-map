@@ -672,3 +672,13 @@ button,input,select,textarea { font-family:var(--font)!important; }
 .dd-overview-item .dd-photo{height:210px!important;min-height:0}
 .dd-overview-item .dd-photo img{height:100%!important;min-height:210px}
 @media(max-width:720px){.dd-photo{height:210px}.dd-photo img{min-height:210px}.dd-overview-item .dd-photo{height:210px!important}}
+
+/* Meal-choice groups: three editorial cards shown by default, the remainder collapsible. */
+.dd-meal-group{margin:0 0 25px}
+.dd-meal-group[hidden]{display:none!important}
+.dd-meal-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 13px;border-bottom:1px solid #e6e8e1;padding-bottom:10px}
+.dd-meal-title>span{font-size:10px;color:#9ba79c;letter-spacing:.17em}
+.dd-meal-title h5{font:500 21px/1.25 Georgia,'Noto Serif TC',serif;color:#334f3e;margin:0;white-space:nowrap}
+.dd-meal-title h5 small{font:500 11px/1.4 system-ui,sans-serif;letter-spacing:.03em;color:#87958a}
+.dd-meal-group .dd-expand{margin:14px auto 0}
+@media(max-width:720px){.dd-meal-title h5{font-size:19px}.dd-meal-group{margin-bottom:23px}}
