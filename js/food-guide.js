@@ -141,14 +141,56 @@ function hoursHTML(p){
  return '<p class="dd-shop-hours"><span aria-hidden="true">◷</span> <span>營業時間（參考）</span> <strong>'+safe(h.display)+'</strong> '+
  '<a href="'+safe(h.source)+'" target="_blank" rel="noopener noreferrer" aria-label="查看'+safe(p.name)+'官方營業時間">核對 ↗</a></p>';
 }
+
+const VERIFIED_RESTAURANT_PHOTOS={
+ d1:{file:'Yakiniku on braziers at 成吉思汗 だるま in Sapporo, Japan (244).jpg',
+  author:'Savannah Rivka',license:'CC BY-SA 4.0',
+  label:'成吉思汗 だるま 店內實拍',type:'現場餐點'},
+ l5:{file:'Wakadorijidainaruto-honten01.JPG',
+  author:'Gpx-evo',license:'CC BY-SA 3.0',
+  label:'若鶏時代なると小樽本店 店面實景',type:'店面外觀'}
+};
+const RESTAURANT_PHOTO_REFERENCES={
+ d2:{title:'食べログ｜海味はちきょう 本店 つっこ飯實拍',
+     url:'https://tabelog.com/hokkaido/A0101/A010103/1003784/dtlrvwlst/B15682040/'},
+ l1:{title:'GARAKU 店家料理實拍介紹',
+     url:'https://www.magical-trip.com/media/soup-curry-garaku-sapporo-guide-best-menu-surrounding-gourmet-spots-2025/'}
+};
+function googleRealPhotosURL(p){
+ const query=[p.name,p.address||p.place||p.area,'北海道'].filter(Boolean).join(' ');
+ return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query);
+}
+function verifiedRestaurantPhoto(p){
+ const photo=VERIFIED_RESTAURANT_PHOTOS[p.id];
+ if(!photo){
+  return '<div class="dd-photo dd-photo-authentic-pending" role="group" aria-label="查看'+safe(p.name)+'真實照片">'+
+    '<div class="dd-authentic-symbol">HOKKAIDO / FOOD JOURNAL</div>'+
+    '<div class="dd-authentic-name">'+safe(p.name)+'</div>'+
+    '<a class="dd-authentic-link" href="'+safe(googleRealPhotosURL(p))+'" target="_blank" rel="noopener noreferrer" aria-label="在 Google Maps 查看'+safe(p.name)+'真正店家照片">查看店家實拍　↗</a>'+
+    '<small>照片由 Google Maps 原站展示，本站不盜用其他店家圖片</small></div>';
+ }
+ const file=photo.file.replace(/ /g,'_');
+ const src='https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width=900';
+ const credit='https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(file);
+ return '<figure class="dd-photo dd-photo-verified"><img src="'+safe(src)+'" alt="'+safe(photo.label)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'+
+   '<figcaption><span>'+safe(photo.label)+'</span><a href="'+safe(credit)+'" target="_blank" rel="noopener noreferrer">© '+safe(photo.author)+' · '+safe(photo.license)+' ↗</a></figcaption></figure>';
+}
+function restaurantPhotoSourceLinks(p){
+ const ref=RESTAURANT_PHOTO_REFERENCES[p.id];
+ return '<a class="dd-actual-photo-link" href="'+safe(googleRealPhotosURL(p))+'" target="_blank" rel="noopener noreferrer">Google Maps 實拍 ↗</a>'+
+ (ref?'<a class="dd-actual-photo-link" href="'+safe(ref.url)+'" target="_blank" rel="noopener noreferrer">'+safe(ref.title)+' ↗</a>':'');
+}
 function photoHTML(p){
- const key=PHOTO_BY_ID[p.id]||p.photoKey;
+ // Exact restaurant photos only: never use stock/other-shop dishes as a restaurant's photograph.
+ if(p.meal)return verifiedRestaurantPhoto(p);
+ // Branded souvenir photographs retain the original credited sources.
+ const key=Object.prototype.hasOwnProperty.call(PHOTO_BY_ID,p.id)?PHOTO_BY_ID[p.id]:p.photoKey;
  const photo=key?PHOTO_LIBRARY[key]:null;
- if(!photo)return '<div class="dd-photo dd-photo-unavailable" role="img" aria-label="目前沒有相符且可使用的照片"><div class="dd-photo-placeholder"><span>HOKKAIDO / LOCAL FINDS</span><small>尚無符合這項推薦的授權照片</small></div></div>';
+ if(!photo)return '';
  const path=photo.file?photo.file.replace(/ /g,'_'):'';
  const url=photo.src||('https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(path)+'?width=900');
  const credit=photo.creditUrl||('https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(path));
- return '<figure class="dd-photo" data-dd-photo="'+safe(key)+'"><img src="'+safe(url)+'" alt="'+safe(p.name+'相關'+photo.label)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'+
+ return '<figure class="dd-photo"><img src="'+safe(url)+'" alt="'+safe(p.name+'相關'+photo.label)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'+
  '<figcaption><span>'+safe(photo.label)+'</span><a href="'+safe(credit)+'" target="_blank" rel="noopener noreferrer" title="照片作者與授權資訊">© '+safe(photo.author)+' · '+safe(photo.license)+' ↗</a></figcaption></figure>';
 }
 
@@ -167,7 +209,7 @@ function foodCard(p){
  '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
  '<p class="dd-pick-feature">'+safe(p.dish)+'</p>'+hoursHTML(p)+
  '<p class="dd-pick-detail">'+safe(p.note)+'</p>'+
- '<div class="dd-pick-foot">'+focusButton(p,'meal')+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">資料來源 ↗</a></div></article>';
+ '<div class="dd-pick-foot">'+focusButton(p,'meal')+restaurantPhotoSourceLinks(p)+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">店家資料 ↗</a></div></article>';
 }
 function giftCard(p){
  return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'">'+photoHTML(p)+

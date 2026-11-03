@@ -682,3 +682,22 @@ button,input,select,textarea { font-family:var(--font)!important; }
 .dd-meal-title h5 small{font:500 11px/1.4 system-ui,sans-serif;letter-spacing:.03em;color:#87958a}
 .dd-meal-group .dd-expand{margin:14px auto 0}
 @media(max-width:720px){.dd-meal-title h5{font-size:19px}.dd-meal-group{margin-bottom:23px}}
+
+
+/* Verified restaurant photography: no cross-shop imagery or stock plates. */
+.dd-photo-authentic-pending{
+  display:flex!important;flex-direction:column;align-items:flex-start;justify-content:center;
+  position:relative!important;min-height:154px!important;height:auto!important;
+  margin:-19px -17px 18px;padding:22px 20px!important;gap:8px;
+  background:linear-gradient(116deg,#253f35 0%,#3c5d4d 72%,#60786a 100%);
+  color:#f7f6ef;overflow:hidden
+}
+.dd-photo-authentic-pending::after{content:'';position:absolute;right:-38px;top:-48px;width:174px;height:174px;border:1px solid #ffffff25;border-radius:50%;pointer-events:none}
+.dd-authentic-symbol{font-size:9px!important;line-height:1.6;letter-spacing:.16em;color:#e5d6b4;z-index:1}
+.dd-authentic-name{font:500 clamp(15px,1.5vw,21px)/1.45 Georgia,'Noto Serif TC',serif;max-width:100%;color:#fff;z-index:1}
+.dd-authentic-link{display:inline-block;color:#fff!important;text-decoration:none!important;border-bottom:1px solid #d9d6ca;padding-bottom:3px;font-size:12px;font-weight:650;line-height:1.6;z-index:1}
+.dd-photo-authentic-pending>small{font-size:9px;color:#d7dfd5;line-height:1.6;z-index:1}
+.dd-pick-foot .dd-actual-photo-link{color:#315e4d;font-weight:650;font-size:10px;line-height:1.6}
+.dd-pick-foot{column-gap:12px;row-gap:8px}
+.dd-photo-verified figcaption span{font-size:9px;color:white}
+@media(max-width:720px){.dd-photo-authentic-pending{margin:-17px -17px 17px;padding:22px!important;min-height:150px!important}}
