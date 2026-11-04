@@ -104,6 +104,23 @@ try{
  window.maplibregl=imported;
  if(!window.WebGLRenderingContext)throw new Error('瀏覽器未提供 WebGL');
  map=new imported.Map({container:mapElement,style:'https://tiles.openfreemap.org/styles/positron',center:[141.4,43.18],zoom:7,attributionControl:true,cooperativeGestures:true});
+ // Track map container size, including breakpoint and sidebar layout changes.
+ // Window resize alone can miss container-only resizes.
+ if(typeof ResizeObserver!=='undefined'){
+   let resizeFrame=0;
+   const observer=new ResizeObserver(()=>{
+     if(resizeFrame)cancelAnimationFrame(resizeFrame);
+     resizeFrame=requestAnimationFrame(()=>{
+       resizeFrame=0;
+       if(map)map.resize();
+     });
+   });
+   observer.observe(mapElement);
+   window.addEventListener('pagehide',()=>{
+     observer.disconnect();
+     if(resizeFrame)cancelAnimationFrame(resizeFrame);
+   },{once:true});
+ }
  map.addControl(new imported.NavigationControl({showCompass:false}),'top-right');
  let mapStructureReady=false;
  map.on('load',()=>{
