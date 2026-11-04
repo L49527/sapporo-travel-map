@@ -1,0 +1,1 @@
+回転寿し 和楽 小樽店：使用者提供之照片以 otaruWaraku.webp 存至 assets/photos/restaurants/，映射至 otaruWaraku。食べログ正確頁：https://tabelog.com/hokkaido/A0106/A010601/1001257/ ；店家官方：https://www.waraku1.jp/shop/05/ ；地址小樽市堺町3-1；電話0134-24-0011；營業11:00–16:00（L.O.15:30），17:00–22:00（L.O.21:30）；不接受訂位。照片由使用者提供，若屬第三方拍攝應確認公開轉載授權。
