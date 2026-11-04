@@ -23,9 +23,9 @@ test('every hotel recommendation has exterior and 3+ person room data',()=>{
   const hotels=parseHotels();
   assert.equal(hotels.length,9);
   for(const hotel of hotels){
-    assert.match(hotel.photo,/^https:\/\//,hotel.name+' photo URL');
+    assert.match(hotel.photo,/^(https:\/\/|\.\/assets\/)/,hotel.name+' photo URL');
     assert.match(hotel.photoSource,/^https:\/\//,hotel.name+' source URL');
-    assert.match(hotel.photoAlt,/^https:\/\//,hotel.name+' room image URL');
+    assert.match(hotel.photoAlt,/^(https:\/\/|\.\/assets\/)/,hotel.name+' room image URL');
     assert.match(hotel.photoAltSource,/^https:\/\//,hotel.name+' room source URL');
     assert.match(hotel.roomType,/3|Triple|Family|Park-side/i,hotel.name+' room type');
     assert.match(hotel.facilities,/洗衣/,hotel.name+' laundry information');
@@ -34,8 +34,9 @@ test('every hotel recommendation has exterior and 3+ person room data',()=>{
   assert.match(hotels.find(h=>h.name==='三井花園飯店札幌西').photoFallback,/^https:\/\//);
   assert.match(hotels.find(h=>h.name==='札幌 Cross Hotel').photoFallback,/^https:\/\//);
   const forza=hotels.find(h=>h.name==='札幌站前 HOTEL FORZA');
-  assert.match(forza.photo,/hotelforza\.jp\/sapporo\/ekimae\/assets\/perf-20261025/);
-  assert.match(forza.photoAlt,/hotelforza\.jp\/sapporo\/ekimae\/images\/rooms\/family-triple_gallery_01\.webp/);
+  assert.equal(forza.photo,'./assets/photos/hotels/hotelForzaSapporoExterior.webp');
+  assert.equal(forza.photoAlt,'./assets/photos/hotels/hotelForzaSapporoFamilyTriple.webp');
+  assert.match(forza.photoSource,/hotelforza\.jp\/sapporo\/ekimae\/zh-tw/);
   assert.doesNotMatch(forza.photoAlt,/img_slide_family_triple_01-sp\.jpg/);
   assert.ok(hotels.every(h=>h.photoAlt),'every hotel has an interior photo for the second slide');
 });
