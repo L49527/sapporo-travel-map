@@ -1,0 +1,145 @@
+/* Responsive stabilization for HOKKAIDO / Sapporo 2027.
+   Loaded after site.css to resolve legacy cascade conflicts.
+   Keep itinerary, image sources, and map providers unchanged. */
+
+/* Navigation: one consistent breakpoint for the eight primary links. */
+@media (max-width: 1250px) {
+  .topnav .main-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 110;
+    background: #f7f6f1;
+    padding: 12px clamp(18px, 4vw, 38px) 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-height: calc(100dvh - 72px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-shadow: 0 18px 30px #17372b24;
+  }
+  .topnav .main-links.open { display: flex; }
+  .topnav .main-links a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 14px;
+    white-space: normal;
+    border-bottom: 1px solid #d8ddd5;
+  }
+  .topnav .menu-toggle {
+    display: grid;
+    place-items: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+  }
+  .topnav .nav-actions .btn { display: none; }
+}
+@media (max-width: 840px) {
+  .topnav .main-links { max-height: calc(100dvh - 68px); }
+}
+
+/* Tablets: give tour descriptions adequate width instead of three cramped cards. */
+@media (min-width: 581px) and (max-width: 900px) {
+  .tour-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tour-grid .tour-card:last-child {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 42%) minmax(0, 1fr);
+    min-height: 195px;
+  }
+  .tour-grid .tour-card:last-child > img {
+    height: 100%;
+    min-height: 195px;
+    object-fit: cover;
+  }
+  .tour-grid .tour-card:last-child .tour-body {
+    align-self: center;
+  }
+}
+
+/* Phones: never clip longer translated copy or enlarged accessibility text. */
+@media (max-width: 580px) {
+  .tour-grid { grid-template-columns: minmax(0, 1fr); }
+  .tour-grid .tour-card,
+  .tour-grid .tour-card:last-child {
+    display: grid;
+    grid-column: auto;
+    grid-template-columns: minmax(128px, 38%) minmax(0, 1fr);
+    grid-template-rows: auto !important;
+    height: auto !important;
+    min-height: 194px !important;
+    max-height: none !important;
+    align-items: stretch;
+  }
+  .tour-grid .tour-card > img {
+    width: 100%;
+    height: 100% !important;
+    min-height: 194px !important;
+    max-height: none !important;
+    object-fit: cover;
+  }
+  .tour-grid .tour-card .tour-body {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+  .tour-grid .tour-card .tour-body p {
+    min-height: 0;
+    overflow: visible;
+  }
+  .tour-grid .tour-card .tour-meta { margin-top: auto; }
+  .tour-grid .tour-card::before,
+  .tour-grid .tour-card.photo-missing::before {
+    width: 38%;
+    height: 100%;
+  }
+}
+
+/* Narrow phones: stack the image, so content keeps a useful text width. */
+@media (max-width: 360px) {
+  .tour-grid .tour-card,
+  .tour-grid .tour-card:last-child {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tour-grid .tour-card > img {
+    height: 176px !important;
+    min-height: 176px !important;
+  }
+  .tour-grid .tour-card::before,
+  .tour-grid .tour-card.photo-missing::before {
+    width: 100%;
+    height: 176px;
+  }
+}
+
+/* Polished interaction without making content depend on JavaScript animation. */
+@media (hover: hover) and (pointer: fine) {
+  .tour-grid .tour-card {
+    transition: transform 220ms ease, box-shadow 220ms ease;
+  }
+  .tour-grid .tour-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px #183b2c22;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 1250px) {
+  .topnav .main-links.open {
+    animation: hokkaido-menu-enter 180ms ease-out both;
+  }
+}
+@keyframes hokkaido-menu-enter {
+  from { opacity: 0; transform: translateY(-7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topnav .main-links.open,
+  .tour-grid .tour-card { animation: none !important; transition: none !important; }
+}
