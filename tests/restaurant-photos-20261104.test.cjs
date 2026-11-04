@@ -12,10 +12,11 @@ const photos=parse(f,'const USER_RESTAURANT_PHOTOS=');
 const t=parse(f,'const TABELOG_DIRECT=');
 const catalog=parse(c,'window.HOKKAIDO_DINING=').catalog;
 test('Four supplied user photos exist and map to the correct venues',()=>{
- for(const id of ['citySuage','cityIchigen','cityOkushiba','l4']){
-  assert.equal(photos[id],id+'.webp');
-  assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',id+'.webp')));
-  assert.ok(sw.includes('./assets/photos/restaurants/'+id+'.webp'));
+ const expected={citySuage:'suagePlus.webp',cityIchigen:'ichigenSohonten.webp',cityOkushiba:'okushibaSoseiji.webp',l4:'otaruMasazushiHonten.webp'};
+ for(const [id,file] of Object.entries(expected)){
+  assert.equal(photos[id],file);
+  assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',file)));
+  assert.ok(sw.includes('./assets/photos/restaurants/'+file));
  }
  assert.notEqual(photos.airportIchigen,photos.cityIchigen,'Main and airport Ichigen must use different images');
 });
@@ -24,8 +25,18 @@ test('Poseidon Tabelog branch, official website and opening hours are correct',(
  const p=catalog.otaruPoseidon;
  assert.equal(p.source,'https://www.otaru-poseidon.jp/');
  assert.equal(p.address,'北海道小樽市堺町4-9');
- assert.match(p.hours,/11:00–18:00/);
+ assert.match(p.hours,/11:00–18:30/);
+ assert.match(p.hours,/L\.O\. 18:00/);
 });
 test('Rendering still prefers user-supplied images over placeholders',()=>{
  assert.ok(f.indexOf('const supplied=suppliedPhotoMarkup(p);')<f.indexOf('const photo=VERIFIED_RESTAURANT_PHOTOS[p.id]'));
+});
+test('Six newly supplied restaurant photos map to exact IDs and are precached',()=>{
+ const expected={otaruIse:'isezushiOtaruEkinaka.png',l5:'narutoHonten.png',otaruSankaku:'takinamiShokudo.png',l6:'kumagera.png','x-biei':'asperges.png','x-tomita':'tomitaMelonHouse.png',furanoYuiga:'yuigaDoxon.png',furanoKodamaya:'kodamaya.png',furanoNatural:'naturalDiningFurano.png',furanoFukuzushi:'fukuzushi.png'};
+ for(const [id,file] of Object.entries(expected)){
+  assert.equal(photos[id],file);
+  assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants',file)).size>0,file+' missing or empty');
+  assert.ok(sw.includes('./assets/photos/restaurants/'+file),file+' not precached');
+ }
+ assert.match(f,/USER_RESTAURANT_PHOTO_CREDITS=\{l5:'圖片由使用者提供 · booji\.com／小布少爺'\}/);
 });

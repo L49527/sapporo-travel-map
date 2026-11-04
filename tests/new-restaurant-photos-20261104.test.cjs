@@ -8,11 +8,11 @@ const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
 function get(name){const prefix='const '+name+'=';const i=script.indexOf(prefix);assert.ok(i>=0);const j=script.indexOf(';',i);return JSON.parse(script.slice(i+prefix.length,j));}
 test('Store photos are unique except same Kakizaki physical shop',()=>{
  const photos=get('USER_RESTAURANT_PHOTOS');
- assert.equal(photos.b1,'b1.webp');
- assert.equal(photos['x-yoi'],'x-yoi.webp');
- assert.equal(photos['gx-yoi'],'x-yoi.webp');
- assert.equal(photos.otaruPoseidon,'otaruPoseidon.webp');
- for(const file of new Set(['b1.webp','x-yoi.webp','otaruPoseidon.webp'])){
+ assert.equal(photos.b1,'sandriaHonten.webp');
+ assert.equal(photos['x-yoi'],'kakizakiSeafoodKobo.webp');
+ assert.equal(photos['gx-yoi'],'kakizakiSeafoodKobo.webp');
+ assert.equal(photos.otaruPoseidon,'otaruPoseidonSakaimachi.webp');
+ for(const file of new Set(['sandriaHonten.webp','kakizakiSeafoodKobo.webp','otaruPoseidonSakaimachi.webp'])){
    assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',file)),file+' missing');
    assert.ok(sw.includes('./assets/photos/restaurants/'+file));
  }
@@ -30,4 +30,14 @@ test('Tabelog links and business hours are branch-specific',()=>{
 test('Souvenir photo reuses same-store image rather than generic photo',()=>{
  assert.match(script,/const userPhoto=suppliedPhotoMarkup\(p\)/);
  assert.match(script,/if\(userPhoto\)return userPhoto/);
+});
+test('New supplied restaurant mappings remain one-to-one and precached',()=>{
+ const expected={otaruIse:'isezushiOtaruEkinaka.png',l5:'narutoHonten.png',otaruSankaku:'takinamiShokudo.png',l6:'kumagera.png','x-biei':'asperges.png','x-tomita':'tomitaMelonHouse.png',furanoYuiga:'yuigaDoxon.png',furanoKodamaya:'kodamaya.png',furanoNatural:'naturalDiningFurano.png',furanoFukuzushi:'fukuzushi.png'};
+ const files=Object.values(expected);
+ assert.equal(new Set(files).size,files.length);
+ for(const [id,file] of Object.entries(expected)){
+  assert.equal(get('USER_RESTAURANT_PHOTOS')[id],file);
+  assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants',file)).size>0,file+' missing or empty');
+  assert.ok(sw.includes('./assets/photos/restaurants/'+file),file+' not precached');
+ }
 });

@@ -14,14 +14,16 @@ test('All three Noboribetsu shops have their own correct Tabelog links',()=>{
 });
 test('Noboribetsu onsen marketplace real photo is used on both same-store cards',()=>{
  const photos=parse(food,'const USER_RESTAURANT_PHOTOS=');
- assert.equal(photos['x-nobo'],'x-nobo.webp');
- assert.equal(photos['gx-nobo'],'x-nobo.webp');
- assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants/x-nobo.webp')));
+ assert.equal(photos['x-nobo'],'noboribetsuOnsenIchiba.webp');
+ assert.equal(photos['gx-nobo'],'noboribetsuOnsenIchiba.webp');
+ assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants/noboribetsuOnsenIchiba.webp')));
+ assert.equal(photos.noboDaio,'ajinoDaioNoboribetsu.webp');
+ assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants/ajinoDaioNoboribetsu.webp')).size>10000);
 });
 test('Addresses and hours are tied to correct shops',()=>{
  const restaurant=parse(dining,'window.HOKKAIDO_DINING=').catalog;
  assert.match(restaurant.noboDaio.address,/29-9/);
- assert.match(restaurant.noboDaio.hours,/L.O.14:50/);
+ assert.match(restaurant.noboDaio.hours,/L\.O\. ?14:50/);
  assert.match(restaurant.noboNobojin.address,/石川ビル2F/);
- assert.match(restaurant.noboNobojin.hours,/L.O.20:30/);
+ assert.match(restaurant.noboNobojin.hours,/L\.O\. ?20:30/);
 });

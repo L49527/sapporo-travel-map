@@ -1,5 +1,6 @@
 /* HOKKAIDO motion system — lightweight, no React or animation dependency.
-   Cards only become hidden if interaction-effects.js explicitly observes them. */
+   Motion only runs when interaction-effects.js adds .motion-on to <html>,
+   so content can never be hidden by CSS alone. */
 
 /* Smooth compact-menu opening and closing, not display:none toggling. */
 @media (max-width: 1250px) {
@@ -33,36 +34,41 @@
   }
 }
 
+/* Clip horizontal entrances at the page boundary without blocking vertical scroll. */
+main#top { overflow-x: clip; }
+
 /* Enter viewport once. 'backwards' does not pin the final transform,
-   therefore subsequent hover and touch interactions can still work. */
-@media (prefers-reduced-motion: no-preference) {
-  .reveal-pending {
-    opacity: 0 !important;
-    transform: translate3d(0, 26px, 0) !important;
-  }
-  .reveal-visible {
-    animation: hokkaido-card-reveal 680ms cubic-bezier(.22, 1, .36, 1) backwards;
-    animation-delay: var(--reveal-delay, 0ms);
-  }
-  @keyframes hokkaido-card-reveal {
-    from { opacity: 0; transform: translate3d(0, 26px, 0); }
-    to { opacity: 1; transform: translate3d(0, 0, 0); }
-  }
+   therefore subsequent hover and touch interactions can still work.
+   Gated on html.motion-on instead of the prefers-reduced-motion media query:
+   every browser that supports IntersectionObserver then animates, and
+   interaction-effects.js removes the class when the user asks for less motion. */
+html.motion-on .reveal-pending {
+  opacity: 0 !important;
+  transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 80px), 0) !important;
+  will-change: opacity, transform;
+}
+html.motion-on .reveal-visible {
+  animation: hokkaido-card-reveal var(--reveal-duration, 550ms) cubic-bezier(.22, 1, .36, 1) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+@keyframes hokkaido-card-reveal {
+  from { opacity: 0; transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 80px), 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
-/* Desktop: all key travel cards, hotels and daily dining cards lift on hover. */
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .tour-card, .highlight-card, .hotel,
-  .dd-pick, .fg-card, .dd-overview-item {
+/* Desktop: key travel cards, hotels and daily dining cards lift on hover. */
+@media (hover: hover) and (pointer: fine) {
+  html.motion-on .tour-card, html.motion-on .highlight-card, html.motion-on .hotel,
+  html.motion-on .dd-pick, html.motion-on .fg-card, html.motion-on .dd-overview-item {
     transition: transform 220ms cubic-bezier(.22, 1, .36, 1),
       box-shadow 220ms ease, border-color 220ms ease;
   }
-  .tour-card:not(.reveal-pending):hover,
-  .highlight-card:not(.reveal-pending):hover,
-  .hotel:not(.reveal-pending):hover,
-  .dd-pick:not(.reveal-pending):hover,
-  .fg-card:not(.reveal-pending):hover,
-  .dd-overview-item:not(.reveal-pending):hover {
+  html.motion-on .tour-card:not(.reveal-pending):hover,
+  html.motion-on .highlight-card:not(.reveal-pending):hover,
+  html.motion-on .hotel:not(.reveal-pending):hover,
+  html.motion-on .dd-pick:not(.reveal-pending):hover,
+  html.motion-on .fg-card:not(.reveal-pending):hover,
+  html.motion-on .dd-overview-item:not(.reveal-pending):hover {
     transform: translateY(-6px) !important;
     box-shadow: 0 14px 30px rgba(22, 54, 43, .16) !important;
   }
@@ -89,6 +95,7 @@
 
 /* Always respect accessibility settings and keep content visible. */
 @media (prefers-reduced-motion: reduce) {
+  html.motion-on .reveal-pending, html.motion-on .reveal-visible,
   .reveal-pending, .reveal-visible {
     opacity: 1 !important;
     transform: none !important;

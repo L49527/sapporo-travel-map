@@ -1,13 +1,13 @@
 # 2026-11-04 Sandria／二條市場／柿崎商店／小樽ポセイ丼更新
 
-依使用者逐張提供的餐廳照片，加入三個獨立 WebP 圖片檔，並依據餐廳 ID 指派。
+依使用者逐張提供的餐廳照片，加入獨立圖片檔並依餐廳 ID 指派。檔名已改為店家 slug。
 
 | 名稱 | ID | 檔案 | 備註 |
 |---|---|---|---|
-| サンドイッチ工房 サンドリア 本店 | `b1` | `b1.webp` | 使用者提供實拍 |
-| どんぶり茶屋 さっぽろ二条市場店 | `b2` | 尚無可匯入原圖 | 已修正 Tabelog 及營業時間；絕不套其他店照片 |
-| 柿崎商店 海鮮工房 | `x-yoi` | `x-yoi.webp` | 同店選物 `gx-yoi` 共用 |
-| 小樽ポセイ丼 堺町総本店 | `otaruPoseidon` | `otaruPoseidon.webp` | 使用者提供實拍 |
+| サンドイッチ工房 サンドリア 本店 | `b1` | `sandriaHonten.webp` | 使用者提供實拍 |
+| どんぶり茶屋 さっぽろ二条市場店 | `b2` | `donburiChayaNijo.png` | 使用者其後提供實拍，與 `どんぶり茶屋` 共用 |
+| 柿崎商店 海鮮工房 | `x-yoi` | `kakizakiSeafoodKobo.webp` | 同店選物 `gx-yoi` 共用 |
+| 小樽ポセイ丼 堺町総本店 | `otaruPoseidon` | `otaruPoseidonSakaimachi.webp` | 使用者提供實拍 |
 
 ### 食べログ分店頁
 
@@ -18,6 +18,6 @@
 
 營業時間為 2026 年查詢時的參考資訊，2027 出發前須再核對。
 
-圖片放在 `assets/photos/restaurants/`，`js/food-guide.js` 的 `USER_RESTAURANT_PHOTOS` 負責綁定，`sw.js` v23 預先快取新增圖片。
+圖片放在 `assets/photos/restaurants/`，`js/food-guide.js` 的 `USER_RESTAURANT_PHOTOS` 負責綁定，`sw.js` cache `v34` 預先快取。
 
 使用者貼圖不必然代表擁有原照片著作權；公開轉載時須確認圖片有適當使用權。

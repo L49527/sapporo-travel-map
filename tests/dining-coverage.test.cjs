@@ -24,7 +24,7 @@ for(const day of ['0','1','2','3','4','5A','5B','5C','6']){
  });
 }
 test('default view limits and map wiring',()=>{
- assert.ok(guide.includes('const FEATURED={breakfast:2,lunch:3,dinner:3,gifts:2};'));
+ assert.ok(guide.includes('const FEATURED={breakfast:3,lunch:3,dinner:3,gifts:3};'));
  assert.match(guide,/hokkaido:daychange/);
  assert.match(guide,/function refreshMap/);
  for(const kind of ['lunch','dinner'])assert.ok(html.includes('id="dd-meals-'+kind+'"'));

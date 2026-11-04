@@ -1,0 +1,148 @@
+/* Cover layout, verified against Backroads Hero.tsx (2026-11-04).
+   This is the final authority for cover sizing and alignment. */
+:root { --cover-nav-height: 64px; }
+html { scroll-padding-top: calc(var(--cover-nav-height) + 16px); }
+body > .topnav {
+  position: fixed;
+  inset: 0 0 auto;
+  width: 100%;
+  height: var(--cover-nav-height);
+  background: #fff;
+  border: 0;
+  box-shadow: 0 2px 12px #163d4220;
+}
+.topnav .nav-wrap { width: min(1170px, calc(100% - 40px)); }
+.topnav .logo { min-width: 0; gap: 10px !important; }
+.topnav .logo strong { font-size: 18px; }
+.topnav .logo small { font-size: 8px; }
+.topnav .logo svg { width: 34px; height: 34px; }
+main#top { padding-top: 0; }
+.hero.hero-sapporo {
+  height: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  max-height: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #58aab3;
+}
+.hero.hero-sapporo .hero-shade {
+  background: linear-gradient(rgba(44, 174, 186, .54), rgba(0, 0, 0, .65)) !important;
+}
+.hero.hero-sapporo .hero-content {
+  width: min(720px, calc(100% - 48px));
+  height: auto;
+  min-height: inherit;
+  padding: calc(var(--cover-nav-height) + 72px) 0 100px;
+  justify-content: center !important;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+}
+.hero.hero-sapporo .hero-kicker {
+  margin: 0 0 20px;
+  font-size: 12px !important;
+  letter-spacing: .3em !important;
+  color: #fff !important;
+}
+.hero.hero-sapporo h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  gap: 12px;
+  line-height: 1.2;
+  text-shadow: 0 2px 20px #123d3f38;
+}
+.hero.hero-sapporo h1 .title-kanji {
+  font-family: 'PingFang TC', 'Noto Sans TC', system-ui, sans-serif !important;
+  font-size: clamp(52px, 6vw, 80px) !important;
+  font-weight: 600 !important;
+  letter-spacing: .18em !important;
+  padding-left: .18em;
+  line-height: 1.2;
+}
+.hero.hero-sapporo h1 .title-romaji {
+  font-family: system-ui, sans-serif !important;
+  font-size: clamp(28px, 4vw, 48px) !important;
+  font-weight: 600 !important;
+  letter-spacing: .14em !important;
+  padding-left: .14em;
+  margin-top: 0;
+  line-height: 1.3;
+}
+.hero.hero-sapporo .hero-dates {
+  margin: 20px 0 30px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.8;
+  letter-spacing: .12em;
+}
+.hero.hero-sapporo .hero-scroll {
+  position: static;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 54px;
+  padding: 12px 26px;
+  gap: 14px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  background: #fff;
+  color: #287e89;
+  font: 500 16px/1.5 system-ui, sans-serif;
+  letter-spacing: .06em;
+  box-shadow: 0 4px 8px #0002;
+  transition: background 250ms ease, color 250ms ease, transform 250ms ease;
+}
+.hero.hero-sapporo .hero-scroll:hover {
+  color: #fff;
+  background: transparent;
+  transform: scale(1.03);
+}
+.hero.hero-sapporo .hero-scroll span { font-size: 20px; }
+.hero.hero-sapporo .cover-pagination {
+  inset: auto 24px 28px !important;
+  width: min(430px, calc(100% - 48px)) !important;
+  margin: 0 auto;
+  gap: 8px !important;
+}
+@media (max-width: 580px) {
+  .topnav .nav-wrap { width: calc(100% - 32px); }
+  .topnav .logo strong { font-size: 16px; }
+  .hero.hero-sapporo .hero-content {
+    width: calc(100% - 40px);
+    padding-top: calc(var(--cover-nav-height) + 40px);
+    padding-bottom: 80px;
+  }
+  .hero.hero-sapporo .hero-kicker { font-size: 10px !important; }
+  .hero.hero-sapporo .hero-dates { font-size: 12px; letter-spacing: .08em; }
+  .hero.hero-sapporo .hero-visual img { object-position: 58% center !important; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero.hero-sapporo .hero-kicker,
+  .hero.hero-sapporo h1,
+  .hero.hero-sapporo .hero-dates,
+  .hero.hero-sapporo .hero-scroll {
+    animation: hokkaido-hero-enter 500ms ease-out backwards;
+  }
+  .hero.hero-sapporo h1 { animation-delay: 200ms; }
+  .hero.hero-sapporo .hero-dates { animation-delay: 350ms; }
+  .hero.hero-sapporo .hero-scroll { animation-delay: 500ms; }
+  @keyframes hokkaido-hero-enter {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero.hero-sapporo .hero-scroll { transition: none; }
+}
+@media print {
+  body > .topnav { display: none !important; }
+  .hero.hero-sapporo { min-height: 0 !important; height: 230px !important; }
+  .hero.hero-sapporo .hero-content { min-height: 0; padding: 24px 0; }
+  .hero.hero-sapporo .hero-scroll { display: none; }
+}

@@ -7,13 +7,21 @@ const f=fs.readFileSync(path.join(root,'js/food-guide.js'),'utf8');
 function data(prefix){const start=f.indexOf(prefix); assert.ok(start!==-1);const end=f.indexOf(';',start+prefix.length);return JSON.parse(f.slice(start+prefix.length,end));}
 const photos=data('const USER_RESTAURANT_PHOTOS=');
 const realFiles=new Set(Object.values(photos));
-test('user photograph mapping has 17 distinct assets and known same-shop duplicates',()=>{
- assert.equal(realFiles.size,17);
- assert.equal(Object.keys(photos).length,19);
+test('user photograph mapping retains known same-shop duplicates',()=>{
+ const aliases=[['l7','d7'],['l1','d6'],['x-yoi','gx-yoi'],['x-nobo','gx-nobo'],['どんぶり茶屋','b2'],['x-joz','gx-joz']];
+ for(const [a,b] of aliases)assert.equal(photos[a],photos[b]);
+ assert.equal(Object.keys(photos).length-realFiles.size,aliases.length,'unexpected cross-shop image reuse');
+
  assert.equal(photos.l7,photos.d7);
  assert.equal(photos.l1,photos.d6);
  for(const [id,file] of Object.entries(photos)){
-  assert.match(file,/^[A-Za-z0-9-]+\.webp$/,'Invalid photo name for '+id);
+  assert.match(file,/^[\p{L}\p{N}-]+\.(?:webp|png)$/u,'Invalid photo name for '+id);
+ }
+});
+test('new restaurant photo mappings cover each supplied venue',()=>{
+ for(const [id,file] of Object.entries({otaruIse:'isezushiOtaruEkinaka.png',l5:'narutoHonten.png',otaruSankaku:'takinamiShokudo.png',l6:'kumagera.png','x-biei':'asperges.png','x-tomita':'tomitaMelonHouse.png',furanoYuiga:'yuigaDoxon.png',furanoKodamaya:'kodamaya.png',furanoNatural:'naturalDiningFurano.png',furanoFukuzushi:'fukuzushi.png'})){
+  assert.equal(photos[id],file);
+  assert.ok(require('node:fs').statSync(path.join(root,'assets/photos/restaurants',file)).size>0,file+' missing or empty');
  }
 });
 test('Misaki Tabelog link and opening hours are correct',()=>{

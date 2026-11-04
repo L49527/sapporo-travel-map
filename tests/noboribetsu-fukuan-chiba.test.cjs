@@ -23,11 +23,15 @@ test('Day 6 A retains five practical lunch candidates without uncertain Chiba',(
  assert.equal(new Set(keys).size,keys.length);
  assert.equal(keys.filter(k=>k!=='noboChiba').length,5);
  assert.ok(keys.includes('noboEnmaken'));
- assert.match(catalog.catalog.noboChiba.hours,/待確認/);
+ assert.match(catalog.catalog.noboChiba.hours,/11:00–15:00/);
+ assert.match(catalog.catalog.noboChiba.hours,/週三休/);
 });
 test('Chiba Tabelog and user photo uploaded, correctly linked',()=>{
  assert.equal(direct.noboChiba,'https://tabelog.com/hokkaido/A0108/A010803/1023670/');
- assert.equal(photo.noboChiba,'noboChiba.webp');
- assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants/noboChiba.webp')).size>10000);
- assert.ok(sw.includes('sapporo-travel-shell-v28'));
+ assert.equal(photo.noboChiba,'chibaNoboribetsu.webp');
+ assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants/chibaNoboribetsu.webp')).size>10000);
+ const cache=sw.match(/const CACHE_NAME='sapporo-travel-shell-v(\d+)'/);
+ assert.ok(cache);
+ assert.ok(Number(cache[1])>=29,'PWA cache must be bumped for the new assets');
+ assert.ok(sw.includes('./assets/photos/restaurants/chibaNoboribetsu.webp'));
 });

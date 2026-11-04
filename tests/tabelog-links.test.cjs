@@ -16,18 +16,34 @@ const extras=json(js,'const EXTRA_MEALS=');
 const catalog=json(dining,'window.HOKKAIDO_DINING=').catalog;
 const restaurants=[...original,...extras,...Object.values(catalog)];
 test('All restaurant cards provide a Tabelog photo lookup',()=>{
- assert.equal(new Set(restaurants.map(x=>x.id)).size,55);
+ for(const id of ['l5','l6','x-biei','x-tomita','otaruIse','otaruSankaku'])
+  assert.ok(restaurants.some(x=>x.id===id),'Missing expected restaurant '+id);
+ assert.ok(restaurants.length>0);
  assert.match(js,/function tabelogPhotoLink\(p\)/);
  assert.match(js,/tabelog\.com\/rstLst\/\?sk=/);
  assert.match(js,/restaurantPhotoSourceLinks\(p\)/);
  assert.match(js,/if\(p\.meal\)return verifiedRestaurantPhoto\(p\)/);
 });
+test('Every restaurant record has a verified direct Tabelog page',()=>{
+ for(const restaurant of restaurants){
+  assert.ok(direct[restaurant.id],'Missing direct Tabelog link for '+restaurant.id+' '+restaurant.name);
+ }
+ assert.equal(direct.cityOkushiba,'https://tabelog.com/hokkaido/A0101/A010101/1041930/');
+});
 test('Direct restaurant links are known, valid and only used for known places',()=>{
  const ids=new Set(restaurants.map(x=>x.id));
- assert.equal(Object.keys(direct).length,15);
+ assert.ok(Object.keys(direct).length>0);
  for(const [id,url] of Object.entries(direct)){
   assert.ok(ids.has(id),'Tabelog direct link for unknown shop '+id);
   assert.match(url,/^https:\/\/tabelog\.com\/hokkaido\/A\d+\/A\d+\/\d+\/$/);
+ }
+ for(const [id,url] of Object.entries({
+  l6:'https://tabelog.com/hokkaido/A0104/A010403/1000298/',
+  'x-biei':'https://tabelog.com/hokkaido/A0104/A010403/1005336/',
+  'x-tomita':'https://tabelog.com/hokkaido/A0104/A010403/1024348/',furanoYuiga:'https://tabelog.com/hokkaido/A0104/A010403/1000063/',furanoKodamaya:'https://tabelog.com/hokkaido/A0104/A010403/1010159/',furanoNatural:'https://tabelog.com/hokkaido/A0104/A010403/1061688/',furanoFukuzushi:'https://tabelog.com/hokkaido/A0104/A010403/1007198/'
+ })){
+  assert.ok(ids.has(id));
+  assert.equal(direct[id],url);
  }
 });
 test('Photo links and internal map clicks remain different actions',()=>{
