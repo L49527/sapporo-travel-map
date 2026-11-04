@@ -29,5 +29,5 @@ test('Chiba Tabelog and user photo uploaded, correctly linked',()=>{
  assert.equal(direct.noboChiba,'https://tabelog.com/hokkaido/A0108/A010803/1023670/');
  assert.equal(photo.noboChiba,'noboChiba.webp');
  assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants/noboChiba.webp')).size>10000);
- assert.ok(sw.includes('sapporo-travel-shell-v27'));
+ assert.ok(sw.includes('sapporo-travel-shell-v28'));
 });
