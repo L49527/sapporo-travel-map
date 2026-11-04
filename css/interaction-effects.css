@@ -1,0 +1,101 @@
+/* HOKKAIDO motion system — lightweight, no React or animation dependency.
+   Cards only become hidden if interaction-effects.js explicitly observes them. */
+
+/* Smooth compact-menu opening and closing, not display:none toggling. */
+@media (max-width: 1250px) {
+  .topnav .main-links,
+  .topnav .main-links.open {
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  .topnav .main-links {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-12px);
+    clip-path: inset(0 0 100% 0);
+    transform-origin: top center;
+    transition: opacity 320ms ease, transform 320ms cubic-bezier(.22, 1, .36, 1),
+      clip-path 320ms cubic-bezier(.22, 1, .36, 1), visibility 0s linear 320ms;
+  }
+  .topnav .main-links.open {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+    animation: none !important; /* replaces the old 180ms entrance animation */
+    transition: opacity 320ms ease, transform 320ms cubic-bezier(.22, 1, .36, 1),
+      clip-path 320ms cubic-bezier(.22, 1, .36, 1), visibility 0s;
+  }
+}
+
+/* Enter viewport once. 'backwards' does not pin the final transform,
+   therefore subsequent hover and touch interactions can still work. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-pending {
+    opacity: 0 !important;
+    transform: translate3d(0, 26px, 0) !important;
+  }
+  .reveal-visible {
+    animation: hokkaido-card-reveal 680ms cubic-bezier(.22, 1, .36, 1) backwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+  @keyframes hokkaido-card-reveal {
+    from { opacity: 0; transform: translate3d(0, 26px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+}
+
+/* Desktop: all key travel cards, hotels and daily dining cards lift on hover. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .tour-card, .highlight-card, .hotel,
+  .dd-pick, .fg-card, .dd-overview-item {
+    transition: transform 220ms cubic-bezier(.22, 1, .36, 1),
+      box-shadow 220ms ease, border-color 220ms ease;
+  }
+  .tour-card:not(.reveal-pending):hover,
+  .highlight-card:not(.reveal-pending):hover,
+  .hotel:not(.reveal-pending):hover,
+  .dd-pick:not(.reveal-pending):hover,
+  .fg-card:not(.reveal-pending):hover,
+  .dd-overview-item:not(.reveal-pending):hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 14px 30px rgba(22, 54, 43, .16) !important;
+  }
+}
+
+/* Touch screens: show immediate press feedback without a fake navigation. */
+@media (hover: none), (pointer: coarse) {
+  .tour-card, .car-btn, .day-nav, .hotel-filter,
+  .hotel, .highlight-card, .dd-pick, .fg-card,
+  .dd-expand, .fg-tab, .menu-toggle {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tour-card.is-pressing, .car-btn.is-pressing,
+  .day-nav.is-pressing, .hotel-filter.is-pressing,
+  .hotel.is-pressing, .highlight-card.is-pressing,
+  .dd-pick.is-pressing, .fg-card.is-pressing,
+  .dd-expand.is-pressing, .fg-tab.is-pressing,
+  .menu-toggle.is-pressing {
+    transform: scale(.975) !important;
+    filter: brightness(.94);
+    transition: transform 110ms ease, filter 110ms ease !important;
+  }
+}
+
+/* Always respect accessibility settings and keep content visible. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-pending, .reveal-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .topnav .main-links, .topnav .main-links.open {
+    transition: none !important;
+    animation: none !important;
+  }
+}
