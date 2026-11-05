@@ -12,9 +12,10 @@ const json=(text,prefix)=>{
 };
 const direct=json(js,'const TABELOG_DIRECT=');
 const original=json(js,'const MEALS=');
+const breakfastExtra=json(js,'const BREAKFAST_EXTRA=');
 const extras=json(js,'const EXTRA_MEALS=');
 const catalog=json(dining,'window.HOKKAIDO_DINING=').catalog;
-const restaurants=[...original,...extras,...Object.values(catalog)];
+const restaurants=[...original,...breakfastExtra,...extras,...Object.values(catalog)];
 test('All restaurant cards provide a Tabelog photo lookup',()=>{
  for(const id of ['l5','l6','x-biei','x-tomita','otaruIse','otaruSankaku'])
   assert.ok(restaurants.some(x=>x.id===id),'Missing expected restaurant '+id);
