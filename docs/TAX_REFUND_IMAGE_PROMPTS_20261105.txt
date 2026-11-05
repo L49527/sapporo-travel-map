@@ -1,0 +1,60 @@
+工具模式：內建 image_gen；非 CLI / API。
+初版提示詞：
+Use case: infographic-diagram
+Asset type: Final raster infographic for an existing Traditional-Chinese Hokkaido travel website, also downloadable.
+Primary request: Create a refined Japanese travel-journal infographic explaining Japan's tax-free shopping refund system. Match an established editorial website: warm cream paper #f7f6f1, deep forest green #253f35 / #142b28, muted terracotta #a1503c, antique gold #a28b62, quiet grey-green #65736f. Sophisticated, restrained, warm, premium travel field guide. No blue/cyan palette.
+Style/medium: Fine ink linework with delicate flat gouache washes, slight natural paper grain, crisp typesetting, flat printed page, no photographed mockup. Large Traditional Chinese serif heading, clean legible Traditional Chinese body, tiny tracked English overlines and warm terracotta step numbers. Abundant negative space, thin olive dividers, mostly square corners. No cartoon people, no glossy 3D, no rounded dashboard cards.
+Composition: Landscape 3:2, high resolution. Header about 20%, four equal step columns in the middle 46%, two key numerical facts below about 18%, dark forest green reminder strip at bottom 16%. Clear reading order left to right. Four separate elegant small still-life illustrations, one per column: shopping bag and receipt; passport and payment card; suitcase and customs check terminal; payment card with refund arrow. Fine dotted travel-route line connects four columns behind the illustrations, never across text. No overlapping or tiny type. Make the third customs step most noticeable with a restrained terracotta accent. All text exact as below, no additions. Use real, correctly formed Traditional Chinese glyphs.
+Text (verbatim, preserve hierarchy):
+Top overline: "JAPAN TAX-FREE / 2026.11.01 起適用"
+Main title: "先付含稅價，離境確認後退款"
+Subtitle: "日本免稅新制 · 2027 北海道旅行適用"
+
+Column 1:
+"01 / 購物當下"
+"免稅店結帳"
+"出示護照"
+"先支付含稅價格"
+
+Column 2:
+"02 / 離店前"
+"登記退款方式"
+"依店家指示登記"
+"保留商品與購物憑證"
+
+Column 3:
+"03 / 離境機場"
+"海關確認攜出"
+"先完成確認，再托運"
+"必要時出示全部商品"
+
+Column 4:
+"04 / 確認完成後"
+"依約定方式退款"
+"由免稅店或受託業者處理"
+"入帳時間依業者規定"
+
+Left key fact:
+"¥5,000 以上"
+"同店・同日・未稅合計"
+Right key fact:
+"90 天內"
+"購買後於出境時完成海關確認"
+
+Bottom dark strip:
+"新千歲機場：先海關，後托運"
+"食品、化妝品雖免特殊密封包裝，仍不可在日本境內消耗。"
+Very small but legible footer within strip:
+"資料：日本觀光廳・日本海關｜2026.11.05 核對｜出發前請再次確認"
+Constraints: Accurate educational infographic, no claim of instant or guaranteed full 10% refund, no QR code, no unauthorized logo or watermark. This is a single flat finished illustration page, not a web UI screenshot. Make every Chinese sentence legible and exact.
+
+定向修正提示詞：
+Use case: precise-object-edit
+Asset type: final Japanese tax-refund infographic for the HOKKAIDO June 2027 travel website.
+Input image: Image 1 is the edit target, preserve the entire infographic.
+Primary request: Make ONLY these seasonal/illustrative corrections. The journey is early summer in Hokkaido, not winter.
+1) In the small top-right mountain landscape, replace all snow with lush muted olive/sage summer slopes and green foliage. No snow, no white caps. Preserve its current size and placement.
+2) On the footer's two small botanical decorations, remove snow and use restrained small green summer foliage, preserving their positions and scale.
+3) Make the passport in column 2 a neutral unbranded dark forest-green travel passport, with a small simple gold globe and the one English word "PASSPORT". Remove the Japanese national name, Japanese characters, chrysanthemum national crest, and the word JAPAN from that passport cover. This is a general foreign travel passport, not a Japanese passport.
+4) Replace the tiny snowcap-like light mountain marking on both payment cards with a simple gold horizontal line ornament, keeping the cards and all other features intact.
+Invariants: keep ALL existing infographic text outside the passport cover pixel-identical if possible; keep every Traditional Chinese heading, label, sentence, date, number, and footer text exactly unchanged; preserve the hierarchy, 4 columns, dimensions, forest/cream/terracotta/gold palette, paper grain, linework, margins, and all main objects. Do not add any objects or text. No snow anywhere. No new national emblems.
