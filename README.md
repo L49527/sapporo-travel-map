@@ -52,3 +52,5 @@ node --test tests/*.test.cjs
 ## 資料與照片說明
 
 外部店家連結、營業時間與房型資訊可能變動，預訂或出發前請以店家官方頁面再次確認。照片授權與來源記錄集中在 [`PHOTO_SOURCES.md`](PHOTO_SOURCES.md)；網站維護結構可參考 [`ARCHITECTURE.md`](ARCHITECTURE.md)。
+
+歷史需求、照片批次、食べログ稽核與驗證紀錄集中在 [`docs/archive/`](docs/archive/)，後續由其他 AI 維護前可先閱讀相關文件，了解既有規則與取捨。
