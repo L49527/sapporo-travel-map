@@ -13,8 +13,8 @@
 - `js/map-local-advice.js`、`js/map-status.js`：地圖提示與載入狀態。
 - `js/pwa-register.js`：Service Worker 註冊。
 - `js/food-guide.js`：每日美食、名產與位置資料及渲染。
-- `assets/photos/*.webp`：從 JavaScript 取出的 2 張 WebP；同一張照片原本重複內嵌兩次。
-- `sw.js`：PWA 預先快取的檔案清單（版本 v10）。
+- `assets/photos/**/*.webp`：本地照片一律 WebP。原 15 張 PNG 已轉 WebP（約 7MB→0.6MB）；6 張截斷 PNG 移至 `docs/archive/corrupted-photos-20261107/` 待重新匯出，不進站。
+- `sw.js`：PWA 快取（`CACHE_NAME` 單一來源，現為 v44）。Shell（HTML/CSS/JS/manifest/icons/封面）進 `sapporo-travel-shell-v44`；餐廳/特產照片進 `sapporo-travel-photos-v44` 於 install 後背景補齊，另有 fetch 時按需回填。新增照片時同步加進 `PHOTO_PRECACHE` 並往後加快取版本。
 - `manifest.webmanifest`、`icons/`：原有 PWA 與 Logo 素材。
 
 ## 開發與部署
@@ -30,4 +30,4 @@ GitHub Pages 的子路徑是 `/sapporo-travel-map/`，因此資源 URL 使用 `.
 JS 仍以原 HTML 的相同順序載入；`js/map.js` 保持 `type="module"`。食物資料仍保留在 `js/food-guide.js`，
 後續可在完整瀏覽器回歸測試後再獨立為 JSON 模組。
 
-更新 PWA 後，先在有網路時載入一次，才能預快取完整新版資源。
+更新 PWA 後，先在有網路時載入一次；快取版本以 `sw.js` 的 `CACHE_NAME` 為準。Shell 優先、照片背景補齊，照片也會有 fetch 時按需快取。

@@ -8,7 +8,8 @@ function data(prefix){const start=f.indexOf(prefix); assert.ok(start!==-1);const
 const photos=data('const USER_RESTAURANT_PHOTOS=');
 const realFiles=new Set(Object.values(photos));
 test('user photograph mapping retains known same-shop duplicates',()=>{
- const aliases=[['l7','d7'],['l1','d6'],['x-yoi','gx-yoi'],['x-nobo','gx-nobo'],['どんぶり茶屋','b2'],['x-joz','gx-joz']];
+ // donburi b2/どんぶり茶屋 原檔截斷（docs/archive/corrupted-photos-20261107），已移除映射，不再是同店別名
+ const aliases=[['l7','d7'],['l1','d6'],['x-yoi','gx-yoi'],['x-nobo','gx-nobo'],['x-joz','gx-joz']];
  for(const [a,b] of aliases)assert.equal(photos[a],photos[b]);
  assert.equal(Object.keys(photos).length-realFiles.size,aliases.length,'unexpected cross-shop image reuse');
 
@@ -19,7 +20,7 @@ test('user photograph mapping retains known same-shop duplicates',()=>{
  }
 });
 test('new restaurant photo mappings cover each supplied venue',()=>{
- for(const [id,file] of Object.entries({otaruIse:'isezushiOtaruEkinaka.png',l5:'narutoHonten.png',otaruSankaku:'takinamiShokudo.png',l6:'kumagera.png','x-biei':'asperges.png','x-tomita':'tomitaMelonHouse.png',furanoYuiga:'yuigaDoxon.png',furanoKodamaya:'kodamaya.png',furanoNatural:'naturalDiningFurano.png',furanoFukuzushi:'fukuzushi.png'})){
+ for(const [id,file] of Object.entries({otaruIse:'isezushiOtaruEkinaka.webp',l5:'narutoHonten.webp',otaruSankaku:'takinamiShokudo.webp',l6:'kumagera.webp','x-tomita':'tomitaMelonHouse.webp',furanoKodamaya:'kodamaya.webp',furanoNatural:'naturalDiningFurano.webp',furanoFukuzushi:'fukuzushi.webp'})){
   assert.equal(photos[id],file);
   assert.ok(require('node:fs').statSync(path.join(root,'assets/photos/restaurants',file)).size>0,file+' missing or empty');
  }

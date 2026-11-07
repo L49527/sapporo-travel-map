@@ -9,9 +9,12 @@ const readJSON=(str,prefix)=>{let i=str.indexOf(prefix);assert.ok(i>=0);return J
 const pics=readJSON(src,'const USER_RESTAURANT_PHOTOS=');
 const links=readJSON(src,'const TABELOG_DIRECT=');
 const restaurants=readJSON(cat,'window.HOKKAIDO_DINING=').catalog;
-test('Donburi Chaya photograph uses the exact existing filename',()=>{
- assert.equal(pics.b2,'donburiChayaNijo.png');
- assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',pics.b2)));
+test('Donburi Chaya corrupted photo is archived and not rendered as stock',()=>{
+ // donburiChayaNijo.png 是 786KB 截斷 PNG（缺 IEND），已移至 archive 待重新匯出。
+ assert.equal(pics.b2,undefined,'truncated photo must not be mapped');
+ assert.equal(pics['どんぶり茶屋'],undefined);
+ assert.ok(fs.existsSync(path.join(root,'docs/archive/corrupted-photos-20261107/donburiChayaNijo.png')));
+ assert.ok(!fs.existsSync(path.join(root,'assets/photos/restaurants/donburiChayaNijo.png')));
  assert.match(src,/if\(p\.meal\)return verifiedRestaurantPhoto\(p\)/);
 });
 test('Otaru Isezushi station and Takinami Tabelog links are correct',()=>{
@@ -19,7 +22,7 @@ test('Otaru Isezushi station and Takinami Tabelog links are correct',()=>{
  assert.equal(links.otaruSankaku,'https://tabelog.com/hokkaido/A0106/A010601/1027887/');
  assert.match(restaurants.otaruIse.hours,/11:00–15:00/);
  assert.match(restaurants.otaruSankaku.hours,/07:00–17:00/);
- const expected={otaruIse:'isezushiOtaruEkinaka.png',otaruSankaku:'takinamiShokudo.png',l5:'narutoHonten.png',l6:'kumagera.png','x-biei':'asperges.png','x-tomita':'tomitaMelonHouse.png',furanoYuiga:'yuigaDoxon.png',furanoKodamaya:'kodamaya.png',furanoNatural:'naturalDiningFurano.png',furanoFukuzushi:'fukuzushi.png'};
+ const expected={otaruIse:'isezushiOtaruEkinaka.webp',otaruSankaku:'takinamiShokudo.webp',l5:'narutoHonten.webp',l6:'kumagera.webp','x-tomita':'tomitaMelonHouse.webp',furanoKodamaya:'kodamaya.webp',furanoNatural:'naturalDiningFurano.webp',furanoFukuzushi:'fukuzushi.webp'};
  const files=Object.entries(expected).map(([id,file])=>{
   assert.equal(pics[id],file);
   const target=path.join(root,'assets/photos/restaurants',file);

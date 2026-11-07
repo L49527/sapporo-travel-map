@@ -6,8 +6,8 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#153e47",
+  "background_color": "#fcfaf6",
+  "theme_color": "#253f35",
   "lang": "zh-TW",
   "icons": [
     {
@@ -27,6 +27,15 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./assets/photos/sapporo-odori-cover.webp",
+      "sizes": "1200x800",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "札幌大通公園與電視塔"
     }
   ]
 }

@@ -12,14 +12,12 @@ function parse(prefix){
  return JSON.parse(food.slice(at+prefix.length,food.indexOf(';',at+prefix.length)));
 }
 
-test('five supplied specialty photos map to the intended products and are precached',()=>{
+test('two healthy supplied specialty photos map to the intended products and are precached',()=>{
+ // s9/s12/s13 原檔截斷，已移至 docs/archive/corrupted-photos-20261107 待重新匯出。
  const photos=parse('const USER_SPECIALTY_PHOTOS=');
  const expected={
-  s8:'bieiCornBread.png',
-  s9:'jagaPokkuru.png',
-  s11:'furanoLavenderCandle.png',
-  s12:'furanoWineCheddarCheese.png',
-  s13:'horiYubariMelonPureJelly.png'
+  s8:'bieiCornBread.webp',
+  s11:'furanoLavenderCandle.webp'
  };
  assert.deepEqual(photos,expected);
  for(const file of Object.values(expected)){
@@ -27,6 +25,7 @@ test('five supplied specialty photos map to the intended products and are precac
   assert.ok(fs.statSync(target).size>10000,file+' missing or too small');
   assert.ok(sw.includes('./assets/photos/specialties/'+file),file+' not precached');
  }
+ for(const id of ['s9','s12','s13'])assert.equal(photos[id],undefined,id+' must not map to truncated png');
  assert.match(food,/suppliedSpecialtyPhotoMarkup\(p\)/);
  assert.match(food,/data-specialty-photo/);
 });

@@ -41,4 +41,4 @@
 
 ## 相容性
 - 保留 Day 1–7、A/B/C、0/1/2 天租車、選店後地圖聚焦及「探索更多」邏輯。
-- PWA shell version: v12。外部 Wikimedia Commons 影像不納入離線快取保證。
+- PWA 快取版本以 `sw.js` 的 `CACHE_NAME` 為準（現 v44）。本地照片在照片快取裡背景補齊；外部 Wikimedia Commons 影像不預快取、僅瀏覽器 HTTP 快取。2026-11 起本地照片一律 WebP；6 張截斷 PNG 見 `docs/archive/corrupted-photos-20261107/README.md`。

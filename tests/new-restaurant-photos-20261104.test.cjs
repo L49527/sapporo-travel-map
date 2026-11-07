@@ -32,7 +32,7 @@ test('Souvenir photo reuses same-store image rather than generic photo',()=>{
  assert.match(script,/if\(userPhoto\)return userPhoto/);
 });
 test('New supplied restaurant mappings remain one-to-one and precached',()=>{
- const expected={otaruIse:'isezushiOtaruEkinaka.png',l5:'narutoHonten.png',otaruSankaku:'takinamiShokudo.png',l6:'kumagera.png','x-biei':'asperges.png','x-tomita':'tomitaMelonHouse.png',furanoYuiga:'yuigaDoxon.png',furanoKodamaya:'kodamaya.png',furanoNatural:'naturalDiningFurano.png',furanoFukuzushi:'fukuzushi.png'};
+ const expected={otaruIse:'isezushiOtaruEkinaka.webp',l5:'narutoHonten.webp',otaruSankaku:'takinamiShokudo.webp',l6:'kumagera.webp','x-tomita':'tomitaMelonHouse.webp',furanoKodamaya:'kodamaya.webp',furanoNatural:'naturalDiningFurano.webp',furanoFukuzushi:'fukuzushi.webp'};
  const files=Object.values(expected);
  assert.equal(new Set(files).size,files.length);
  for(const [id,file] of Object.entries(expected)){

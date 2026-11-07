@@ -8,7 +8,7 @@
 - 餐廳與名產卡片，附分店、營業時間、照片來源與食べログ／官方連結。
 - 飯店卡片：外觀與三人以上房型照片輪換，並標示房內設施與洗衣方式。
 - MapLibre 互動地圖、行前清單、封面輪播、進場動畫與 PWA 快取。
-- 使用者提供的餐廳與特產照片均放在 `assets/photos/`。
+- 使用者提供的餐廳與特產照片均放在 `assets/photos/`，一律 WebP（長邊 ≤1100px）。6 張截斷 PNG 移至 `docs/archive/corrupted-photos-20261107/` 待重新匯出。
 
 ## 本機預覽
 
@@ -36,7 +36,7 @@ python3 -m http.server 8000
 | `js/map.js` | MapLibre 地圖 |
 | `assets/photos/` | 餐廳、名產與飯店本地圖片 |
 | `icons/`、`manifest.webmanifest` | PWA 圖示與設定 |
-| `sw.js` | Service Worker 與離線快取清單 |
+| `sw.js` | Service Worker 與離線快取（shell + photos 雙快取，版本以 `CACHE_NAME` 為準，現 v44） |
 | `tests/` | 資料與頁面結構檢查 |
 
 ## 驗證
@@ -47,7 +47,7 @@ python3 -m http.server 8000
 node --test tests/*.test.cjs
 ```
 
-新增或更換本地圖片時，同步檢查 `sw.js` 的快取清單與相關測試。
+新增或更換本地圖片時，同步檢查 `sw.js` 的快取清單與相關測試。預算試算會記在瀏覽器；飯店照片離屏或 `prefers-reduced-motion` 時不輪換。CI 在 `.github/workflows/test.yml` 跑 `npm test`。
 
 ## 資料與照片說明
 

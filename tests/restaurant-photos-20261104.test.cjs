@@ -32,7 +32,7 @@ test('Rendering still prefers user-supplied images over placeholders',()=>{
  assert.ok(f.indexOf('const supplied=suppliedPhotoMarkup(p);')<f.indexOf('const photo=VERIFIED_RESTAURANT_PHOTOS[p.id]'));
 });
 test('Six newly supplied restaurant photos map to exact IDs and are precached',()=>{
- const expected={otaruIse:'isezushiOtaruEkinaka.png',l5:'narutoHonten.png',otaruSankaku:'takinamiShokudo.png',l6:'kumagera.png','x-biei':'asperges.png','x-tomita':'tomitaMelonHouse.png',furanoYuiga:'yuigaDoxon.png',furanoKodamaya:'kodamaya.png',furanoNatural:'naturalDiningFurano.png',furanoFukuzushi:'fukuzushi.png'};
+ const expected={otaruIse:'isezushiOtaruEkinaka.webp',l5:'narutoHonten.webp',otaruSankaku:'takinamiShokudo.webp',l6:'kumagera.webp','x-tomita':'tomitaMelonHouse.webp',furanoKodamaya:'kodamaya.webp',furanoNatural:'naturalDiningFurano.webp',furanoFukuzushi:'fukuzushi.webp'};
  for(const [id,file] of Object.entries(expected)){
   assert.equal(photos[id],file);
   assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants',file)).size>0,file+' missing or empty');

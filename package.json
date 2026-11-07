@@ -1,0 +1,12 @@
+{
+  "name": "sapporo-travel-map",
+  "version": "1.0.0",
+  "private": true,
+  "description": "札幌・北海道 2027 七日旅行地圖（純靜態網站）",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  }
+}

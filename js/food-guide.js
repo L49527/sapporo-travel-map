@@ -197,7 +197,8 @@ function googleRealPhotosURL(p){
 // Photos selected and supplied in this conversation, keyed by actual restaurant ID.
 // Do not display another restaurant's photo. Asset files are provided separately in the
 // image package and must be committed under assets/photos/restaurants/ before rendering.
-const USER_SPECIALTY_PHOTOS={"s8":"bieiCornBread.png","s9":"jagaPokkuru.png","s11":"furanoLavenderCandle.png","s12":"furanoWineCheddarCheese.png","s13":"horiYubariMelonPureJelly.png"};
+// s9/s12/s13 原檔損壞（見 docs/archive/corrupted-photos-20261107/README.md），待重新匯出後再加回。
+const USER_SPECIALTY_PHOTOS={"s8":"bieiCornBread.webp","s11":"furanoLavenderCandle.webp"};
 function suppliedSpecialtyPhotoMarkup(p){
  const file=USER_SPECIALTY_PHOTOS[p.id];
  if(!file)return null;
@@ -206,12 +207,12 @@ function suppliedSpecialtyPhotoMarkup(p){
    '<img src="'+safe(path)+'" alt="'+safe(p.name+'：使用者提供的特產商品照片')+'" loading="lazy" decoding="async">'+
    '<figcaption><span>'+safe(p.name)+' · 商品照片</span><span>圖片由使用者提供</span></figcaption></figure>';
 }
-const USER_RESTAURANT_PHOTOS={"d4":"keyakiSusukinoHonten.webp","l7":"matsuiJingisukanOdoriMinami1.webp","d7":"matsuiJingisukanOdoriMinami1.webp","d2":"hachikyoHonten.webp","d5":"kaniHonkeSapporoEkimae.webp","d3":"sapporoBeerGarden.webp","l1":"garakuSapporoHonten.webp","d6":"garakuSapporoHonten.webp","l2":"nemuroHanamaruJrTower.webp","l3":"shingenMinami6.webp","d1":"darumaHonten.webp","airportIchigen":"ichigenNewChitose.webp","airportShirakaba":"shirakabaSansoNewChitose.webp","airportKantaro":"kantaroNewChitose.webp","airportNewSanko":"otaruNewSankoNewChitose.webp","airportHanabusa":"hanabusaNewChitose.webp","airportKeyaki":"keyakiNewChitose.webp","b3":"cafeYoshimiAkarenga.webp","b4":"northernTerraceDiner.webp","x-shako":"misakiShakotan.webp","x-shik":"lakesideKitchenTonton.webp","citySuage":"suagePlus.webp","cityIchigen":"ichigenSohonten.webp","cityOkushiba":"okushibaSoseiji.webp","l4":"otaruMasazushiHonten.webp","otaruWaraku":"warakuOtaru.webp","b1":"sandriaHonten.webp","x-yoi":"kakizakiSeafoodKobo.webp","gx-yoi":"kakizakiSeafoodKobo.webp","otaruPoseidon":"otaruPoseidonSakaimachi.webp","どんぶり茶屋":"donburiChayaNijo.png","b2":"donburiChayaNijo.png","x-nobo":"noboribetsuOnsenIchiba.webp","gx-nobo":"noboribetsuOnsenIchiba.webp","noboChiba":"chibaNoboribetsu.webp","noboDaio":"ajinoDaioNoboribetsu.webp","otaruIse":"isezushiOtaruEkinaka.png","l5":"narutoHonten.png","otaruSankaku":"takinamiShokudo.png","l6":"kumagera.png","x-biei":"asperges.png","x-tomita":"tomitaMelonHouse.png","furanoYuiga":"yuigaDoxon.png","furanoKodamaya":"kodamaya.png","furanoNatural":"naturalDiningFurano.png","furanoFukuzushi":"fukuzushi.png","noboNobojin":"hokkaidoBbqNobojin.webp","shakotanNakamuraya":"nakamurayaShakotan.webp","shakotanFuji":"fujizushiShakotan.webp","shakotanRinkou":"rinkouShokudo.webp","shakotanSugino":"suginoUnizenShakotan.webp","jozanIchi":"shokudoIchiJozan.webp","jozanKonno":"shokudoKonnoJozan.webp","jozanShiumai":"shiumaiHayama.webp","jozanFranse":"franseJozan.webp","jozanHakken":"hakkenzanKitchenMarche.webp","noboKitaUdon":"kitaNoboruUdon.webp","noboEnmaken":"enmakenNoboribetsu.webp","gx-shik":"memereLakesideSweets.webp","s7":"kamaeiFactoryStore.webp","gx-furano":"farmTomitaSouvenirs.webp","x-joz":"furukawaFruitGlacee.webp","gx-joz":"furukawaFruitGlacee.webp"};
-USER_RESTAURANT_PHOTOS.b8='juneCoffeeSapporo.png';
-USER_RESTAURANT_PHOTOS.b9='starbucksSapporoStellarPlace.png';
-USER_RESTAURANT_PHOTOS.b6='ohisoNijoMarket.png';
-USER_RESTAURANT_PHOTOS.b7='uomasaMarketSushi.png';
-USER_RESTAURANT_PHOTOS.b5='kitanogurumeSeafood.png';
+const USER_RESTAURANT_PHOTOS={"d4":"keyakiSusukinoHonten.webp","l7":"matsuiJingisukanOdoriMinami1.webp","d7":"matsuiJingisukanOdoriMinami1.webp","d2":"hachikyoHonten.webp","d5":"kaniHonkeSapporoEkimae.webp","d3":"sapporoBeerGarden.webp","l1":"garakuSapporoHonten.webp","d6":"garakuSapporoHonten.webp","l2":"nemuroHanamaruJrTower.webp","l3":"shingenMinami6.webp","d1":"darumaHonten.webp","airportIchigen":"ichigenNewChitose.webp","airportShirakaba":"shirakabaSansoNewChitose.webp","airportKantaro":"kantaroNewChitose.webp","airportNewSanko":"otaruNewSankoNewChitose.webp","airportHanabusa":"hanabusaNewChitose.webp","airportKeyaki":"keyakiNewChitose.webp","b3":"cafeYoshimiAkarenga.webp","b4":"northernTerraceDiner.webp","x-shako":"misakiShakotan.webp","x-shik":"lakesideKitchenTonton.webp","citySuage":"suagePlus.webp","cityIchigen":"ichigenSohonten.webp","cityOkushiba":"okushibaSoseiji.webp","l4":"otaruMasazushiHonten.webp","otaruWaraku":"warakuOtaru.webp","b1":"sandriaHonten.webp","x-yoi":"kakizakiSeafoodKobo.webp","gx-yoi":"kakizakiSeafoodKobo.webp","otaruPoseidon":"otaruPoseidonSakaimachi.webp","x-nobo":"noboribetsuOnsenIchiba.webp","gx-nobo":"noboribetsuOnsenIchiba.webp","noboChiba":"chibaNoboribetsu.webp","noboDaio":"ajinoDaioNoboribetsu.webp","otaruIse":"isezushiOtaruEkinaka.webp","l5":"narutoHonten.webp","otaruSankaku":"takinamiShokudo.webp","l6":"kumagera.webp","x-tomita":"tomitaMelonHouse.webp","furanoKodamaya":"kodamaya.webp","furanoNatural":"naturalDiningFurano.webp","furanoFukuzushi":"fukuzushi.webp","noboNobojin":"hokkaidoBbqNobojin.webp","shakotanNakamuraya":"nakamurayaShakotan.webp","shakotanFuji":"fujizushiShakotan.webp","shakotanRinkou":"rinkouShokudo.webp","shakotanSugino":"suginoUnizenShakotan.webp","jozanIchi":"shokudoIchiJozan.webp","jozanKonno":"shokudoKonnoJozan.webp","jozanShiumai":"shiumaiHayama.webp","jozanFranse":"franseJozan.webp","jozanHakken":"hakkenzanKitchenMarche.webp","noboKitaUdon":"kitaNoboruUdon.webp","noboEnmaken":"enmakenNoboribetsu.webp","gx-shik":"memereLakesideSweets.webp","s7":"kamaeiFactoryStore.webp","gx-furano":"farmTomitaSouvenirs.webp","x-joz":"furukawaFruitGlacee.webp","gx-joz":"furukawaFruitGlacee.webp"};
+USER_RESTAURANT_PHOTOS.b8='juneCoffeeSapporo.webp';
+USER_RESTAURANT_PHOTOS.b9='starbucksSapporoStellarPlace.webp';
+USER_RESTAURANT_PHOTOS.b6='ohisoNijoMarket.webp';
+USER_RESTAURANT_PHOTOS.b7='uomasaMarketSushi.webp';
+USER_RESTAURANT_PHOTOS.b5='kitanogurumeSeafood.webp';
 const USER_RESTAURANT_PHOTO_CREDITS={l5:'圖片由使用者提供 · booji.com／小布少爺'};
 function suppliedPhotoMarkup(p){
  const file=USER_RESTAURANT_PHOTOS[p.id];
@@ -465,6 +466,21 @@ window.addEventListener('hokkaido:daychange',()=>{
 });
 showOverview();
 draw();
-initLocalMap();
+// Lazy: only load Leaflet when the day map scrolls near the viewport, so the
+// main MapLibre map does not compete with it on initial page load.
+(function lazyLocalMap(){
+ const panel=document.getElementById('fg-local-map');
+ if(!panel){initLocalMap();return;}
+ if(!('IntersectionObserver' in window)){initLocalMap();return;}
+ let started=false;
+ const observer=new IntersectionObserver(entries=>{
+  if(started)return;
+  if(entries.some(e=>e.isIntersecting)){started=true;observer.disconnect();initLocalMap();}
+ },{rootMargin:'400px 0px'});
+ observer.observe(panel);
+ // Fallback: focusPlace before map loads already queues pendingFocus; also load
+ // on first card interaction so clicking a place never waits for scroll.
+ dayRoot.addEventListener('click',()=>{if(!started){started=true;observer.disconnect();initLocalMap();}},{once:false});
+})();
 
 })();
