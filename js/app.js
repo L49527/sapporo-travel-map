@@ -1,5 +1,5 @@
 'use strict';
-const PHOTOS={"bluepond":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Biei_Blue-pond.jpg/800px-Biei_Blue-pond.jpg","otaru":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Otaru_Canal_Center.jpg/800px-Otaru_Canal_Center.jpg","flowers":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Shikisai-no-oka.jpg/800px-Shikisai-no-oka.jpg","sapporoLilac":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Odori_park_at_Sapporo_TV_tower.jpg/800px-Odori_park_at_Sapporo_TV_tower.jpg","farm":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Farm_Tomita_2.jpg/800px-Farm_Tomita_2.jpg","shakotan":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Cape_Kamui_HDR1.jpg/800px-Cape_Kamui_HDR1.jpg","noboribetsu":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Jigokudani_%28Hell_Valley%29%2C_Noboribetsu_Onsen%2C_Hokkaido%2C_April_2023_05.jpg/800px-Jigokudani_%28Hell_Valley%29%2C_Noboribetsu_Onsen%2C_Hokkaido%2C_April_2023_05.jpg","jozankei":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Jozankei_Onsen_02.jpg/800px-Jozankei_Onsen_02.jpg","hero":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Sapporo_TV_Tower_at_Odori_Park_01.jpg/1200px-Sapporo_TV_Tower_at_Odori_Park_01.jpg"};
+const PHOTOS={"bluepond":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Biei_Blue-pond.jpg/960px-Biei_Blue-pond.jpg","otaru":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Otaru_Canal_Center.jpg/960px-Otaru_Canal_Center.jpg","flowers":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Shikisai-no-oka.jpg/960px-Shikisai-no-oka.jpg","sapporoLilac":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Odori_park_at_Sapporo_TV_tower.jpg/960px-Odori_park_at_Sapporo_TV_tower.jpg","farm":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Farm_Tomita_2.jpg/960px-Farm_Tomita_2.jpg","shakotan":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Cape_Kamui_HDR1.jpg/960px-Cape_Kamui_HDR1.jpg","noboribetsu":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Jigokudani_%28Hell_Valley%29%2C_Noboribetsu_Onsen%2C_Hokkaido%2C_April_2023_05.jpg/960px-Jigokudani_%28Hell_Valley%29%2C_Noboribetsu_Onsen%2C_Hokkaido%2C_April_2023_05.jpg","jozankei":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Jozankei_Onsen_02.jpg/960px-Jozankei_Onsen_02.jpg","hero":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Sapporo_TV_Tower_at_Odori_Park_01.jpg/1280px-Sapporo_TV_Tower_at_Odori_Park_01.jpg"};
 const dates=['6/12 六','6/13 日','6/14 一','6/15 二','6/16 三','6/17 四','6/18 五'];
 const baseDays=[
  {title:'抵達札幌・薄野美食',desc:'從機場到城市，把第一天留給舒適的節奏。',image:'city',transport:'JR＋地鐵',geo:'札幌車站',stops:[['13:00–15:00','抵達新千歲機場','入境、領取行李；時段依實際航班調整'],['15:00–16:00','JR 快速列車到札幌','最快約 33 分鐘，依車種而異'],['16:00–17:30','飯店入住及休息','推薦連住札幌車站或大通周邊'],['18:00–21:00','薄野晚餐、狸小路散步','湯咖哩、味噌拉麵或成吉思汗烤肉']],note:'第一天不安排郊外景點，避免航班或入境時間延誤。'},
@@ -91,10 +91,71 @@ function updateTransitLinks(){let el=document.getElementById('transitResources')
 function adjustRailEstimate(){let el=document.getElementById('rail'); if(!el || el.dataset.manuallyEdited==='yes')return;el.value=railEstimate[state.car][state.plan]}
 
 const state={plan:'A',car:0,day:0,filter:'all'};
+
+function readTripUrl(){
+ const params=new URLSearchParams(location.search);
+ const plan=params.get('plan');
+ const car=params.get('car');
+ const day=params.get('day');
+ state.plan=['A','B','C'].includes(plan)?plan:'A';
+ state.car=/^[0-2]$/.test(car)?Number(car):0;
+ state.day=/^[1-7]$/.test(day)?Number(day)-1:0;
+}
+
+function setTripParams(url){
+ url.searchParams.set('plan',state.plan);
+ url.searchParams.set('car',String(state.car));
+ url.searchParams.set('day',String(state.day+1));
+ return url;
+}
+
+function syncTripUrl(){
+ if(location.protocol==='http:'||location.protocol==='https:'){
+  history.replaceState(history.state,'',setTripParams(new URL(location.href)));
+ }
+}
+
+function tripShareUrl(){
+ const localPreview=location.protocol==='file:'||['localhost','127.0.0.1','[::1]'].includes(location.hostname);
+ const url=setTripParams(new URL(localPreview?'https://l49527.github.io/sapporo-travel-map/':location.href));
+ url.hash='days';
+ return url.href;
+}
+
+async function shareDay(){
+ const field=$('#shareDayUrl');
+ const status=$('#shareDayStatus');
+ const url=tripShareUrl();
+ try{
+  await navigator.clipboard.writeText(url);
+  field.hidden=true;
+  status.textContent='已複製行程連結';
+ }catch(_){
+  field.value=url;
+  field.hidden=false;
+  field.focus();
+  field.select();
+  status.textContent='請複製下方連結';
+ }
+}
+
 const BUDGET_STORE='sapporo2027_budget_v1';
-const BUDGET_FIELDS=['people','flight','room','food','rail','car','activity','other'];
+const BUDGET_FIELDS=['people','flight','room','roomMode','roomSecond','roomTriple','food','rail','car','activity','other'];
 function saveBudget(){try{const data={};for(const id of BUDGET_FIELDS)data[id]=$('#'+id)?.value??'';data.railEdited=$('#rail')?.dataset.manuallyEdited==='yes';localStorage.setItem(BUDGET_STORE,JSON.stringify(data));}catch(_){}}
-function restoreBudget(){let raw=null;try{raw=localStorage.getItem(BUDGET_STORE);}catch(_){}if(!raw)return;let data=null;try{data=JSON.parse(raw);}catch(_){}if(!data||typeof data!=='object')return;for(const id of BUDGET_FIELDS){const el=$('#'+id);if(el&&data[id]!=null&&data[id]!=='')el.value=String(data[id]).slice(0,12);}const rail=$('#rail');if(rail&&data.railEdited)rail.dataset.manuallyEdited='yes';}
+function restoreBudget(){
+ let raw;
+ try{raw=localStorage.getItem(BUDGET_STORE);}catch(_){return;}
+ if(!raw)return;
+ let data;
+ try{data=JSON.parse(raw);}catch(_){return;}
+ if(!data||typeof data!=='object')return;
+ for(const id of BUDGET_FIELDS){
+  const field=$('#'+id);
+  if(field&&data[id]!=null&&data[id]!=='')field.value=String(data[id]).slice(0,12);
+ }
+ $('#roomMode').value=data.roomMode==='triple'?'triple':'two';
+ if(data.railEdited)$('#rail').dataset.manuallyEdited='yes';
+}
 const hotelPhotoTimers=[];
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const clean=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -102,10 +163,18 @@ const money=n=>'NT$'+Math.round(n).toLocaleString('en-US');
 const graphic={city:'hero',otaru:'otaru',bluepond:'bluepond',farm:'farm',festival:'hero',shrine:'sapporoLilac',noboribetsu:'noboribetsu',shikotsu:'bluepond',shakotan:'shakotan',jozankei:'sapporoLilac'};
 function getDay(i){return state.car===0?(i===3?noCarDayFour:i===5?noCarDaySix[state.plan]:baseDays[i]):i===5?variations[state.plan].day6[state.car]:baseDays[i]}
 function renderControls(){for(const el of $$('[data-plan]')){let on=el.dataset.plan===state.plan;el.classList.toggle('active',on);el.setAttribute('aria-pressed',String(on))}for(const el of $$('[data-car]')){let on=Number(el.dataset.car)===state.car;el.classList.toggle('active',on);el.setAttribute('aria-pressed',String(on))}$('#modeExplainer').textContent=state.car===0?'全程不開車：札幌搭 JR／地鐵、富良野美瑛參加一日巴士團；其他郊區依路線搭 JR／巴士／季節觀光巴士。':state.car===1?'市區搭 JR／地鐵；郊區租車一天，第二個郊外日依方案安排 JR＋巴士／預約巴士團。':'市區搭 JR／地鐵；6/15 美瑛・富良野及 6/17 郊外各自租車一天，不須在札幌市區開車。';$('#planNotice').textContent=state.car===0?noCarNotice[state.plan]:state.car===1?variations[state.plan].rental1:variations[state.plan].rental2;adjustRailEstimate();renderMap();renderDays();renderHotels();renderBudget()}
-function renderMap(){let v=variations[state.plan];$('#mapTitle').textContent='PLAN '+state.plan+'｜'+v.label;$('#mapDesc').textContent=v.intro;let r=state.car===0?noCarRoutes[state.plan]:state.car===1?v.route1:v.route2;$('#mapLines').innerHTML=r.map((x,i)=>`<div class="map-route"><strong>${i===0?'6/15｜美瑛・富良野':'6/17｜'+getDay(5).title}</strong><p>${clean(x)}</p></div>`).join('');$('#mapLink').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(state.plan==='A'?'支笏湖 登別 北海道':state.plan==='B'?'積丹 神威岬 北海道':'定山溪 支笏湖 北海道');
+function renderMap(){let v=variations[state.plan];$('#mapTitle').textContent='PLAN '+state.plan+'｜'+v.label;$('#mapDesc').textContent=v.intro;let r=state.car===0?noCarRoutes[state.plan]:state.car===1?v.route1:v.route2;$('#mapLines').innerHTML=r.map((x,i)=>`<div class="map-route"><strong>${i===0?'6/15｜美瑛・富良野':'6/17｜'+getDay(5).title}</strong><p>${clean(x)}</p></div>`).join('');$('#mapLink').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(getDay(5).geo);
  const map={sapporo:[318,300,'札幌'],furano:[486,207,'富良野'],biei:[487,158,'美瑛'],blue:[539,177,'青池'],otaru:[251,279,'小樽'],yoichi:[201,265,'余市'],shakotan:[144,205,'積丹'],shikotsu:[323,355,'支笏湖'],noboribetsu:[236,388,'登別'],jozankei:[258,336,'定山溪']};
  let names=['sapporo','furano','biei','blue','otaru'];if(state.plan==='A')names.push('noboribetsu',...(state.car===2?['shikotsu']:[]));if(state.plan==='B')names.push('yoichi','shakotan');if(state.plan==='C')names.push('jozankei',...(state.car===2?['shikotsu']:[]));names=[...new Set(names)];$('#mapPoints').innerHTML=names.map((n,i)=>{const [x,y,t]=map[n];return `<g><circle cx="${x}" cy="${y}" r="${n==='sapporo'?12:8}" fill="${n==='sapporo'?'#d97249':'#176b88'}" stroke="#fff" stroke-width="3"/><text x="${x+13}" y="${y-8}" font-family="sans-serif" font-size="14" font-weight="700" fill="#213b4a" paint-order="stroke" stroke="#e7efee" stroke-width="4">${t}</text></g>`}).join('');const path=state.car===0?[map.sapporo,map.furano,map.biei,map.blue,map.sapporo]:[map.sapporo,map.furano,map.biei,map.blue,map.sapporo];$('#mapRoutes').setAttribute('stroke-dasharray',state.car===0?'8 10':'none');if(state.car===2){let more=state.plan==='A'?['shikotsu','noboribetsu']:state.plan==='B'?['yoichi','shakotan']:['jozankei','shikotsu'];path.push(...more.map(n=>map[n]),map.sapporo)}$('#mapRoutes').setAttribute('d','M'+path.map(([x,y])=>x+' '+y).join(' L'));window.dispatchEvent(new CustomEvent('hokkaido:routechange',{detail:{plan:state.plan,car:state.car}}));}
-function renderDays(){$('#dayNav').innerHTML=dates.map((dt,i)=>`<button class="day-nav ${i===state.day?'active':''}" type="button" data-day="${i}" ${i===state.day?'aria-current="date"':''}><span class="n">${String(i+1).padStart(2,'0')}</span><span>${clean(dt)}<small>${clean(getDay(i).title)}</small></span></button>`).join('');$$('[data-day]').forEach(b=>b.onclick=()=>{state.day=Number(b.dataset.day);renderDays();if(innerWidth<760)$('#days').scrollIntoView({behavior:'smooth'})});let d=getDay(state.day);$('#dayDate').textContent='DAY '+String(state.day+1).padStart(2,'0')+' / 2027.06.'+String(12+state.day).padStart(2,'0');$('#dayTransport').textContent=d.transport;$('#dayTitle').textContent=d.title;$('#dayDesc').textContent=d.desc;$('#dayImage').src=PHOTOS[graphic[d.image]]||PHOTOS.hero;$('#dayImage').alt=['city','festival','shrine'].includes(d.image)?'札幌大通公園與電視塔實景（非祭典或神宮現場照片）':d.title+'當地景點實景攝影';$('#dayTimeline').innerHTML=d.stops.map(t=>`<div class="time-step"><time>${clean(t[0])}</time><div><strong>${clean(t[1])}</strong><p>${clean(t[2])}</p></div></div>`).join('');$('#dayNotice').textContent='注意事項｜'+d.note;$('#dayGoogle').href='#dd-map-panel';$('#dayGoogle').textContent='查看當日地圖 ↓';$('#dayGoogle').removeAttribute('target');$('#dayGoogle').removeAttribute('rel');$('#prevDay').disabled=state.day===0;$('#nextDay').disabled=state.day===6;window.dispatchEvent(new CustomEvent('hokkaido:daychange',{detail:{day:state.day,plan:state.plan,car:state.car}}))}
+function selectDay(day){
+ state.day=day;
+ syncTripUrl();
+ renderDays();
+}
+function renderDays(){
+ $('#shareDayUrl').hidden=true;
+ $('#shareDayStatus').textContent='';
+ $('#dayNav').innerHTML=dates.map((dt,i)=>`<button class="day-nav ${i===state.day?'active':''}" type="button" data-day="${i}" ${i===state.day?'aria-current="date"':''}><span class="n">${String(i+1).padStart(2,'0')}</span><span>${clean(dt)}<small>${clean(getDay(i).title)}</small></span></button>`).join('');$$('[data-day]').forEach(b=>b.onclick=()=>{selectDay(Number(b.dataset.day));if(innerWidth<760)$('#days').scrollIntoView({behavior:'smooth'})});let d=getDay(state.day);$('#dayDate').textContent='DAY '+String(state.day+1).padStart(2,'0')+' / 2027.06.'+String(12+state.day).padStart(2,'0');$('#dayTransport').textContent=d.transport;$('#dayTitle').textContent=d.title;$('#dayDesc').textContent=d.desc;$('#dayImage').src=PHOTOS[graphic[d.image]]||PHOTOS.hero;$('#dayImage').alt=['city','festival','shrine'].includes(d.image)?'札幌大通公園與電視塔實景（非祭典或神宮現場照片）':d.title+'當地景點實景攝影';$('#dayTimeline').innerHTML=d.stops.map(t=>`<div class="time-step"><time>${clean(t[0])}</time><div><strong>${clean(t[1])}</strong><p>${clean(t[2])}</p></div></div>`).join('');$('#dayNotice').textContent='注意事項｜'+d.note;$('#dayGoogle').href='#dd-map-panel';$('#dayGoogle').textContent='查看當日地圖 ↓';$('#dayGoogle').removeAttribute('target');$('#dayGoogle').removeAttribute('rel');$('#prevDay').disabled=state.day===0;$('#nextDay').disabled=state.day===6;window.dispatchEvent(new CustomEvent('hokkaido:daychange',{detail:{day:state.day,plan:state.plan,car:state.car}}))}
 function renderHighlights(){const x=[['札幌・大通公園','CITY & CULTURE','6/13 於札幌市區參加 YOSAKOI，6/16 感受北海道神宮祭。','hero','大通公園 札幌'],['小樽・運河散步','HISTORIC PORT','歷史倉庫、甜點、玻璃工藝，搭 JR 輕鬆抵達。','otaru','小樽運河'],['美瑛・白金青池','NATURE & LANDSCAPE','青色池水與初夏綠意，是 6 月最值得造訪的景點之一。','bluepond','白金青池'],['北海道初夏花田','SEASONAL FLOWERS','6 月中先看季節花卉，大片薰衣草通常要到 7 月。','flowers','四季彩之丘']];$('#highlightGrid').innerHTML=x.map(a=>`<article class="highlight-card"><img loading="lazy" src="${PHOTOS[a[3]]}" alt="${a[0]}"><div><div class="k">${a[1]}</div><h3>${a[0]}</h3><p>${a[2]}</p><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a[4])}" target="_blank" rel="noopener noreferrer">查看目的地 ↗</a></div></article>`).join('')}
 function renderRoomSizes(hotel){
  const sizes=hotel.roomSizes.map(({label,area})=>`<li>${label?`<span>${clean(label)}</span> `:''}<strong>${area} m²</strong> <span class="room-ping">（約 ${(area*0.3025).toFixed(1)} 坪）</span></li>`).join('');
@@ -122,10 +191,97 @@ function renderHotels(){
   button.setAttribute('aria-pressed',String(selected));
  });
 }
-function value(id){return Math.max(0,Number($('#'+id).value)||0)}function renderBudget(){const ppl=Math.max(1,value('people')),flight=value('flight'),room=value('room'),food=value('food'),rail=value('rail'),car=value('car'),act=value('activity'),other=value('other');const rooms=Math.ceil(ppl/2),hotelsCost=rooms*6*room,rental=car*state.car,total=ppl*(flight+food*7+rail+act+other)+hotelsCost+rental;$('#budgetLabel').textContent='PLAN '+state.plan+(state.car===0?' / 100% PUBLIC TRANSIT':' / RENTAL '+state.car+' DAY'+(state.car===2?'S':''));$('#perCost').textContent=money(total/ppl);$('#allCost').textContent=`${ppl} 人全團總預算　${money(total)}`;$('#budgetParts').innerHTML=[['機票',flight],['六晚住宿分攤',hotelsCost/ppl],['7 天餐飲',food*7],['大眾運輸',rail],['租車分攤',rental/ppl],['景點體驗',act],['其他預備費',other]].map(([k,n])=>`<div><span>${k}</span><b>${money(n)}</b></div>`).join('');saveBudget()}
+function value(id){return Math.max(0,Number($('#'+id).value)||0)}
+
+function lodgingCost(people){
+ const threePeople=people===3;
+ for(const id of ['roomModeField','roomSecondField','roomTripleField','roomComparison']){
+  $('#'+id).hidden=!threePeople;
+ }
+ $('#roomLabel').textContent=threePeople?'兩間房｜第 1 間每晚 NT$':'雙人房每晚 NT$';
+
+ const firstRoom=value('room');
+ if(!threePeople)return Math.ceil(people/2)*6*firstRoom;
+
+ const secondRoom=$('#roomSecond').value===''?firstRoom:value('roomSecond');
+ const twoRooms=6*(firstRoom+secondRoom);
+ const triple=$('#roomTriple').value===''?null:6*value('roomTriple');
+ $('#roomComparison').textContent='六晚住宿｜一間三人房 '+(triple===null?'待輸入房價':money(triple))+'｜兩間房 '+money(twoRooms);
+ return $('#roomMode').value==='triple'?triple:twoRooms;
+}
+
+function renderBudget(){
+ const people=Math.max(1,value('people'));
+ const flight=value('flight'), food=value('food')*7, rail=value('rail');
+ const rental=value('car')*state.car, activity=value('activity'), other=value('other');
+ const lodging=lodgingCost(people);
+ const total=people*(flight+food+rail+activity+other)+(lodging??0)+rental;
+ const lodgingPerPerson=lodging===null?null:lodging/people;
+
+ $('#budgetLabel').textContent='PLAN '+state.plan+(state.car===0?' / 100% PUBLIC TRANSIT':' / RENTAL '+state.car+' DAY'+(state.car===2?'S':''));
+ $('#perCost').textContent=lodging===null?'—':money(total/people);
+ $('#allCost').textContent=lodging===null?'輸入三人房每晚房價後顯示全團預算':`${people} 人全團總預算　${money(total)}`;
+ const parts=[['機票',flight],['六晚住宿分攤',lodgingPerPerson],['7 天餐飲',food],['大眾運輸',rail],['租車分攤',rental/people],['景點體驗',activity],['其他預備費',other]];
+ $('#budgetParts').innerHTML=parts.map(([label,amount])=>`<div><span>${label}</span><b>${amount===null?'待輸入房價':money(amount)}</b></div>`).join('');
+ saveBudget();
+}
 function copyDay(){let d=getDay(state.day),t=`2027/6/${12+state.day} ${d.title}\n交通：${d.transport}\n`+d.stops.map(a=>a.join('｜')).join('\n')+'\n注意：'+d.note;const cb=()=>{let btn=$('#copyDay');btn.textContent='已複製 ✓';setTimeout(()=>btn.textContent='複製當日行程　⧉',1500)};if(navigator.clipboard?.writeText){navigator.clipboard.writeText(t).then(cb).catch(()=>fallback(t,cb))}else fallback(t,cb)}function fallback(t,cb){let inp=document.createElement('textarea');document.body.appendChild(inp);inp.value=t;inp.select();document.execCommand('copy');inp.remove();cb()}
 function exportJson(){const ds=dates.map((date,i)=>({day:i+1,date,...getDay(i)}));let content=JSON.stringify({destination:'札幌・北海道',dates:'2027/06/12 - 2027/06/18',plan:state.plan,carRentalDays:state.car,days:ds,hotels,notice:'規劃參考，非即時房價、班次或活動預約資訊'},null,2);let url=URL.createObjectURL(new Blob([content],{type:'application/json;charset=utf-8'}));let a=document.createElement('a');a.href=url;a.download='Sapporo-2027-7D6N-'+state.plan+'-'+state.car+'day.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)}
-function init(){let img=PHOTOS;for (let [key,src] of [['tourA','bluepond'],['tourB','otaru'],['tourC','flowers'],['storyImg','bluepond']])$('#'+key).src=img[src];$$('[data-plan]').forEach(el=>el.onclick=()=>{state.plan=el.dataset.plan;renderControls()});$$('[data-car]').forEach(el=>el.onclick=()=>{state.car=Number(el.dataset.car);renderControls()});$$('[data-filter]').forEach(el=>el.onclick=()=>{state.filter=el.dataset.filter;renderHotels()});restoreBudget();$$('#budget input').forEach(x=>x.addEventListener('input',()=>{if(x.id==='rail')x.dataset.manuallyEdited='yes';renderBudget()}));$('#prevDay').onclick=()=>{if(state.day){state.day--;renderDays()}};$('#nextDay').onclick=()=>{if(state.day<6){state.day++;renderDays()}};$('#copyDay').onclick=copyDay;$('#downloadJson').onclick=exportJson;$('#printPage').onclick=()=>window.print();$('#menuBtn').onclick=()=>{const n=$('#mainLinks');n.classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',String(n.classList.contains('open')))};$$('#mainLinks a').forEach(a=>a.addEventListener('click',()=>{$('#mainLinks').classList.remove('open');$('#menuBtn').setAttribute('aria-expanded','false')}));updateTransitLinks();renderHighlights();renderControls()}
+function init(){
+ readTripUrl();
+ for(const [id,photo] of [['tourA','bluepond'],['tourB','otaru'],['tourC','flowers'],['storyImg','bluepond']]){
+  $('#'+id).src=PHOTOS[photo];
+ }
+ for(const button of $$('[data-plan]')){
+  button.onclick=()=>{
+   state.plan=button.dataset.plan;
+   syncTripUrl();
+   renderControls();
+  };
+ }
+ for(const button of $$('[data-car]')){
+  button.onclick=()=>{
+   state.car=Number(button.dataset.car);
+   syncTripUrl();
+   renderControls();
+  };
+ }
+ for(const button of $$('[data-filter]')){
+  button.onclick=()=>{
+   state.filter=button.dataset.filter;
+   renderHotels();
+  };
+ }
+
+ restoreBudget();
+ for(const input of $$('#budget input')){
+  input.addEventListener('input',()=>{
+   if(input.id==='rail')input.dataset.manuallyEdited='yes';
+   renderBudget();
+  });
+ }
+ $('#roomMode').addEventListener('change',renderBudget);
+ $('#prevDay').onclick=()=>{if(state.day>0)selectDay(state.day-1)};
+ $('#nextDay').onclick=()=>{if(state.day<dates.length-1)selectDay(state.day+1)};
+ $('#copyDay').onclick=copyDay;
+ $('#shareDay').onclick=shareDay;
+ $('#downloadJson').onclick=exportJson;
+ $('#printPage').onclick=()=>window.print();
+ $('#menuBtn').onclick=()=>{
+  const nav=$('#mainLinks');
+  nav.classList.toggle('open');
+  $('#menuBtn').setAttribute('aria-expanded',String(nav.classList.contains('open')));
+ };
+ for(const link of $$('#mainLinks a')){
+  link.addEventListener('click',()=>{
+   $('#mainLinks').classList.remove('open');
+   $('#menuBtn').setAttribute('aria-expanded','false');
+  });
+ }
+ updateTransitLinks();
+ renderHighlights();
+ renderControls();
+}
 document.addEventListener('DOMContentLoaded',()=>{
   const dayPhoto=document.getElementById('dayImage');
   const imageContainer=dayPhoto&&dayPhoto.closest('.day-img');
