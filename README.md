@@ -36,7 +36,7 @@ python3 -m http.server 8000
 | `js/map.js` | MapLibre 地圖 |
 | `assets/photos/` | 餐廳、名產與飯店本地圖片 |
 | `icons/`、`manifest.webmanifest` | PWA 圖示與設定 |
-| `sw.js` | Service Worker 與離線快取（shell + photos 雙快取，版本以 `CACHE_NAME` 為準，現 v44） |
+| `sw.js` | Service Worker 與離線快取（shell + photos 雙快取，版本以 `CACHE_NAME` 為準，現 v49） |
 | `tests/` | 資料與頁面結構檢查 |
 
 ## 驗證

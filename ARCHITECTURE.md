@@ -14,7 +14,7 @@
 - `js/pwa-register.js`：Service Worker 註冊。
 - `js/food-guide.js`：每日美食、名產與位置資料及渲染。
 - `assets/photos/**/*.webp`：本地照片一律 WebP。原 15 張 PNG 已轉 WebP（約 7MB→0.6MB）；6 張截斷 PNG 移至 `docs/archive/corrupted-photos-20261107/` 待重新匯出，不進站。
-- `sw.js`：PWA 快取（`CACHE_NAME` 單一來源，現為 v44）。Shell（HTML/CSS/JS/manifest/icons/封面）進 `sapporo-travel-shell-v44`；餐廳/特產照片進 `sapporo-travel-photos-v44` 於 install 後背景補齊，另有 fetch 時按需回填。新增照片時同步加進 `PHOTO_PRECACHE` 並往後加快取版本。
+- `sw.js`：PWA 快取（`CACHE_NAME` 單一來源，現為 v49）。Shell（HTML/CSS/JS/manifest/icons/封面）進 `sapporo-travel-shell-v49`；餐廳/特產照片進 `sapporo-travel-photos-v49` 於 install 後背景補齊，另有 fetch 時按需回填。新增照片時同步加進 `PHOTO_PRECACHE` 並往後加快取版本。
 - `manifest.webmanifest`、`icons/`：原有 PWA 與 Logo 素材。
 
 ## 開發與部署

@@ -19,7 +19,7 @@ test('New restaurant photos use readable store-name filenames',()=>{
 test('All restaurant photo filenames are store names, not schedule IDs',()=>{
  for(const [id,file] of Object.entries(photos)){
   assert.doesNotMatch(file,/^(?:[bdl]\d+|x-[a-z0-9-]+)\.(?:webp|png)$/i,'ID-like filename for '+id+': '+file);
-  assert.match(file,/^[a-z][A-Za-z0-9-]+\.(?:webp|png)$/,'Photo filename for '+id+' should be a readable slug');
+  assert.match(file,/^[\p{L}\p{N} ・-]+\.(?:webp|png)$/u,'Photo filename for '+id+' should be a readable store name');
   assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',file)),file+' missing');
   assert.ok(sw.includes('./assets/photos/restaurants/'+file),file+' not precached');
  }

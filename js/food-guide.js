@@ -147,6 +147,13 @@ function allFor(ctx){
   ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0)),
   ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]}))
  ].filter(p=>p.zone&&ctx.zones.includes(p.zone));
+ const farm=gifts.find(p=>p.id==='gx-furano');
+ const marche=gifts.find(p=>p.id==='s11');
+ if(farm&&marche){
+  const farmIndex=gifts.indexOf(farm);
+  gifts[farmIndex]=Object.assign({},marche,{locations:[farm,marche]});
+  gifts.splice(gifts.indexOf(marche),1);
+ }
  return {meals:[...breakfasts,...choices],gifts};
 }
 
@@ -197,17 +204,18 @@ function googleRealPhotosURL(p){
 // Photos selected and supplied in this conversation, keyed by actual restaurant ID.
 // Do not display another restaurant's photo. Asset files are provided separately in the
 // image package and must be committed under assets/photos/restaurants/ before rendering.
-// s9/s12/s13 原檔損壞（見 docs/archive/corrupted-photos-20261107/README.md），待重新匯出後再加回。
-const USER_SPECIALTY_PHOTOS={"s8":"bieiCornBread.webp","s11":"furanoLavenderCandle.webp"};
+// 損壞原檔保存在 docs/archive；s12 使用使用者指定的既有照片。
+const USER_SPECIALTY_PHOTOS={"s8":"bieiCornBread.webp","s11":"furanoLavenderCandle.webp","s12":"farmTomitaSouvenirs.webp","s13":"北海道哈密瓜果凍.webp","s9":"薯條三兄弟.webp"};
 function suppliedSpecialtyPhotoMarkup(p){
  const file=USER_SPECIALTY_PHOTOS[p.id];
  if(!file)return null;
- const path='./assets/photos/specialties/'+file;
+ const folder=p.id==='s12'?'restaurants':'specialties';
+ const path='./assets/photos/'+folder+'/'+file;
  return '<figure class="dd-photo dd-photo-verified dd-photo-user" data-specialty-photo="'+safe(p.id)+'">'+
    '<img src="'+safe(path)+'" alt="'+safe(p.name+'：使用者提供的特產商品照片')+'" loading="lazy" decoding="async">'+
    '<figcaption><span>'+safe(p.name)+' · 商品照片</span><span>圖片由使用者提供</span></figcaption></figure>';
 }
-const USER_RESTAURANT_PHOTOS={"d4":"keyakiSusukinoHonten.webp","l7":"matsuiJingisukanOdoriMinami1.webp","d7":"matsuiJingisukanOdoriMinami1.webp","d2":"hachikyoHonten.webp","d5":"kaniHonkeSapporoEkimae.webp","d3":"sapporoBeerGarden.webp","l1":"garakuSapporoHonten.webp","d6":"garakuSapporoHonten.webp","l2":"nemuroHanamaruJrTower.webp","l3":"shingenMinami6.webp","d1":"darumaHonten.webp","airportIchigen":"ichigenNewChitose.webp","airportShirakaba":"shirakabaSansoNewChitose.webp","airportKantaro":"kantaroNewChitose.webp","airportNewSanko":"otaruNewSankoNewChitose.webp","airportHanabusa":"hanabusaNewChitose.webp","airportKeyaki":"keyakiNewChitose.webp","b3":"cafeYoshimiAkarenga.webp","b4":"northernTerraceDiner.webp","x-shako":"misakiShakotan.webp","x-shik":"lakesideKitchenTonton.webp","citySuage":"suagePlus.webp","cityIchigen":"ichigenSohonten.webp","cityOkushiba":"okushibaSoseiji.webp","l4":"otaruMasazushiHonten.webp","otaruWaraku":"warakuOtaru.webp","b1":"sandriaHonten.webp","x-yoi":"kakizakiSeafoodKobo.webp","gx-yoi":"kakizakiSeafoodKobo.webp","otaruPoseidon":"otaruPoseidonSakaimachi.webp","x-nobo":"noboribetsuOnsenIchiba.webp","gx-nobo":"noboribetsuOnsenIchiba.webp","noboChiba":"chibaNoboribetsu.webp","noboDaio":"ajinoDaioNoboribetsu.webp","otaruIse":"isezushiOtaruEkinaka.webp","l5":"narutoHonten.webp","otaruSankaku":"takinamiShokudo.webp","l6":"kumagera.webp","x-tomita":"tomitaMelonHouse.webp","furanoKodamaya":"kodamaya.webp","furanoNatural":"naturalDiningFurano.webp","furanoFukuzushi":"fukuzushi.webp","noboNobojin":"hokkaidoBbqNobojin.webp","shakotanNakamuraya":"nakamurayaShakotan.webp","shakotanFuji":"fujizushiShakotan.webp","shakotanRinkou":"rinkouShokudo.webp","shakotanSugino":"suginoUnizenShakotan.webp","jozanIchi":"shokudoIchiJozan.webp","jozanKonno":"shokudoKonnoJozan.webp","jozanShiumai":"shiumaiHayama.webp","jozanFranse":"franseJozan.webp","jozanHakken":"hakkenzanKitchenMarche.webp","noboKitaUdon":"kitaNoboruUdon.webp","noboEnmaken":"enmakenNoboribetsu.webp","gx-shik":"memereLakesideSweets.webp","s7":"kamaeiFactoryStore.webp","gx-furano":"farmTomitaSouvenirs.webp","x-joz":"furukawaFruitGlacee.webp","gx-joz":"furukawaFruitGlacee.webp"};
+const USER_RESTAURANT_PHOTOS={"d4":"keyakiSusukinoHonten.webp","l7":"matsuiJingisukanOdoriMinami1.webp","d7":"matsuiJingisukanOdoriMinami1.webp","d2":"hachikyoHonten.webp","d5":"kaniHonkeSapporoEkimae.webp","d3":"sapporoBeerGarden.webp","l1":"garakuSapporoHonten.webp","d6":"garakuSapporoHonten.webp","l2":"nemuroHanamaruJrTower.webp","l3":"shingenMinami6.webp","d1":"darumaHonten.webp","airportIchigen":"ichigenNewChitose.webp","airportShirakaba":"shirakabaSansoNewChitose.webp","airportKantaro":"kantaroNewChitose.webp","airportNewSanko":"otaruNewSankoNewChitose.webp","airportHanabusa":"hanabusaNewChitose.webp","airportKeyaki":"keyakiNewChitose.webp","b3":"cafeYoshimiAkarenga.webp","b4":"northernTerraceDiner.webp","x-shako":"misakiShakotan.webp","x-shik":"lakesideKitchenTonton.webp","citySuage":"suagePlus.webp","cityIchigen":"ichigenSohonten.webp","cityOkushiba":"okushibaSoseiji.webp","l4":"otaruMasazushiHonten.webp","otaruWaraku":"warakuOtaru.webp","b1":"sandriaHonten.webp","x-yoi":"kakizakiSeafoodKobo.webp","gx-yoi":"kakizakiSeafoodKobo.webp","otaruPoseidon":"otaruPoseidonSakaimachi.webp","x-nobo":"noboribetsuOnsenIchiba.webp","gx-nobo":"noboribetsuOnsenIchiba.webp","noboChiba":"chibaNoboribetsu.webp","noboDaio":"ajinoDaioNoboribetsu.webp","otaruIse":"isezushiOtaruEkinaka.webp","l5":"narutoHonten.webp","otaruSankaku":"takinamiShokudo.webp","l6":"kumagera.webp","x-tomita":"tomitaMelonHouse.webp","furanoKodamaya":"kodamaya.webp","furanoNatural":"naturalDiningFurano.webp","furanoFukuzushi":"fukuzushi.webp","noboNobojin":"hokkaidoBbqNobojin.webp","shakotanNakamuraya":"nakamurayaShakotan.webp","shakotanFuji":"fujizushiShakotan.webp","shakotanRinkou":"rinkouShokudo.webp","shakotanSugino":"suginoUnizenShakotan.webp","jozanIchi":"shokudoIchiJozan.webp","jozanKonno":"食堂こんの.webp","jozanShiumai":"shiumaiHayama.webp","jozanFranse":"franseJozan.webp","jozanHakken":"hakkenzanKitchenMarche.webp","noboKitaUdon":"kitaNoboruUdon.webp","noboEnmaken":"enmakenNoboribetsu.webp","gx-shik":"メメール・支笏湖義式冰淇淋.webp","s7":"kamaeiFactoryStore.webp","x-joz":"定山溪手工蘋果派.webp","gx-joz":"定山溪手工蘋果派.webp","b2":"どんぶり茶屋 二條市場店.webp","x-biei":"RESTAURANT ASPERGES.webp","furanoYuiga":"唯我獨尊 Yuiga Doxon.webp"};
 USER_RESTAURANT_PHOTOS.b8='juneCoffeeSapporo.webp';
 USER_RESTAURANT_PHOTOS.b9='starbucksSapporoStellarPlace.webp';
 USER_RESTAURANT_PHOTOS.b6='ohisoNijoMarket.webp';
@@ -287,13 +295,19 @@ function foodCard(p){
  '<div class="dd-pick-foot">'+focusButton(p,'meal')+restaurantPhotoSourceLinks(p)+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">店家資料 ↗</a></div></article>';
 }
 function giftCard(p){
+ const places=p.locations||[p];
+ const placeDetails=places.map(place=>
+  '<div class="dd-gift-place">'+
+  '<p class="dd-pick-detail"><strong>建議購買：</strong>'+safe(place.buyAt||'當地物產販售處')+'</p>'+
+  giftHoursHTML(place)+
+  '<p class="dd-pick-detail">'+safe(place.tip)+'　'+safe(place.carry)+'</p>'+
+  '<div class="dd-pick-foot">'+focusButton(place,'gift')+'<a href="'+safe(place.source)+'" target="_blank" rel="noopener noreferrer">特產資訊 ↗</a></div></div>'
+ ).join('');
+ const photoNote=p.locations?'<p class="dd-pick-detail">圖片為香氛商品示例，實際販售品項請以各店為準。</p>':'';
  return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'">'+photoHTML(p)+
  '<div class="dd-pick-kicker">LOCAL SPECIALTY / '+safe(p.area)+'</div>'+
  '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
- '<p class="dd-pick-feature">'+safe(p.pick)+'</p>'+
- '<p class="dd-pick-detail"><strong>建議購買：</strong>'+safe(p.buyAt||'當地物產販售處')+'</p>'+giftHoursHTML(p)+
- '<p class="dd-pick-detail">'+safe(p.tip)+'　'+safe(p.carry)+'</p>'+
- '<div class="dd-pick-foot">'+focusButton(p,'gift')+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">特產資訊 ↗</a></div></article>';
+ '<p class="dd-pick-feature">'+safe(p.pick)+'</p>'+photoNote+placeDetails+'</article>';
 }
 function updateMore(btn,name,length,limit){
  const remainder=Math.max(0,length-limit),open=expanded[name];
@@ -304,7 +318,13 @@ function updateMore(btn,name,length,limit){
 function draw(){
  const ctx=dayContext(),entries=allFor(ctx);
  const meals=editorialMeals(entries.meals,ctx.day), gifts=entries.gifts;
- currentPlaces=[...meals.map(p=>Object.assign({},p,{kind:'meal'})),...gifts.map(p=>Object.assign({},p,{kind:'gift'}))];
+ currentPlaces=[
+  ...meals.map(p=>Object.assign({},p,{kind:'meal'})),
+  ...gifts.flatMap(p=>(p.locations||[p]).map(place=>Object.assign({},place,{
+   kind:'gift',cardId:p.id,
+   name:p.locations?p.name+'｜'+place.buyAt:place.name
+  })))
+ ];
  let contextExtra='';
  if(ctx.day===0)contextExtra='｜首日午後抵達，早餐為隔日早晨候選；午餐僅供航班較早時備選。';
  if(ctx.day===3&&state.car===0)contextExtra='｜6/15 一日觀光巴士可能含午餐，餐廳候選不代表有自由停靠時間。';
@@ -366,7 +386,7 @@ function refreshMap(ctx){
 function focusPlace(place,scroll){
  const z=ZONES[place.zone];
  if(!z)return;
- dayRoot.querySelectorAll('[data-dd-card]').forEach(el=>el.classList.toggle('is-selected',el.dataset.ddCard===place.id));
+ dayRoot.querySelectorAll('[data-dd-card]').forEach(el=>el.classList.toggle('is-selected',el.dataset.ddCard===(place.cardId||place.id)));
  if(!localMap){
   pendingFocus={id:place.id,kind:place.kind};
   mapStatus.textContent='已選取 '+place.name+'｜'+z.name+'。地圖尚在載入，請參考區域方位。';
