@@ -59,7 +59,18 @@ test('index head has single description/theme and OG tags',()=>{
  assert.match(html,/twitter:card/);
  assert.ok(!html.includes('japan-tax-refund-2026-v1.png'));
  assert.ok(html.includes('japan-tax-refund-2026-v1.webp'));
- assert.ok(!html.includes('960px-'), 'gallery must use 800px thumbs');
+});
+
+test('Wikimedia thumbnail URLs use the current host and standard sizes',()=>{
+ const standardSizes=[20,40,60,120,250,330,500,960,1280,1920,3840];
+ for(const file of ['index.html','js/app.js','js/cover-carousel.js']){
+  const thumbs=[...read(file).matchAll(/https:\/\/(upload|thumb)\.wikimedia\.org\/wikipedia\/commons\/thumb\/[^"\s]+?\/(\d+)px-/g)];
+  assert.ok(thumbs.length>0,`${file} contains Wikimedia thumbnail URLs`);
+  for(const [,host,width] of thumbs){
+   assert.equal(host,'thumb',file);
+   assert.ok(standardSizes.includes(Number(width)),`${file} requests an unsupported thumbnail width ${width}`);
+  }
+ }
 });
 
 test('manifest theme matches index',()=>{

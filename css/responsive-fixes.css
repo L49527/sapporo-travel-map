@@ -143,3 +143,17 @@
   .topnav .main-links.open,
   .tour-grid .tour-card { animation: none !important; transition: none !important; }
 }
+
+.day-share { max-width: 100%; }
+.day-share-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.day-share-status:not(:empty) { display: block; margin-top: 6px; font-size: .875rem; }
+.day-share-url, #roomMode {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cbd7da;
+  padding: 10px;
+  font: inherit;
+  background: #fff;
+  color: #253f35;
+}
+.day-share-url { margin-top: 6px; }
