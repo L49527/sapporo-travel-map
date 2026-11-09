@@ -12,20 +12,24 @@ function parse(prefix){
  return JSON.parse(food.slice(at+prefix.length,food.indexOf(';',at+prefix.length)));
 }
 
-test('two healthy supplied specialty photos map to the intended products and are precached',()=>{
- // s9/s12/s13 原檔截斷，已移至 docs/archive/corrupted-photos-20261107 待重新匯出。
+test('supplied specialty photos map to the intended products and are precached',()=>{
+ // 原檔已歸檔；s12 使用使用者指定的現有照片。
  const photos=parse('const USER_SPECIALTY_PHOTOS=');
  const expected={
   s8:'bieiCornBread.webp',
-  s11:'furanoLavenderCandle.webp'
+  s9:'薯條三兄弟.webp',
+  s11:'furanoLavenderCandle.webp',
+  s12:'farmTomitaSouvenirs.webp',
+  s13:'北海道哈密瓜果凍.webp'
  };
  assert.deepEqual(photos,expected);
- for(const file of Object.values(expected)){
-  const target=path.join(root,'assets/photos/specialties',file);
+ for(const [id,file] of Object.entries(expected)){
+  const folder=id==='s12'?'restaurants':'specialties';
+  const target=path.join(root,'assets/photos',folder,file);
   assert.ok(fs.statSync(target).size>10000,file+' missing or too small');
-  assert.ok(sw.includes('./assets/photos/specialties/'+file),file+' not precached');
+  assert.ok(sw.includes('./assets/photos/'+folder+'/'+file),file+' not precached');
  }
- for(const id of ['s9','s12','s13'])assert.equal(photos[id],undefined,id+' must not map to truncated png');
  assert.match(food,/suppliedSpecialtyPhotoMarkup\(p\)/);
  assert.match(food,/data-specialty-photo/);
 });
+

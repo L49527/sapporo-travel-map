@@ -10,9 +10,9 @@ test('Memere lakeside sweets uses a user photo and no Tabelog dependency',()=>{
  const photos=parse('const USER_RESTAURANT_PHOTOS=');
  const gifts=parse('const EXTRA_GIFTS=');
  assert.ok(gifts.some(g=>g.id==='gx-shik'&&g.name.includes('メメール')));
- assert.equal(photos['gx-shik'],'memereLakesideSweets.webp');
- assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants/memereLakesideSweets.webp')).size>10000);
- assert.ok(sw.includes('./assets/photos/restaurants/memereLakesideSweets.webp'));
+ assert.equal(photos['gx-shik'],'メメール・支笏湖義式冰淇淋.webp');
+ assert.ok(fs.statSync(path.join(root,'assets/photos/restaurants/メメール・支笏湖義式冰淇淋.webp')).size>10000);
+ assert.ok(sw.includes('./assets/photos/restaurants/メメール・支笏湖義式冰淇淋.webp'));
  const direct=parse('const TABELOG_DIRECT=');
  assert.equal(direct['gx-shik'],undefined,'gift has no Tabelog page');
 });

@@ -7,12 +7,12 @@
 
 | 原檔案 | 曾對應 ID | 現況 |
 |---|---|---|
-| `asperges.png` | `x-biei` | 待重新匯出 |
-| `donburiChayaNijo.png` | `b2` / `どんぶり茶屋` | 待重新匯出 |
-| `yuigaDoxon.png` | `furanoYuiga` | 待重新匯出 |
+| `asperges.png` | `x-biei` | 損壞原檔留存；2026-11-09 已改用使用者新提供的照片 |
+| `donburiChayaNijo.png` | `b2` / `どんぶり茶屋` | 損壞原檔留存；2026-11-09 已改用使用者新提供的照片 |
+| `yuigaDoxon.png` | `furanoYuiga` | 損壞原檔留存；2026-11-09 已改用使用者新提供的照片 |
 | `furanoWineCheddarCheese.png` | `s12` | 待重新匯出 |
-| `horiYubariMelonPureJelly.png` | `s13` | 待重新匯出 |
-| `jagaPokkuru.png` | `s9` | 待重新匯出 |
+| `horiYubariMelonPureJelly.png` | `s13` | 損壞原檔留存；2026-11-09 已改用使用者新提供的照片 |
+| `jagaPokkuru.png` | `s9` | 損壞原檔留存；2026-11-09 已改用使用者新提供的照片 |
 
 ## 重新匯出步驟
 

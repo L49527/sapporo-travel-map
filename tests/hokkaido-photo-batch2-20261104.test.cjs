@@ -14,7 +14,7 @@ const expected={
  shakotanRinkou:'rinkouShokudo.webp',
  shakotanSugino:'suginoUnizenShakotan.webp',
  jozanIchi:'shokudoIchiJozan.webp',
- jozanKonno:'shokudoKonnoJozan.webp',
+ jozanKonno:'食堂こんの.webp',
  jozanShiumai:'shiumaiHayama.webp',
  jozanFranse:'franseJozan.webp',
  jozanHakken:'hakkenzanKitchenMarche.webp',
@@ -33,7 +33,7 @@ test('Second photo batch files are all distinct',()=>{
  const files=Object.values(expected);
  assert.equal(new Set(files).size,files.length);
  for(const file of files){
-  assert.match(file,/^[a-z][A-Za-z0-9]+\.webp$/,file+' should be a camelCase store slug');
+  assert.match(file,/^[\p{L}\p{N} ・-]+\.webp$/u,file+' should be a readable store name');
  }
 });
 test('Photo cache version bumped again for the second batch',()=>{

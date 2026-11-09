@@ -9,12 +9,12 @@ const readJSON=(str,prefix)=>{let i=str.indexOf(prefix);assert.ok(i>=0);return J
 const pics=readJSON(src,'const USER_RESTAURANT_PHOTOS=');
 const links=readJSON(src,'const TABELOG_DIRECT=');
 const restaurants=readJSON(cat,'window.HOKKAIDO_DINING=').catalog;
-test('Donburi Chaya corrupted photo is archived and not rendered as stock',()=>{
- // donburiChayaNijo.png 是 786KB 截斷 PNG（缺 IEND），已移至 archive 待重新匯出。
- assert.equal(pics.b2,undefined,'truncated photo must not be mapped');
- assert.equal(pics['どんぶり茶屋'],undefined);
+test('Donburi Chaya uses the supplied image named for its branch',()=>{
+ const file='どんぶり茶屋 二條市場店.webp';
+ assert.equal(pics.b2,file);
+ assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',file)));
+ assert.ok(fs.readFileSync(path.join(root,'sw.js'),'utf8').includes('./assets/photos/restaurants/'+file));
  assert.ok(fs.existsSync(path.join(root,'docs/archive/corrupted-photos-20261107/donburiChayaNijo.png')));
- assert.ok(!fs.existsSync(path.join(root,'assets/photos/restaurants/donburiChayaNijo.png')));
  assert.match(src,/if\(p\.meal\)return verifiedRestaurantPhoto\(p\)/);
 });
 test('Otaru Isezushi station and Takinami Tabelog links are correct',()=>{
@@ -35,4 +35,29 @@ test('Otaru Isezushi station and Takinami Tabelog links are correct',()=>{
  assert.equal(links.l6,'https://tabelog.com/hokkaido/A0104/A010403/1000298/');
  assert.equal(links['x-biei'],'https://tabelog.com/hokkaido/A0104/A010403/1005336/');
  assert.equal(links['x-tomita'],'https://tabelog.com/hokkaido/A0104/A010403/1024348/');
+});
+
+
+test('RESTAURANT ASPERGES uses its supplied branch-named photograph',()=>{
+ const file='RESTAURANT ASPERGES.webp';
+ assert.equal(pics['x-biei'],file);
+ assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',file)));
+ assert.ok(fs.readFileSync(path.join(root,'sw.js'),'utf8').includes('./assets/photos/restaurants/'+file));
+});
+
+
+test('new user photos use corresponding card names',()=>{
+ const expected={
+  furanoYuiga:'唯我獨尊 Yuiga Doxon.webp',
+  'gx-shik':'メメール・支笏湖義式冰淇淋.webp',
+  jozanKonno:'食堂こんの.webp',
+  'gx-joz':'定山溪手工蘋果派.webp',
+  'x-joz':'定山溪手工蘋果派.webp'
+ };
+ const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
+ for(const [id,file] of Object.entries(expected)){
+  assert.equal(pics[id],file);
+  assert.ok(fs.existsSync(path.join(root,'assets/photos/restaurants',file)));
+  assert.ok(sw.includes('./assets/photos/restaurants/'+file));
+ }
 });

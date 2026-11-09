@@ -8,7 +8,6 @@ function data(prefix){const start=f.indexOf(prefix); assert.ok(start!==-1);const
 const photos=data('const USER_RESTAURANT_PHOTOS=');
 const realFiles=new Set(Object.values(photos));
 test('user photograph mapping retains known same-shop duplicates',()=>{
- // donburi b2/どんぶり茶屋 原檔截斷（docs/archive/corrupted-photos-20261107），已移除映射，不再是同店別名
  const aliases=[['l7','d7'],['l1','d6'],['x-yoi','gx-yoi'],['x-nobo','gx-nobo'],['x-joz','gx-joz']];
  for(const [a,b] of aliases)assert.equal(photos[a],photos[b]);
  assert.equal(Object.keys(photos).length-realFiles.size,aliases.length,'unexpected cross-shop image reuse');
@@ -16,7 +15,7 @@ test('user photograph mapping retains known same-shop duplicates',()=>{
  assert.equal(photos.l7,photos.d7);
  assert.equal(photos.l1,photos.d6);
  for(const [id,file] of Object.entries(photos)){
-  assert.match(file,/^[\p{L}\p{N}-]+\.(?:webp|png)$/u,'Invalid photo name for '+id);
+  assert.match(file,/^[\p{L}\p{N} ・-]+\.(?:webp|png)$/u,'Invalid photo name for '+id);
  }
 });
 test('new restaurant photo mappings cover each supplied venue',()=>{
