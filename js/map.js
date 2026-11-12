@@ -7,11 +7,13 @@ if(location.protocol==='file:'){return;}
 const notice=document.getElementById('sapporoMapNotice');
 const status=(kind, message)=>{if(!notice)return;notice.dataset.state=kind;notice.querySelector('strong').textContent=kind==='ready'?'':'互動地圖未載入';notice.querySelector('span').textContent=message||'';};
 const retry=document.getElementById('sapporoMapRetry');if(retry)retry.addEventListener('click',()=>location.reload());
+let ready=false;
+const toolbar=document.getElementById('liveMapToolbar');
+const mapElement=document.getElementById('liveHokkaidoMap');
+if(!host||!mapElement||!toolbar)return;
 const timeout=setTimeout(()=>{if(!ready){host.classList.remove('is-live-loading','has-live-map');toolbar.hidden=true;status('error','互動地圖 15 秒內未完成渲染，已切回行程示意圖。請在開發者工具查看 [SapporoMap] 訊息。')}},15000);
 
-const mapElement=document.getElementById('liveHokkaidoMap');
-const toolbar=document.getElementById('liveMapToolbar');
-if(host && mapElement){host.classList.add('is-live-loading');}
+host.classList.add('is-live-loading');
 const $=q=>document.querySelector(q);
 const PLACES={
   sapporo:{name:'札幌',point:[141.3508,43.0618],tag:'旅程主要住宿基地'},
@@ -26,7 +28,7 @@ const PLACES={
   jozankei:{name:'定山溪溫泉',point:[141.1556,42.9625],tag:'溪谷散步與日歸溫泉'}
 };
 const params={plan:'A',car:0};
-let map=null,markers=[],focus='all',ready=false;
+let map=null,markers=[],focus='all';
 const routeFeatures=(plan,car)=>{
   // Straight connections indicate visit order only, NOT navigable street or public-transit routes.
   const key=(arr)=>arr.map(k=>PLACES[k].point);

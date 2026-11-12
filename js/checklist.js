@@ -81,7 +81,7 @@ function render(){const root=$('checklistCategories'),m=mode();const focusId=doc
  card.append(body);root.append(card);}
  summarize();if(focusId){const input=Array.from(root.querySelectorAll('[data-task-id]')).find(e=>e.dataset.taskId===focusId);if(input)input.focus({preventScroll:true});}
 }
-function countdown(){const diff=new Date('2027-06-12T00:00:00+08:00')-Date.now();const days=Math.ceil(diff/86400000);$('checklistCountdown').textContent=days>0?String(days).padStart(3,'0'):days===0?'TODAY':'✓';$('checklistCountdownText').textContent=days>0?'天後出發 · DAYS TO GO':days===0?'今天出發！':'旅行日期已過';}
+function countdown(){const diff=new Date('2027-06-12T00:00:00+09:00')-Date.now();const days=Math.ceil(diff/86400000);$('checklistCountdown').textContent=days>0?String(days).padStart(3,'0'):days===0?'TODAY':'✓';$('checklistCountdownText').textContent=days>0?'天後出發 · DAYS TO GO':days===0?'今天出發！':'旅行日期已過';}
 $('checklistIncomplete').addEventListener('click',()=>{onlyPending=!onlyPending;$('checklistIncomplete').setAttribute('aria-pressed',onlyPending?'true':'false');if(onlyPending)categories.forEach(c=>expanded.add(c.id));render();});
 $('checklistCustomForm').addEventListener('submit',ev=>{ev.preventDefault();const i=$('checklistCustomInput'),v=i.value.trim();if(!v)return;const id='u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9);saved.custom.push({id,text:v.slice(0,90)});i.value='';expanded.add('custom');persist();render();i.focus();});
 $('checklistReset').addEventListener('click',()=>{if(!confirm('要清除所有已勾選的完成紀錄嗎？自訂待辦文字會保留。'))return;saved.done={};persist();render();});
