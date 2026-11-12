@@ -35,7 +35,7 @@ test('sw splits shell and photo caches and bumps version',()=>{
  const sw=read('sw.js');
  assert.match(sw,/const CACHE_NAME='sapporo-travel-shell-v(\d+)'/);
  assert.ok(Number(sw.match(/sapporo-travel-shell-v(\d+)/)[1])>=44);
- assert.match(sw,/PHOTO_CACHE_NAME='sapporo-travel-photos-v49'/);
+ assert.equal(sw.match(/sapporo-travel-photos-v(\d+)/)[1],sw.match(/sapporo-travel-shell-v(\d+)/)[1],'shell and photo cache versions must match');
  assert.match(sw,/SHELL_PRECACHE/);
  assert.match(sw,/PHOTO_PRECACHE/);
  const photoSection=sw.slice(sw.indexOf('PHOTO_PRECACHE='));
