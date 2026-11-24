@@ -11,8 +11,8 @@ const BREAKFAST_ROSTER={
  '3':['b8','b7','b1'],
  '4':['b2','b3','b9'],
  '5':['b4','b7','b5'],
- '5A':['b4','b7','b5'],
- '5B':['b4','b7','b5'],
+ '5A':['b4','b9','b1'],
+ '5B':['b4','b9','b3'],
  '5C':['b4','b7','b5'],
  '6':['b6','b8','b9']
 };
@@ -72,7 +72,7 @@ function dayContext(){
  const zones=day===0?['station','susukino','odori']:
  day===1?['station','odori','nijo','susukino']:
  day===2?['yoichi','otaru','sakaimachi']:
- day===3?['furano','tomita','biei','station']:
+ day===3?(typeof state!=='undefined'&&state.plan==='C'?['station','odori','susukino']:['furano','tomita','biei','station']):
  day===4?['odori','nijo','station','susukino']:
  day===6?['station','airport']:[];
  let label=LABELS[day];
@@ -90,16 +90,29 @@ function dayContext(){
    if(!zones.includes('station'))zones.push('station');
    label=itinerary.title;
    detail='目前為 '+state.plan+' 方案／'+(state.car===0?'不租車':state.car+' 天租車')+'。當天的美食與名產會依此更換。';
+ }else if(day===3&&state.plan==='C'){
+   label=typeof getDay==='function'?getDay(3).title:label;
+   detail='C 方案的 6/15 留在札幌近郊慢遊，午晚餐以市區為主。';
  }else if(day===3){
    detail=state.car===0?'觀光巴士行程停留時間有限；美瑛市區餐廳僅自駕時顯示。':'自駕可視停留時間決定是否加進美瑛餐廳。';
  }else if(day===6){
-   detail='機場購物與札幌站最後採買；依實際航班時間取捨。';
+   const f=['early','noon','late'].includes(state.flight)?state.flight:'late';
+   detail=f==='early'?'早班機：不安排午晚餐，伴手禮請前一晚或在機場購買。':f==='noon'?'中午班機：只列機場午餐，不安排晚餐。':'晚班機：可在札幌站採買後，於機場用餐。';
  }else detail='與七日旅行時間軸連動；點一下名店就能在下方地圖查看所在區域。';
  return {day,zones:[...new Set(zones)],label,detail};
 }
 function allFor(ctx){
+ // Helpers live inside allFor so the function stays self-contained.
+ function markClosed(candidate,day){
+  const api=window.HokkaidoClosedDay;
+  if(!api)return candidate;
+  const st=api.closedStatus(candidate.hours,api.tripWeekday(day));
+  if(st)candidate.closed=st;
+  return candidate;
+ }
+ function flightChoice(){return (typeof state!=='undefined'&&['early','noon','late'].includes(state.flight))?state.flight:'late';}
  const dining=window.HOKKAIDO_DINING;
- const key=ctx.day===5?'5'+state.plan:String(ctx.day);
+ const key=ctx.day===5?'5'+state.plan:(ctx.day===3&&state.plan==='C')?'3C':String(ctx.day);
  // Breakfast is always eaten before leaving Sapporo, so it has its own
  // per-day roster instead of being filtered by the day-trip zones.
  const breakfasts=(BREAKFAST_ROSTER[key]||BREAKFAST_ROSTER[ctx.day]||[])
@@ -110,31 +123,38 @@ function allFor(ctx){
     if(!candidate.zone||!ZONES[candidate.zone])return null;
     if(ctx.day===0)candidate.note='隔日早晨候選；'+candidate.note;
     else if(!ctx.zones.includes(candidate.zone))candidate.note='出發前於札幌市區用餐；'+candidate.note;
-    return candidate;
+    return markClosed(candidate,ctx.day);
    })
    .filter(Boolean);
  const choices=[];
- const schedule=dining?.roster?.[key];
+ const schedule=dining?.roster?.[key]||(key==='3C'?dining?.roster?.['1']:null);
  function pick(id,meal){
   const base=MEALS.find(p=>p.id===id)||EXTRA_MEALS.find(p=>p.id===id)||dining?.catalog?.[id];
   if(!base)return null;
   const candidate=Object.assign({},base,{meal,zone:base.zone||MEAL_ZONE[id]});
   if(!candidate.zone||!ZONES[candidate.zone])return null;
-  if(ctx.day===3&&state.car===0){
+  if(ctx.day===3&&state.plan!=='C'&&state.car!==0&&meal==='lunch'&&(candidate.zone==='furano'||id==='l6')){
+    candidate.detour=true;
+    candidate.note='位於富良野市區，與美瑛方向相反，需繞路約 20–30 分鐘。 '+candidate.note;
+  }
+  if(ctx.day===3&&state.plan!=='C'&&state.car===0){
     candidate.note='觀光巴士常已含午餐且未必自由停靠；以下為更換行程／自駕候選。 '+candidate.note;
   }
-  if(ctx.day===5&&state.car===0&&meal==='lunch'){
+  if(ctx.day===5&&(state.car===0||(state.plan==='B'&&state.car===1))&&meal==='lunch'){
     candidate.note='依預約團停靠點與自由用餐時間決定是否能去。 '+candidate.note;
   }
   if(ctx.day===6){
     candidate.note='返程前安檢區外餐飲候選；請優先完成行李托運、免稅查驗及報到。 '+candidate.note;
   }
-  return candidate;
+  return markClosed(candidate,ctx.day);
  }
+ const flight=flightChoice();
  for(const meal of ['lunch','dinner']){
+  // Early flights leave before lunch; midday flights leave before dinner.
+  if(ctx.day===6&&(flight==='early'||(flight==='noon'&&meal==='dinner')))continue;
   const keys=[...(schedule?.[meal]||[])];
   if(ctx.day===5&&meal==='lunch'&&state.car===2&&state.plan==='A')keys.push('x-shik');
-  if(ctx.day===5&&meal==='lunch'&&state.car===2&&state.plan==='C')keys.push('jozanHakken');
+  if(ctx.day===5&&meal==='lunch'&&state.car>=1&&state.plan==='C')keys.push('jozanHakken');
   const names=new Set();
   for(const id of keys){
    const p=pick(id,meal);if(!p)continue;
@@ -144,8 +164,8 @@ function allFor(ctx){
   }
  }
  const gifts=[
-  ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&(!p.carOnly||state.car!==0)),
-  ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]}))
+  ...EXTRA_GIFTS.filter(p=>p.index===ctx.day&&!(ctx.day===3&&state.plan==='C')&&(!p.carOnly||state.car!==0)),
+  ...GIFTS.filter(p=>(GIFT_DAYS[ctx.day===3&&state.plan==='C'?1:ctx.day]||[]).includes(p.id)).map(p=>Object.assign({},p,{zone:GIFT_ZONE[p.id]}))
  ].filter(p=>p.zone&&ctx.zones.includes(p.zone));
  const farm=gifts.find(p=>p.id==='gx-furano');
  const marche=gifts.find(p=>p.id==='s11');
@@ -278,7 +298,8 @@ function photoHTML(p){
 
 function editorialMeals(items,day){
  const order=(day===0?['dinner','lunch','breakfast']:day===6?['breakfast','lunch','dinner']:day===3||day===5?['lunch','breakfast','dinner']:['lunch','dinner','breakfast']);
- return items.map((p,i)=>({p,i})).sort((a,b)=>order.indexOf(a.p.meal)-order.indexOf(b.p.meal)||a.i-b.i).map(x=>x.p);
+ const rank=p=>p.closed==='closed'?2:(p.closed||p.detour)?1:0;
+ return items.map((p,i)=>({p,i})).sort((a,b)=>order.indexOf(a.p.meal)-order.indexOf(b.p.meal)||rank(a.p)-rank(b.p)||a.i-b.i).map(x=>x.p);
 }
 function focusButton(p,kind){
  const label=kind==='gift'?'查看建議購買區域':'在地圖查看';
@@ -287,8 +308,9 @@ function focusButton(p,kind){
 
 function foodCard(p){
  const mealName={breakfast:'早餐',lunch:'午餐',dinner:'晚餐'}[p.meal]||'餐飲';
- return '<article class="dd-pick" role="listitem" data-dd-card="'+safe(p.id)+'">'+photoHTML(p)+
- '<div class="dd-pick-kicker">'+mealName+' / '+safe(p.area)+'</div>'+
+ const closedTag=p.closed==='closed'?'<span class="dd-closed-tag">當日公休</span>':p.closed==='maybe'?'<span class="dd-closed-tag is-maybe">當日可能公休</span>':'';
+ return '<article class="dd-pick'+(p.closed==='closed'?' is-closed':'')+'" role="listitem" data-dd-card="'+safe(p.id)+'">'+photoHTML(p)+
+ '<div class="dd-pick-kicker">'+mealName+' / '+safe(p.area)+closedTag+'</div>'+
  '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
  '<p class="dd-pick-feature">'+safe(p.dish)+'</p>'+hoursHTML(p)+
  '<p class="dd-pick-detail">'+safe(p.note)+'</p>'+
@@ -327,7 +349,7 @@ function draw(){
  ];
  let contextExtra='';
  if(ctx.day===0)contextExtra='｜首日午後抵達，早餐為隔日早晨候選；午餐僅供航班較早時備選。';
- if(ctx.day===3&&state.car===0)contextExtra='｜6/15 一日觀光巴士可能含午餐，餐廳候選不代表有自由停靠時間。';
+ if(ctx.day===3&&state.plan!=='C'&&state.car===0)contextExtra='｜6/15 一日觀光巴士可能含午餐，餐廳候選不代表有自由停靠時間。';
  if(ctx.day===5)contextExtra='｜郊外午餐受巴士或自駕路線限制；晚餐建議回札幌後安排。';
  if(ctx.day===6)contextExtra='｜回程當天以航班優先，晚餐僅適合較晚起飛且預留充足報到時間者。';
  dayContextLabel.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+' · '+ctx.label+'｜'+ctx.detail+contextExtra;

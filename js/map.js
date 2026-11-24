@@ -33,17 +33,17 @@ const routeFeatures=(plan,car)=>{
   // Straight connections indicate visit order only, NOT navigable street or public-transit routes.
   const key=(arr)=>arr.map(k=>PLACES[k].point);
   const paths=[
-    {names:['sapporo','otaru','yoichi','sapporo'],id:'otaru',color:'#718f96',type:'JR/步行'},
-    {names:['sapporo','tomita','biei','blue','sapporo'],id:'biei',color:'#be8054',type:car===0?'預約觀光巴士':'自駕'}
+    {names:['sapporo','yoichi','otaru','sapporo'],id:'otaru',color:'#718f96',type:'JR/步行'},
+    ...(plan==='C'?[]:[{names:['sapporo','tomita','biei','blue','sapporo'],id:'biei',color:'#be8054',type:car===0?'預約觀光巴士':'自駕'}])
   ];
   const extra=plan==='A'? (car===2?['sapporo','shikotsu','noboribetsu','sapporo']:['sapporo','noboribetsu','sapporo'])
-    :plan==='B'? ['sapporo','yoichi','shakotan','sapporo']
-    :car===2? ['sapporo','jozankei','shikotsu','sapporo']:['sapporo','jozankei','sapporo'];
+    :plan==='B'? (car===2?['sapporo','yoichi','shakotan','sapporo']:['sapporo','yoichi','shakotan','otaru','sapporo'])
+    :car>=1? ['sapporo','jozankei','shikotsu','sapporo']:['sapporo','jozankei','sapporo'];
   paths.push({names:extra,id:'excursion',color:'#357d72',type:car===0?'JR／巴士／觀光巴士':'自駕／大眾運輸'});
   return paths.map(x=>({type:'Feature',properties:{id:x.id,color:x.color,transport:x.type},geometry:{type:'LineString',coordinates:key(x.names)}}));
 };
 const routeData=(p,c)=>({type:'FeatureCollection',features:routeFeatures(p,c)});
-function placesFor(p,c){const ids=['sapporo','otaru','yoichi','tomita','biei','blue'];if(p==='A')ids.push('noboribetsu',...(c===2?['shikotsu']:[]));if(p==='B')ids.push('yoichi','shakotan');if(p==='C')ids.push('jozankei',...(c===2?['shikotsu']:[]));return [...new Set(ids)];}
+function placesFor(p,c){const ids=p==='C'?['sapporo','otaru','yoichi']:['sapporo','otaru','yoichi','tomita','biei','blue'];if(p==='A')ids.push('noboribetsu',...(c===2?['shikotsu']:[]));if(p==='B')ids.push('yoichi','shakotan');if(p==='C')ids.push('jozankei',...(c>=1?['shikotsu']:[]));return [...new Set(ids)];}
 function redrawMarkers(){
  markers.forEach(m=>m.remove());markers=[];
  for(const id of placesFor(params.plan,params.car)){
@@ -65,7 +65,7 @@ function boundsFor(keys){
 function view(){
  if(!ready || !map)return;
  const ids=focus==='otaru'?['sapporo','otaru','yoichi']:focus==='biei'?['tomita','biei','blue']
- :focus==='excursion'?(params.plan==='A'?['sapporo','noboribetsu',...(params.car===2?['shikotsu']:[])]:params.plan==='B'?['sapporo','yoichi','shakotan']:['sapporo','jozankei',...(params.car===2?['shikotsu']:[])])
+ :focus==='excursion'?(params.plan==='A'?['sapporo','noboribetsu',...(params.car===2?['shikotsu']:[])]:params.plan==='B'?['sapporo','yoichi','shakotan',...(params.car===2?[]:['otaru'])]:['sapporo','jozankei',...(params.car>=1?['shikotsu']:[])])
  :placesFor(params.plan,params.car);
  map.fitBounds(boundsFor(ids),{padding:{left:42,right:92,top:78,bottom:48},maxZoom:focus==='all'?8.4:10.2,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:650});
 }
@@ -75,6 +75,14 @@ function highlightRoutes(){
 }
 function applyChoice(plan,car){
  params.plan=['A','B','C'].includes(plan)?plan:'A';params.car=[0,1,2].includes(Number(car))?Number(car):0;
+ const bieiButton=toolbar.querySelector('[data-map-focus="biei"]');
+ if(bieiButton){
+  bieiButton.hidden=params.plan==='C';
+  if(params.plan==='C'&&focus==='biei'){
+   focus='all';
+   toolbar.querySelectorAll('[data-map-focus]').forEach(b=>{const active=b.dataset.mapFocus==='all';b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+  }
+ }
  if(!ready)return;
  map.getSource('trip-paths').setData(routeData(params.plan,params.car));
  redrawMarkers();view();highlightRoutes();

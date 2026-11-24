@@ -187,3 +187,98 @@
 }
 .pwa-toast button:focus-visible { outline: 2px solid #8ed2d2; outline-offset: 2px; }
 .pwa-offline { bottom: 64px; background: #5a4a1f; }
+
+/* Closed-day labels in the daily food guide */
+.dd-closed-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border: 1px solid #a5432a;
+  color: #a5432a;
+  font-size: 12px;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+.dd-closed-tag.is-maybe { border-color: #8a6a1f; color: #8a6a1f; }
+.dd-pick.is-closed { opacity: .62; }
+
+/* Departure flight switch on 6/18 */
+.flight-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0 16px; }
+.flight-switch[hidden] { display: none; }
+.flight-switch-label { font-size: 13px; font-weight: 700; color: #253f35; margin-right: 4px; }
+.flight-switch button {
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid #9fb5ad;
+  background: #fff;
+  color: #253f35;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.flight-switch button.active { background: #253f35; border-color: #253f35; color: #fff; }
+.flight-switch button:focus-visible { outline: 2px solid #176b88; outline-offset: 2px; }
+
+/* "Today" shortcut during the trip */
+.today-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9998;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 0;
+  background: #a5432a;
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  cursor: pointer;
+}
+.today-btn[hidden] { display: none; }
+.today-btn:focus-visible { outline: 3px solid #8ed2d2; outline-offset: 2px; }
+
+/* Day navigation: keep the date and the title on separate lines */
+.day-nav .day-nav-date { display: block; }
+.day-nav small { display: block; }
+
+/* Mobile: show the timetable sooner, fold the long hotel list */
+.mobile-fold > summary { display: none; }
+@media (max-width: 768px) {
+  .day-content .day-img { height: 120px !important; }
+  .mobile-fold > summary {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 16px;
+    padding: 10px 14px;
+    border: 1px solid #9fb5ad;
+    background: #fff;
+    color: #253f35;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .mobile-fold[open] > summary { display: none; }
+  .pwa-offline { bottom: 72px; }
+}
+
+/* Readability: raise the smallest text people read on the road.
+   Photo credits stay small on purpose. */
+.dd-pick-kicker, .dd-pick-en, .dd-shop-hours, .dd-shop-hours > span, .dd-shop-hours strong, .dd-shop-hours a,
+.dd-pick-foot a, .dd-pick-foot .dd-actual-photo-link, .dd-map-action,
+.hotel .area, .hotel .en, .hotel .room-type, .hotel .room-type b, .hotel .facilities, .hotel .facilities b,
+.hotel .room-size-head, .hotel .room-size-head b, .hotel .room-size-head a,
+.checklist-task-meta, .checklist-card-head small, .checklist-task-link,
+.eyebrow, .budget-field label, .budget-field small, .day-tag, .time-step time { font-size: 12px !important; }
+.dd-pick-detail, .checklist-task-help, .time-step p, .selector-bar p, .tour-body p { font-size: 13px !important; line-height: 1.65; }
+.day-nav small { font-size: 12px !important; }
+
+/* Touch targets: at least 40px tall for actions inside cards and lists */
+.dd-pick-foot a, .dd-pick-foot .dd-actual-photo-link, .dd-map-action,
+.dd-shop-hours a, .hotel .room-size-head a, .transit-resource-links a,
+.checklist-official a, .checklist-task-link, .dd-overview-link, .map-external-link, .day-actions .text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+}
