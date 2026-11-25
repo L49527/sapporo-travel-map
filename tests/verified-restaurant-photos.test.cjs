@@ -11,9 +11,10 @@ test('Only photo-verified restaurants display embedded pictures',()=>{
  assert.match(src,/l5:\{file:/);
  assert.match(src,/if\(!photo\)\{/);
 });
-test('Restaurant real-photo links are always offered',()=>{
- assert.match(src,/function googleRealPhotosURL\(p\)/);
+test('Restaurant cards offer a photo source and a Google Maps address link',()=>{
+ assert.match(src,/function googleRestaurantURL\(p\)/);
  assert.match(src,/www\.google\.com\/maps\/search/);
+ assert.match(src,/Google Maps 店址/);
  assert.match(src,/restaurantPhotoSourceLinks\(p\)/);
  assert.match(src,/target="_blank" rel="noopener noreferrer"/);
 });

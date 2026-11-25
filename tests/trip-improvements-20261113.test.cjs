@@ -35,25 +35,72 @@ test('Plan B lunch on Thursday 6/17 flags the three closed Shakotan shops',()=>{
 });
 
 // Evaluate the itinerary data and getDay() from app.js without a DOM.
-function loadItinerary(){
- const app=read('js/app.js');
- const data=app.slice(0,app.indexOf('const railEstimate='));
- const start=app.indexOf('function getDay(i){');
- const end=app.indexOf('\n}\n',start)+2;
- const ctx={};
- vm.runInNewContext(data+'\nvar state={plan:"A",car:0,day:0,flight:"late"};\n'+app.slice(start,end)+'\nthis.getDay=getDay;this.state=state;',ctx);
+function loadItinerary(url='/',saved={}){
+ const ctx={
+  document:{addEventListener(){}},
+  location:new URL(url,'https://l49527.github.io/sapporo-travel-map/'),
+  localStorage:{getItem:key=>saved[key]??null},
+  URL,URLSearchParams
+ };
+ vm.runInNewContext(read('js/app.js')+'\nObject.assign(this,{getDay,state,readTripUrl,tripShareUrl});',ctx);
  return ctx;
 }
 
-test('6/18 has early, midday and late departure versions',()=>{
+test('6/18 has four departure periods and keeps city shopping for late flights',()=>{
  const ctx=loadItinerary();
  const titles={};
- for(const f of ['early','noon','late']){ctx.state.flight=f;titles[f]=ctx.getDay(6);}
+ for(const f of ['early','noon','afternoon','late']){ctx.state.flight=f;titles[f]=ctx.getDay(6);}
  assert.equal(titles.early.flight,'early');
  assert.equal(titles.noon.flight,'noon');
+ assert.equal(titles.afternoon.flight,'afternoon');
  assert.equal(titles.late.flight,'late');
  assert.ok(!titles.early.stops.some(s=>/購物/.test(s[1])),'early flight should not schedule shopping');
+ assert.ok(!titles.afternoon.stops.some(s=>/購物/.test(s[1])));
  assert.ok(titles.late.stops.some(s=>/購物/.test(s[1])));
+});
+
+test('departure time determines local airport targets, including previous-day travel',()=>{
+ const ctx=loadItinerary();
+ const cases=[
+  ['10:00','early','07:00 前','06:00 前'],
+  ['11:00','noon','08:00 前','07:00 前'],
+  ['14:00','afternoon','11:00 前','10:00 前'],
+  ['16:00','late','13:00 前','12:00 前'],
+  ['01:10','early','6/17 22:10 前','6/17 21:10 前']
+ ];
+ for(const [time,preset,arrival,transfer] of cases){
+  ctx.state.flightTime=time;
+  const day=ctx.getDay(6);
+  assert.equal(day.flight,preset);
+  assert.equal(day.stops.find(s=>s[1]==='抵達國際線航廈')[0],arrival);
+  assert.equal(day.stops.find(s=>s[1]==='離開札幌、前往新千歲機場')[0],transfer);
+ }
+ ctx.state.flightTime='';
+ assert.equal(ctx.getDay(6).stops.find(s=>s[1]==='抵達國際線航廈')[0],'起飛前至少 3 小時');
+});
+
+test('shared flight choices override the recipient’s previously saved time',()=>{
+ const sender=loadItinerary();
+ Object.assign(sender.state,{day:6,flight:'late'});
+ const saved={sapporo2027_flight_v1:'early',sapporo2027_flight_time:'10:00'};
+ const late=loadItinerary(sender.tripShareUrl(),saved);
+ late.readTripUrl();
+ assert.equal(late.state.flight,'late');
+ assert.equal(late.state.flightTime,'');
+
+ Object.assign(sender.state,{flight:'afternoon',flightTime:'15:20'});
+ const exact=loadItinerary(sender.tripShareUrl(),saved);
+ exact.readTripUrl();
+ assert.equal(exact.state.flight,'afternoon');
+ assert.equal(exact.state.flightTime,'15:20');
+ assert.equal(exact.state.day,6);
+
+ const legacy=loadItinerary('?plan=C&car=0&day=7',saved);
+ legacy.readTripUrl();
+ assert.equal(legacy.state.flight,'late');
+ const unshared=loadItinerary('?day=7',saved);
+ unshared.readTripUrl();
+ assert.equal(unshared.state.flightTime,'10:00');
 });
 
 test('Plan C keeps 6/15 in Sapporo in every transport mode; A and B still go to Biei',()=>{
@@ -63,6 +110,7 @@ test('Plan C keeps 6/15 in Sapporo in every transport mode; A and B still go to 
   ctx.state.plan='C';
   const day=ctx.getDay(3);
   assert.doesNotMatch(JSON.stringify([day.title,day.stops]),/美瑛|富良野|青池/);
+  assert.deepEqual(Array.from(day.landmarks,([name])=>name),['白色戀人公園','大通公園','藻岩山纜車山麓站']);
   for(const plan of ['A','B']){
    ctx.state.plan=plan;
    assert.match(JSON.stringify(ctx.getDay(3)),/美瑛|青池/);

@@ -55,6 +55,7 @@ const scenicStops={
  6:[['札幌站',43.0687,141.3508],['新千歲機場',42.7746,141.6926]]
 };
 function dayLandmarks(ctx){
+ if(ctx.day===3&&typeof getDay==='function')return getDay(3).landmarks||scenicStops[3];
  if(ctx.day!==5)return scenicStops[ctx.day]||[];
  const landmarks=[];
  if(ctx.zones.includes('noboribetsu'))landmarks.push(['登別地獄谷',42.4911,141.1649]);
@@ -74,7 +75,7 @@ function dayContext(){
  day===2?['yoichi','otaru','sakaimachi']:
  day===3?(typeof state!=='undefined'&&state.plan==='C'?['station','odori','susukino']:['furano','tomita','biei','station']):
  day===4?['odori','nijo','station','susukino']:
- day===6?['station','airport']:[];
+ day===6?(state.flight==='late'?['station','airport']:['airport']):[];
  let label=LABELS[day];
  let detail='';
  if(day===5&&typeof getDay==='function'){
@@ -96,8 +97,11 @@ function dayContext(){
  }else if(day===3){
    detail=state.car===0?'觀光巴士行程停留時間有限；美瑛市區餐廳僅自駕時顯示。':'自駕可視停留時間決定是否加進美瑛餐廳。';
  }else if(day===6){
-   const f=['early','noon','late'].includes(state.flight)?state.flight:'late';
-   detail=f==='early'?'早班機：不安排午晚餐，伴手禮請前一晚或在機場購買。':f==='noon'?'中午班機：只列機場午餐，不安排晚餐。':'晚班機：可在札幌站採買後，於機場用餐。';
+   const itinerary=getDay(6);
+   label=itinerary.title;
+   detail=itinerary.flight==='early'
+    ?'伴手禮可前一晚買齊，當天以抵達機場為優先。'
+    :'有足夠時間辦完報到與退稅手續，再考慮安檢前的用餐與採買。';
  }else detail='與七日旅行時間軸連動；點一下名店就能在下方地圖查看所在區域。';
  return {day,zones:[...new Set(zones)],label,detail};
 }
@@ -110,12 +114,12 @@ function allFor(ctx){
   if(st)candidate.closed=st;
   return candidate;
  }
- function flightChoice(){return (typeof state!=='undefined'&&['early','noon','late'].includes(state.flight))?state.flight:'late';}
  const dining=window.HOKKAIDO_DINING;
  const key=ctx.day===5?'5'+state.plan:(ctx.day===3&&state.plan==='C')?'3C':String(ctx.day);
  // Breakfast is always eaten before leaving Sapporo, so it has its own
  // per-day roster instead of being filtered by the day-trip zones.
- const breakfasts=(BREAKFAST_ROSTER[key]||BREAKFAST_ROSTER[ctx.day]||[])
+ const earlyDeparture=ctx.day===6&&state.flight==='early';
+ const breakfasts=(earlyDeparture?[]:BREAKFAST_ROSTER[key]||BREAKFAST_ROSTER[ctx.day]||[])
    .map(id=>BREAKFAST_VENUES.find(p=>p.id===id))
    .filter(Boolean)
    .map(p=>{
@@ -123,7 +127,7 @@ function allFor(ctx){
     if(!candidate.zone||!ZONES[candidate.zone])return null;
     if(ctx.day===0)candidate.note='隔日早晨候選；'+candidate.note;
     else if(!ctx.zones.includes(candidate.zone))candidate.note='出發前於札幌市區用餐；'+candidate.note;
-    return markClosed(candidate,ctx.day);
+    return markClosed(candidate,ctx.day===0?1:ctx.day);
    })
    .filter(Boolean);
  const choices=[];
@@ -144,14 +148,17 @@ function allFor(ctx){
     candidate.note='依預約團停靠點與自由用餐時間決定是否能去。 '+candidate.note;
   }
   if(ctx.day===6){
-    candidate.note='返程前安檢區外餐飲候選；請優先完成行李托運、免稅查驗及報到。 '+candidate.note;
+    candidate.note='返程前安檢區外餐飲候選；請先依航空公司與海關指示完成報到、免稅確認與托運。 '+candidate.note;
   }
   return markClosed(candidate,ctx.day);
  }
- const flight=flightChoice();
+ const departureHour=state.flightTime?Number(state.flightTime.slice(0,2)):null;
  for(const meal of ['lunch','dinner']){
-  // Early flights leave before lunch; midday flights leave before dinner.
-  if(ctx.day===6&&(flight==='early'||(flight==='noon'&&meal==='dinner')))continue;
+  if(ctx.day===6){
+   // Restaurant cards are for the pre-security terminal. Leave time for airport procedures.
+   if(earlyDeparture || (meal==='lunch' && departureHour!==null && departureHour<15))continue;
+   if(meal==='dinner' && (state.flight!=='late' || (departureHour!==null && departureHour<21)))continue;
+  }
   const keys=[...(schedule?.[meal]||[])];
   if(ctx.day===5&&meal==='lunch'&&state.car===2&&state.plan==='A')keys.push('x-shik');
   if(ctx.day===5&&meal==='lunch'&&state.car>=1&&state.plan==='C')keys.push('jozanHakken');
@@ -217,7 +224,7 @@ function tabelogPhotoLink(p){
  };
 }
 
-function googleRealPhotosURL(p){
+function googleRestaurantURL(p){
  const query=[p.name,p.address||p.place||p.area,'北海道'].filter(Boolean).join(' ');
  return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query);
 }
@@ -274,8 +281,7 @@ function restaurantPhotoSourceLinks(p){
  const t=tabelogPhotoLink(p);
  const label=t.direct?'食べログ實拍':'食べログ搜尋照片';
  const search='<a class="dd-actual-photo-link" href="'+safe(t.url)+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>';
- const google='<a class="dd-actual-photo-link" href="'+safe(googleRealPhotosURL(p))+'" target="_blank" rel="noopener noreferrer">Google Maps 照片 ↗</a>';
- return search+google;
+ return search;
 }
 
 function photoHTML(p){
@@ -314,7 +320,9 @@ function foodCard(p){
  '<h5>'+safe(p.name)+'</h5><div class="dd-pick-en">'+safe(p.en)+'</div>'+
  '<p class="dd-pick-feature">'+safe(p.dish)+'</p>'+hoursHTML(p)+
  '<p class="dd-pick-detail">'+safe(p.note)+'</p>'+
- '<div class="dd-pick-foot">'+focusButton(p,'meal')+restaurantPhotoSourceLinks(p)+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">店家資料 ↗</a></div></article>';
+ '<div class="dd-pick-foot">'+focusButton(p,'meal')+
+ '<a href="'+safe(googleRestaurantURL(p))+'" target="_blank" rel="noopener noreferrer">Google Maps 店址 ↗</a>'+
+ restaurantPhotoSourceLinks(p)+'<a href="'+safe(p.source)+'" target="_blank" rel="noopener noreferrer">店家資料 ↗</a></div></article>';
 }
 function giftCard(p){
  const places=p.locations||[p];
@@ -351,7 +359,6 @@ function draw(){
  if(ctx.day===0)contextExtra='｜首日午後抵達，早餐為隔日早晨候選；午餐僅供航班較早時備選。';
  if(ctx.day===3&&state.plan!=='C'&&state.car===0)contextExtra='｜6/15 一日觀光巴士可能含午餐，餐廳候選不代表有自由停靠時間。';
  if(ctx.day===5)contextExtra='｜郊外午餐受巴士或自駕路線限制；晚餐建議回札幌後安排。';
- if(ctx.day===6)contextExtra='｜回程當天以航班優先，晚餐僅適合較晚起飛且預留充足報到時間者。';
  dayContextLabel.textContent='DAY '+String(ctx.day+1).padStart(2,'0')+' · '+ctx.label+'｜'+ctx.detail+contextExtra;
  const numbers={};
  for(const meal of ['breakfast','lunch','dinner']){
@@ -497,8 +504,8 @@ dayRoot.addEventListener('click',event=>{
 });
 const lastDay=document.getElementById('dd-lastday');
 if(lastDay)lastDay.addEventListener('click',()=>{
- if(typeof state==='undefined'||typeof renderDays!=='function')return;
- state.day=6;renderDays();
+ if(typeof selectDay!=='function')return;
+ selectDay(6);
  document.getElementById('days').scrollIntoView({behavior:'smooth',block:'start'});
 });
 window.addEventListener('hokkaido:daychange',()=>{

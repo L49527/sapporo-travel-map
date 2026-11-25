@@ -21,6 +21,28 @@ if ('serviceWorker' in navigator && (location.protocol==='https:' || location.ho
   notified=true;
   toast('pwaUpdateToast','網站已更新到新版本。',{label:'重新整理',run:()=>location.reload()});
  });
+ const status=document.getElementById('offlineStatus');
+ function showStatus(message){
+  status.textContent=message;
+  status.hidden=false;
+ }
+ function prepareOffline(worker){
+  if(!worker)return;
+  const online=navigator.onLine!==false;
+  if(online)showStatus('正在準備離線行程與照片…');
+  worker.postMessage({type:'prepare-offline',download:online});
+ }
+ navigator.serviceWorker.addEventListener('message',event=>{
+  if(event.data?.type!=='offline-status')return;
+  const {shell,photos}=event.data;
+  showStatus(!shell?'離線行程尚未準備完成，請在連線時重新開啟。'
+   :photos?'離線行程與預下載照片已準備完成。'
+   :'行程可離線使用。部分照片尚未下載，可連線後重新整理。');
+ });
+ navigator.serviceWorker.addEventListener('controllerchange',()=>
+  prepareOffline(navigator.serviceWorker.controller));
+ window.addEventListener('online',()=>prepareOffline(navigator.serviceWorker.controller));
+ navigator.serviceWorker.ready.then(reg=>prepareOffline(reg.active));
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'})
  .then(reg=>{reg.update().catch(()=>{});console.info('[SapporoPWA] ready',reg.scope)})
  .catch(err=>console.warn('[SapporoPWA] unavailable',err.message)));
