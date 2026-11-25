@@ -282,3 +282,38 @@
   align-items: center;
   min-height: 40px;
 }
+
+.flight-switch:not([hidden]) {
+  display: grid;
+  justify-items: start;
+  margin-bottom: 20px;
+}
+.flight-presets, .flight-time-controls, .flight-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.flight-time-controls label { font-weight: 650; }
+.flight-time-controls input {
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid #9fb5ad;
+  color: #253f35;
+  background: #fff;
+  font: inherit;
+}
+#flightHelp { margin: 0; font-size: 13px; }
+.flight-links a { color: #176b79; text-decoration: underline; }
+.day-content .day-img { position: relative; margin: 0; }
+#dayImageCaption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 7px 12px;
+  background: #172b25e8;
+  color: #fff;
+  font-size: 13px;
+}
+#people[aria-invalid="true"] { border-color: #a13f39; }
+#peopleError { color: #a13f39; }
+#peopleError[hidden] { display: none; }

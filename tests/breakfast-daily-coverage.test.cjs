@@ -57,7 +57,7 @@ test('each breakfast venue appears at most twice across the six mornings',()=>{
 
 test('breakfast no longer disappears on day-trip dates',()=>{
  assert.doesNotMatch(guide,/p\.day\.includes\(date\)/);
- assert.match(guide,/const breakfasts=\(BREAKFAST_ROSTER\[key\]/);
+ assert.match(guide,/BREAKFAST_ROSTER\[key\]\|\|BREAKFAST_ROSTER\[ctx.day\]/);
  assert.match(html,/早餐每天至少三個/);
  assert.match(html,/避免連日重複/);
 });

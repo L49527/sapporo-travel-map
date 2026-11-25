@@ -1,0 +1,157 @@
+#printDocument {
+  display: none;
+}
+
+@media print {
+  body[data-print-mode="trip"] > *:not(#printDocument) {
+    display: none !important;
+  }
+
+  body[data-print-mode="trip"] #printDocument {
+    display: block !important;
+    color: #1d302c;
+    font: 10pt/1.55 Arial, "Noto Sans TC", sans-serif;
+    padding: 0;
+  }
+
+  .print-cover {
+    border-bottom: 2px solid #315b53;
+    margin-bottom: 16mm;
+    padding: 8mm 0 7mm;
+  }
+
+  .print-day > header,
+  .print-budget > header {
+    color: #52786f;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: .14em;
+  }
+
+  .print-cover h1 {
+    color: #193f39;
+    font: 700 27pt/1.2 Georgia, serif;
+    margin: 5mm 0 2mm;
+  }
+
+  .print-cover p {
+    margin: 2mm 0;
+  }
+
+  .print-cover-note {
+    color: #687974;
+    font-size: 9pt;
+  }
+
+  .print-day {
+    break-inside: avoid;
+    break-after: page;
+    border-bottom: 1px solid #b9cbc5;
+    padding-bottom: 8mm;
+    margin-bottom: 8mm;
+  }
+
+  .print-day:last-of-type {
+    break-after: auto;
+  }
+
+  .print-day > header,
+  .print-budget > header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .print-day h2 {
+    color: #193f39;
+    font: 700 19pt/1.25 Georgia, serif;
+    margin: 3mm 0 2mm;
+  }
+
+  .print-desc {
+    color: #4c625d;
+    margin: 0 0 4mm;
+  }
+
+  .print-day ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-day li {
+    border-top: 1px solid #d8e1dd;
+    display: grid;
+    gap: 5mm;
+    grid-template-columns: 29mm 1fr;
+    padding: 3mm 0;
+  }
+
+  .print-day li time {
+    color: #52786f;
+    font-size: 9pt;
+    font-weight: 700;
+  }
+
+  .print-day li strong {
+    font-size: 10.5pt;
+  }
+
+  .print-day li p {
+    color: #687974;
+    font-size: 9pt;
+    margin: 1mm 0 0;
+  }
+
+  .print-note {
+    background: #f0f5f2;
+    margin: 4mm 0 0;
+    padding: 3mm 4mm;
+  }
+
+  .print-budget {
+    break-inside: avoid;
+    border: 1px solid #b9cbc5;
+    margin-top: 10mm;
+    padding: 6mm;
+  }
+
+  .print-budget h2 { margin: 0; font-size: 14pt; }
+
+  .print-budget-total {
+    display: grid;
+    gap: 8mm;
+    grid-template-columns: 1fr 1fr;
+    margin: 7mm 0;
+  }
+
+  .print-budget-total small {
+    color: #687974;
+    display: block;
+  }
+
+  .print-budget-total strong {
+    color: #193f39;
+    display: block;
+    font: 700 18pt Georgia, serif;
+    margin-top: 1mm;
+  }
+
+  .print-budget ul {
+    border-top: 1px solid #d8e1dd;
+    list-style: none;
+    margin: 0;
+    padding: 2mm 0 0;
+  }
+
+  .print-budget li {
+    display: flex;
+    justify-content: space-between;
+    padding: 1mm 0;
+  }
+
+  @page {
+    margin: 14mm;
+    size: A4;
+  }
+}
