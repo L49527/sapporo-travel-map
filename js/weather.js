@@ -169,16 +169,19 @@
   const old=hasCache&&(Date.now()-entry.fetchedAt>=FRESH||notice!==''||root.navigator.onLine===false);
   $('weatherTripHeading').textContent=`旅行當天 · ${date} · ${LOCATIONS[place].name}`;
   $('weatherTripBadge').textContent=result.row?(old?'已儲存預報':'當日預報'):'六月行前參考';
-  const messages={future:'此旅行日期尚未進入最長 16 天的預報範圍。以下為六月穿搭準備，沒有當日溫度或降雨預測。',
+  const messages={future:'尚未提供當日預報：此旅行日期尚未進入最長 16 天的預報範圍。以下為六月穿搭參考。',
    past:'此旅行日期已過，不以近期預報代替當日天氣。以下保留六月穿搭參考。',
    unavailable:'尚未取得這一天的完整預報日期資料，以下先提供六月穿搭參考。'};
   $('weatherTrip').innerHTML=result.row?summary(result.row)+packing(result.row):`<p>${messages[result.kind]}</p>`+packing(null,true);
-  $('weatherStatus').textContent=[notice,hasCache?`${old?'已儲存資料':'資料擷取'}：${stamp(entry.fetchedAt)}（日本時間）`:'尚無可用的天氣資料。',busy?'正在更新…':''].filter(Boolean).join(' ');
+  const forecastStatus=[notice,hasCache?`${old?'已儲存資料':'資料擷取'}：${stamp(entry.fetchedAt)}（日本時間）`:'尚無可用的天氣資料。',busy?'正在更新…':''].filter(Boolean).join(' ');
+  $('weatherStatus').textContent=result.row?forecastStatus:'六月穿搭參考來源查核：2026/11/25。';
+  $('weatherRecentStatus').textContent=forecastStatus;
   $('weatherRefresh').disabled=busy;
   $('weatherRefresh').textContent=busy?'更新中…':'更新天氣';
   $('weatherPanel').setAttribute('aria-busy',String(busy));
+  $('weatherRecentPanel').setAttribute('aria-busy',String(busy));
   const recent=hasCache?entry.days.filter(x=>x.date>=japanDate()).slice(0,7):[];
-  $('weatherRecentSummary').textContent=`${LOCATIONS[place].name}近期七天天氣（與旅行日期分開顯示）`;
+  $('weatherRecentSummary').textContent=`查看近期天氣｜${LOCATIONS[place].name}`;
   $('weatherRecent').innerHTML=recent.length
    ?`<p class="weather-note">${old?'已儲存的':'近期'}預報 · ${recent[0].date} 至 ${recent.at(-1).date} · 日本時間。可左右滑動查看。</p><div class="weather-days" tabindex="0" role="region" aria-label="近期七天預報，可左右捲動">${recent.map(row=>{
     const [icon,label]=wmo(row.code);
