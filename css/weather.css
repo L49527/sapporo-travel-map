@@ -17,7 +17,7 @@
 .weather-packing ul{padding-left:20px;margin:0}
 .weather-panel .weather-alert{padding:8px 12px;border-left:3px solid #b45332;background:#f4e9dc}
 .weather-panel .weather-note,.weather-panel .weather-status{font-size:12px;color:#526459;overflow-wrap:anywhere}
-.weather-recent{margin-top:16px;padding-top:16px;border-top:1px solid #c6d4c9}
+.weather-recent{margin:0 0 24px;padding-top:12px;padding-bottom:12px}
 .weather-recent summary{cursor:pointer;font-size:14px;font-weight:700;min-height:44px;padding:10px 0}
 .weather-days{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(100px,1fr);gap:8px;margin:12px 0;padding-bottom:8px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
 .weather-day{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;background:#fff;border:1px solid #d9e2da;border-radius:8px;font-size:12px;text-align:center}
