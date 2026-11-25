@@ -31,19 +31,51 @@
    Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0,10)===value;
  }
  function number(value,min=-100,max=100){return typeof value==='number'&&Number.isFinite(value)&&value>=min&&value<=max?value:null;}
+ const SNOW_CODES=[71,73,75,77,85,86],ICE_CODES=[56,57,66,67];
+ const RAIN_CODES=[51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99];
+ // [emoji, label, icon]: the emoji stays for plain-text use; pages draw the SVG icon,
+ // which looks the same on every device (some emoji, e.g. fog, render as a grey blob).
  function wmo(code){
-  if(code===0)return ['☀️','晴天'];
-  if([1,2].includes(code))return ['🌤️','晴時多雲'];
-  if(code===3)return ['☁️','陰天'];
-  if([45,48].includes(code))return ['🌫️','霧'];
-  if([51,53,55].includes(code))return ['🌦️','毛毛雨'];
-  if([56,57,66,67].includes(code))return ['🌧️','凍雨'];
-  if([61,63,65].includes(code))return ['🌧️','雨'];
-  if([71,73,75,77,85,86].includes(code))return ['🌨️','雪'];
-  if([80,81,82].includes(code))return ['🌦️','陣雨'];
-  if([95,96,99].includes(code))return ['⛈️','雷雨'];
-  return ['—','天氣資料不足'];
+  if(code===0)return ['☀️','晴天','sun'];
+  if([1,2].includes(code))return ['🌤️','晴時多雲','partly'];
+  if(code===3)return ['☁️','陰天','cloud'];
+  if([45,48].includes(code))return ['🌫️','霧','fog'];
+  if([51,53,55].includes(code))return ['🌦️','毛毛雨','drizzle'];
+  if(ICE_CODES.includes(code))return ['🌧️','凍雨','rain'];
+  if([61,63,65].includes(code))return ['🌧️','雨','rain'];
+  if(SNOW_CODES.includes(code))return ['🌨️','雪','snow'];
+  if([80,81,82].includes(code))return ['🌦️','陣雨','drizzle'];
+  if([95,96,99].includes(code))return ['⛈️','雷雨','storm'];
+  return ['—','天氣資料不足','none'];
  }
+ const CLOUD='<path d="M7 14h10a3.5 3.5 0 0 0 .4-7A5 5 0 0 0 7.6 8 3 3 0 0 0 7 14z"/>';
+ const ICONS={
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+  partly:'<path d="M8 2.5v1.5M2.5 8H4M4.1 4.1l1.1 1.1M11.9 4.1l-1.1 1.1"/><path d="M5.2 10.6A3 3 0 0 1 10.6 6.4"/><path d="M9 20h8a3.5 3.5 0 0 0 .4-7A5 5 0 0 0 8 14a3 3 0 0 0 1 6z"/>',
+  cloud:'<path d="M7 18h10a4 4 0 0 0 .5-8A5.5 5.5 0 0 0 7 11.5 3.3 3.3 0 0 0 7 18z"/>',
+  fog:CLOUD+'<path d="M4 17.5h16M6.5 21h11"/>',
+  drizzle:CLOUD+'<path d="M9 17.5v.5M13 17.5v.5M11 20.5v.5M15 20.5v.5"/>',
+  rain:CLOUD+'<path d="M9 17l-1 3.5M13 17l-1 3.5M17 17l-1 3.5"/>',
+  snow:CLOUD+'<path d="M8.5 18h.01M12 18h.01M15.5 18h.01M10.2 21h.01M13.8 21h.01" stroke-width="2.6"/>',
+  storm:CLOUD+'<path d="M12.5 15l-2.5 3.5h3.5L11 22"/>',
+  none:'<path d="M8 12h8"/>'
+ };
+ function iconSVG(kind){
+  const name=Object.hasOwn(ICONS,kind)?kind:'none';
+  return `<svg class="weather-icon weather-icon--${name}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+ }
+ // Two or three short words for the one-line summary; the full advice stays in advice().
+ function quickTips(row){
+  const {high,low,rain,wind,code}=row,tips=[];
+  if(high===null)tips.push('可增減的分層衣物');
+  else tips.push(high<=10?'厚外套':high<=18?'長袖＋保暖外套':high<26?'薄長袖＋薄外套':'短袖＋薄外套');
+  if(low!==null&&low<10&&(high===null||high>10))tips.push('早晚加一層');
+  if(SNOW_CODES.includes(code)||ICE_CODES.includes(code))tips.push('防滑鞋');
+  else if(RAIN_CODES.includes(code)||(rain!==null&&rain>=40))tips.push(wind!==null&&wind>=8?'雨衣':'雨具');
+  if(wind!==null&&wind>=8)tips.push('防風');
+  return tips.slice(0,3);
+ }
+ const SEASONAL_LINE='六月參考：短袖或薄長袖＋薄外套，早晚加一層、備雨具';
  function normalize(data){
   const d=data?.daily;
   if(!Array.isArray(d?.time)||!d.time.length||!Array.isArray(d.temperature_2m_max)||!Array.isArray(d.temperature_2m_min))throw new Error('missing daily data');
@@ -80,8 +112,8 @@
    if(low!==null&&low<10){clothes.push('早晚偏冷，加帶保暖中層與防風外套。');gear.push('圍巾或脖圍');}
    else if(low!==null&&low<15)clothes.push('早晚外出記得加上外套。');
    if(high!==null&&low!==null&&high-low>=10)alerts.push('日夜溫差較大，衣物以方便增減為主。');
-   const snow=[71,73,75,77,85,86].includes(code),ice=[56,57,66,67].includes(code);
-   const rainCode=[51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code);
+   const snow=SNOW_CODES.includes(code),ice=ICE_CODES.includes(code);
+   const rainCode=RAIN_CODES.includes(code);
    if(snow||ice){gear.push('防水防滑鞋、手套與保暖帽');alerts.push('可能有雪或凍雨，出門前確認路面與交通狀況。');}
    if(rainCode||(rain!==null&&rain>=40))gear.push(wind!==null&&wind>=8?'有帽防水外套或雨衣（風大時避免撐傘）':'折疊傘或雨衣、防潑水鞋');
    else if(rain===null)gear.push('雨具備用（降雨機率資料不足）');
@@ -111,7 +143,7 @@
   const delta=(Date.parse(date)-Date.parse(japanDate(now)))/86400000;
   return {kind:delta>=16?'future':'unavailable',row:null};
  }
- const api={LOCATIONS,locationsFor,tripDate,japanDate,wmo,normalize,advice,forecastURL,selectForecast,usable};
+ const api={LOCATIONS,locationsFor,tripDate,japanDate,wmo,iconSVG,quickTips,SEASONAL_LINE,normalize,advice,forecastURL,selectForecast,usable};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(!root.document)return;
 
@@ -154,8 +186,8 @@
  function stamp(epoch){return new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(epoch);}
  const metric=(value,suffix)=>value===null?'未提供':Math.round(value*10)/10+suffix;
  function summary(row){
-  const [icon,label]=wmo(row.code);
-  return `<div class="weather-summary"><strong>${icon} ${label}</strong><span>最低 ${metric(row.low,'°C')} ／ 最高 ${metric(row.high,'°C')}</span><span>降雨機率 ${metric(row.rain,'%')}</span><span>最大風速 ${metric(row.wind,' m/s')}</span><span>最高 UV ${metric(row.uv,'')}</span></div>`;
+  const [,label,kind]=wmo(row.code);
+  return `<div class="weather-summary"><strong>${iconSVG(kind)} ${label}</strong><span>最低 ${metric(row.low,'°C')} ／ 最高 ${metric(row.high,'°C')}</span><span>降雨機率 ${metric(row.rain,'%')}</span><span>最大風速 ${metric(row.wind,' m/s')}</span><span>最高 UV ${metric(row.uv,'')}</span></div>`;
  }
  function packing(row,seasonal=false){
   const a=advice(row,LOCATIONS[place],seasonal);
@@ -168,6 +200,16 @@
   const date=tripDate(selection.day),result=selectForecast(entry,date),hasCache=usable(entry);
   const old=hasCache&&(Date.now()-entry.fetchedAt>=FRESH||notice!==''||root.navigator.onLine===false);
   $('weatherTripHeading').textContent=`旅行當天 · ${date} · ${LOCATIONS[place].name}`;
+  if(result.row){
+   const row=result.row,[,label,kind]=wmo(row.code);
+   const temp=row.low!==null&&row.high!==null?`${Math.round(row.low)}–${Math.round(row.high)}°C`:'';
+   const rain=row.rain!==null?`降雨 ${Math.round(row.rain)}%`:'';
+   const alerts=advice(row,LOCATIONS[place]).alerts.length;
+   const text=[label,temp,rain,quickTips(row).join('、')].filter(Boolean).map(escape).join(' · ');
+   $('weatherLine').innerHTML=iconSVG(kind)+`<span>${text}</span>`+(alerts?'<span class="weather-flag">注意事項</span>':'');
+  }else{
+   $('weatherLine').textContent=SEASONAL_LINE;
+  }
   $('weatherTripBadge').textContent=result.row?(old?'已儲存預報':'當日預報'):'六月行前參考';
   const messages={future:'尚未提供當日預報：此旅行日期尚未進入最長 16 天的預報範圍。以下為六月穿搭參考。',
    past:'此旅行日期已過，不以近期預報代替當日天氣。以下保留六月穿搭參考。',
@@ -181,11 +223,11 @@
   $('weatherPanel').setAttribute('aria-busy',String(busy));
   $('weatherRecentPanel').setAttribute('aria-busy',String(busy));
   const recent=hasCache?entry.days.filter(x=>x.date>=japanDate()).slice(0,7):[];
-  $('weatherRecentSummary').textContent=`查看近期天氣｜${LOCATIONS[place].name}`;
+  $('weatherRecentSummary').textContent=`近期 7 天預報（今天起算）｜${LOCATIONS[place].name}`;
   $('weatherRecent').innerHTML=recent.length
    ?`<p class="weather-note">${old?'已儲存的':'近期'}預報 · ${recent[0].date} 至 ${recent.at(-1).date} · 日本時間。可左右滑動查看。</p><div class="weather-days" tabindex="0" role="region" aria-label="近期七天預報，可左右捲動">${recent.map(row=>{
-    const [icon,label]=wmo(row.code);
-    return `<div class="weather-day"><time datetime="${row.date}">${row.date.slice(5).replace('-','/')}</time><span aria-hidden="true">${icon}</span><b>${label}</b><span>${metric(row.low,'°')} ～ ${metric(row.high,'°')}</span><small>降雨 ${metric(row.rain,'%')}</small></div>`;
+    const [,label,kind]=wmo(row.code);
+    return `<div class="weather-day"><time datetime="${row.date}">${row.date.slice(5).replace('-','/')}</time>${iconSVG(kind)}<b>${label}</b><span>${metric(row.low,'°')} ～ ${metric(row.high,'°')}</span><small>降雨 ${metric(row.rain,'%')}</small></div>`;
    }).join('')}</div><details><summary>查看 ${recent[0].date} 的近期穿搭建議（與旅行日分開）</summary>${packing(recent[0])}</details>`
    :'<p>近期預報暫時無法顯示；六月行前穿搭參考仍可使用。</p>';
  }

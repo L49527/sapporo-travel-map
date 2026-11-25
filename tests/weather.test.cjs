@@ -83,3 +83,23 @@ test('seasonal fallback contains no fabricated daily measurements',()=>{
  assert(!/[0-9]/.test(JSON.stringify(a)));
  assert(a.gear.some(x=>x.includes('防風')));
 });
+test('one-line summary tips stay short and follow rain, wind, cold and snow',()=>{
+ const row=w.normalize(payload())[0];
+ assert.deepEqual(w.quickTips(row),['薄長袖＋薄外套','雨具']);
+ assert.deepEqual(w.quickTips({...row,rain:10,code:0}),['薄長袖＋薄外套']);
+ assert.deepEqual(w.quickTips({...row,high:14,low:6,rain:70,wind:10,code:61}),['長袖＋保暖外套','早晚加一層','雨衣']);
+ assert.ok(w.quickTips({...row,code:71}).includes('防滑鞋'));
+ assert.deepEqual(w.quickTips({...row,high:null,low:null,rain:null,code:null}),['可增減的分層衣物']);
+ assert.ok(w.quickTips({...row,high:12,low:3,rain:90,wind:12,code:95}).length<=3);
+ assert.match(w.SEASONAL_LINE,/六月/);
+});
+test('weather icons are inline SVG for every code, including fog',()=>{
+ for(const code of [0,2,3,45,51,56,63,73,81,95,null]){
+  const kind=w.wmo(code)[2];
+  const svg=w.iconSVG(kind);
+  assert.match(svg,/^<svg class="weather-icon weather-icon--\w+"/);
+  assert.match(svg,/aria-hidden="true"/);
+ }
+ assert.equal(w.wmo(45)[2],'fog');
+ assert.match(w.iconSVG('<script>'),/weather-icon--none/);
+});
